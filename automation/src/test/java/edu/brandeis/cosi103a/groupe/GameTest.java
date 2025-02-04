@@ -3,50 +3,51 @@ package edu.brandeis.cosi103a.groupe;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Supply {
-    private Map<String, Integer> cardQuantities;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+/**
+ * Unit test for simple App.
+ */
+public class GameTest 
+{
+    /**
+     * Tests that automation frameworks are create with the correct ap 
+     */
+    @Test
+    public void testAutomationCard()
+    {
+         // Create an AutomationCard with a specific AP value
+         AutomationCard card = new AutomationCard("Framework", 8, 6);
+
+         // Verify that the getAp method returns the correct AP value
+         assertEquals(6,card.getAp());
+    }
     
     /*
-     * Constructor for the supply
+     * Tests that the supply is created with the correct quantities of cards
      */
-    public Supply() {
-        cardQuantities = new HashMap<>();
-        cardQuantities.put("Method", 14);
-        cardQuantities.put("Module", 8);
-        cardQuantities.put("Framework", 8);
-        cardQuantities.put("Bitcoin", 60);
-        cardQuantities.put("Ethereum", 40);
-        cardQuantities.put("Dogecoin", 30);
-    }
+    @Test
+    public void testGetCardQuantity() {
+        // Create a new Supply object
+        Supply supply = new Supply();
 
-    /**
-     * Gets the quantity of a specific card in the supply.
-     * @param cardName The name of the card.
-     * @return The quantity of the card in the supply.
-     */
-    public int getCardQuantity(String cardName) {
-        return cardQuantities.getOrDefault(cardName, 0);
-    }
+        // Verify the initial quantities of the cards
+        assertEquals(14, supply.getCardQuantity("Method"));
+        assertEquals(8, supply.getCardQuantity("Module"));
+        assertEquals(8, supply.getCardQuantity("Framework"));
+        assertEquals(60, supply.getCardQuantity("Bitcoin"));
+        assertEquals(40, supply.getCardQuantity("Ethereum"));
+        assertEquals(30, supply.getCardQuantity("Dogecoin"));
 
-    /**
-     * Decreases the quantity of a specific card in the supply by one.
-     * @param cardName The name of the card.
-     * @return True if the card was successfully taken from the supply, false if the card is out of stock.
-     */
-    public boolean takeCard(String cardName) {
-        int quantity = cardQuantities.getOrDefault(cardName, 0);
-        
-        if (quantity > 0) {
-            cardQuantities.put(cardName, quantity - 1);
-            return true;
-        }
-        return false;
-    }
+        // Take some cards from the supply
+        supply.takeCard("Method");
+        supply.takeCard("Bitcoin");
 
-    public void printSupply() {
-        System.out.println("Supply: ");
-        for (String cardName : cardQuantities.keySet()) {
-            System.out.println(cardName + ": " + cardQuantities.get(cardName));
-        }
+        // Verify the updated quantities of the cards
+        assertEquals(13, supply.getCardQuantity("Method"));
+        assertEquals(59, supply.getCardQuantity("Bitcoin"));
     }
 }
