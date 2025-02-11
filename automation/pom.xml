@@ -25,6 +25,13 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/io.github.brandeis-cosi-103a/atg-api -->
+<dependency>
+    <groupId>io.github.brandeis-cosi-103a</groupId>
+    <artifactId>atg-api</artifactId>
+    <version>2.4.1</version>
+</dependency>
+
   </dependencies>
 
   <build>
