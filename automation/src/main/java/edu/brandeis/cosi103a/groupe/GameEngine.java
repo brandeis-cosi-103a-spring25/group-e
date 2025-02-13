@@ -3,19 +3,44 @@ package edu.brandeis.cosi103a.groupe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import com.google.common.collect.ImmutableList;
+import edu.brandeis.cosi.atg.api.Engine;
+import edu.brandeis.cosi.atg.api.EngineCreator;
+import edu.brandeis.cosi.atg.api.GameObserver;
+import edu.brandeis.cosi.atg.api.GameState;
+import edu.brandeis.cosi.atg.api.Player.ScorePair;
+import edu.brandeis.cosi.atg.api.PlayerViolationException;
+import edu.brandeis.cosi.atg.api.event.EndTurnEvent;
+import edu.brandeis.cosi.atg.api.event.Event;
+import edu.brandeis.cosi.atg.api.event.GameEvent;
+import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
 /*
  * This class simulates simlpified game play for the Automation card game.
  * 
- * Emily Szabo
- * emilyszabo@brandeis.edu
- * Jan. 27th, 2025
- * COSI 103A ip2
+ *
  */
-public class Playgame {
-    public static void main(String[] args) {
-        Player player1 = new Player("Player 1");
-        Player player2 = new Player("Player 2");
-        Supply supply = new Supply();
+public class GameEngine implements Engine {
+    private final GameObserver observer;
+    private final Player player1, player2;
+    private final Supply supply;
+    
+    public GameEngine(Player player1, Player player2, GameObserver observer) {
+        this.player1 = player1;
+        this.player2 = player2;
+        this.supply = new Supply();
+        this.observer = observer;
+    }
+    
+    @EngineCreator
+    public static Engine makeEngine(Player player1, Player player2, GameObserver observer){
+        Engine thisEngine = new GameEngine(player1, player2, observer);
+        return thisEngine;
+
+    }
+
+    @Override
+    public ImmutableList<ScorePair> play() throws PlayerViolationException {
         
         // Automation cards
         Card methodCard = new AutomationCard("Method", 2, 1);
@@ -42,6 +67,8 @@ public class Playgame {
         }
 
         // Shuffle the decks
+        //GameEvent GameEvent = new GameEvent("Deck Shuffled.");
+        //this.observer.notifyEvent(game, GameEvent);
         player1.shuffleDeck();
         player2.shuffleDeck();
 
@@ -86,6 +113,7 @@ public class Playgame {
         } else {
             System.out.println("It's a tie!");
         }
+                return null; //Should be player and score pairs
     }
 
     /**
@@ -94,7 +122,7 @@ public class Playgame {
      * @param supply The supply of cards.
      * @param availableCards The available cards for purchase.
      */
-    private static void playerTurn(Player player, Supply supply, Card... availableCards) {
+    private void playerTurn(Player player, Supply supply, Card... availableCards) {
         // Buy phase
         player.playHand();
         int totalMoneyInHand = player.getTotalMoneyInHand();
@@ -120,6 +148,9 @@ public class Playgame {
         }
         // Cleanup phase
         player.cleanup();
+        EndTurnEvent event = new EndTurnEvent();
+        GameState endTurn = new GameState(player.getName(), player.getHand(), null, totalMoneyInHand, totalMoneyInHand, totalMoneyInHand, null);
+        this.observer.notifyEvent(endTurn, event);
         player.drawHand(5);
         System.out.println();
     }
@@ -145,5 +176,7 @@ public class Playgame {
         }
         
         return availableCards.get((int) (Math.random() * availableCards.size()));
-    } 
+    }
+
+   
 }

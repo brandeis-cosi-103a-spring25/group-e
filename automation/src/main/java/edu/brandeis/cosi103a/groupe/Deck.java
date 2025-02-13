@@ -7,10 +7,6 @@ import java.util.List;
 /*
  * This class creates a deck of cards
  * 
- * Emily Szabo
- * emilyszabo@brandeis.edu
- * Jan. 27th, 2025
- * COSI 103A ip2
  */
 public class Deck {
     private LinkedList<Card> cards;

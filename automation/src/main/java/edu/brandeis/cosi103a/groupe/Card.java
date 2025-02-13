@@ -3,10 +3,6 @@ package edu.brandeis.cosi103a.groupe;
 /*
  * This class creates a card
  * 
- * Emily Szabo
- * emilyszabo@brandeis.edu
- * Jan. 27th, 2025
- * COSI 103A ip2
  */
 abstract class Card {
     private String name;
