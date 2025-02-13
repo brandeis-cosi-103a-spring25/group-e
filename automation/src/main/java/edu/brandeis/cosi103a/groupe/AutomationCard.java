@@ -13,8 +13,8 @@ class AutomationCard extends Card{
      * @param cost The cost of the card in cryptocoins.
      * @param ap The Automation Points (AP) the card provides.
      */
-    public AutomationCard(String name, int cost, int ap) {
-        super(name, cost);
+    public AutomationCard(String name, int cost, int ap, Type type) {
+        super(name, cost, type);
         this.ap = ap;
     }
     
@@ -35,4 +35,5 @@ class AutomationCard extends Card{
     public int getMoney() {
         return 0;
     }
+
 }

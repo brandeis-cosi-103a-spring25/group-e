@@ -11,10 +11,13 @@ import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.Player.ScorePair;
 import edu.brandeis.cosi.atg.api.PlayerViolationException;
+import edu.brandeis.cosi.atg.api.decisions.BuyDecision;
+import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.event.EndTurnEvent;
 import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.event.GameEvent;
 import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
+import edu.brandeis.cosi103a.groupe.Card.Type;
 /*
  * This class simulates simlpified game play for the Automation card game.
  * 
@@ -43,14 +46,14 @@ public class GameEngine implements Engine {
     public ImmutableList<ScorePair> play() throws PlayerViolationException {
         
         // Automation cards
-        Card methodCard = new AutomationCard("Method", 2, 1);
-        Card moduleCard = new AutomationCard("Module", 5, 3);
-        Card frameworkCard = new AutomationCard("Framework", 8, 6);
+        Card methodCard = new AutomationCard("Method", 2, 1, Type.METHOD);
+        Card moduleCard = new AutomationCard("Module", 5, 3, Type.MODULE);
+        Card frameworkCard = new AutomationCard("Framework", 8, 6, Type.FRAMEWORK);
 
         // Cryptocurrency cards
-        Card bitcoinCard = new CryptocurrencyCard("Bitcoin", 0, 1);
-        Card ethereumCard = new CryptocurrencyCard("Ethereum", 3, 2);
-        Card dogecoinCard = new CryptocurrencyCard("Dogecoin", 6, 3);
+        Card bitcoinCard = new CryptocurrencyCard("Bitcoin", 0, 1, Type.BITCOIN);
+        Card ethereumCard = new CryptocurrencyCard("Ethereum", 3, 2, Type.ETHEREUM);
+        Card dogecoinCard = new CryptocurrencyCard("Dogecoin", 6, 3, Type.DOGECOIN);
 
         // Distribute starter decks to both players
         for (int i = 0; i < 7; i++) {
@@ -124,6 +127,7 @@ public class GameEngine implements Engine {
      */
     private void playerTurn(Player player, Supply supply, Card... availableCards) {
         // Buy phase
+        
         player.playHand();
         int totalMoneyInHand = player.getTotalMoneyInHand();
         System.out.println(player.getName() + " has " + totalMoneyInHand + " money in hand.");
@@ -136,6 +140,7 @@ public class GameEngine implements Engine {
         Card purchasedCard = randomAvailableCard(supply, totalMoneyInHand, availableCards);
         if (purchasedCard != null) {
             player.purchaseCard(purchasedCard, supply);
+            BuyDecision Decision = new BuyDecision(purchasedCard.getType());
             System.out.println(player.getName() + " buys: " + purchasedCard.getName() + " (Cost: " + purchasedCard.getCost() + ", AP: " + purchasedCard.getAp() + ")");
             System.out.println(player.getName() + " - Total AP: " + player.getTotalAp() + ", Money left: " + player.getMoney());
 
@@ -164,7 +169,7 @@ public class GameEngine implements Engine {
      */
     private static Card randomAvailableCard(Supply supply, int playerMoney, Card... cards) {
         List<Card> availableCards = new ArrayList<>();
-
+    
         for (Card card : cards) {
             if (supply.getCardQuantity(card.getName()) > 0 && card.getCost() <= playerMoney) {
                 availableCards.add(card);
@@ -174,6 +179,7 @@ public class GameEngine implements Engine {
         if (availableCards.isEmpty()) {
             return null;
         }
+
         
         return availableCards.get((int) (Math.random() * availableCards.size()));
     }
