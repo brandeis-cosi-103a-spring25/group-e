@@ -3,18 +3,17 @@ package edu.brandeis.cosi103a.groupe;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-/*
+import com.google.common.collect.ImmutableList;
+import edu.brandeis.cosi.atg.api.Hand;
+/* 
  * This class creates a player in the game
  * 
- * Emily Szabo
- * emilyszabo@brandeis.edu
- * Jan. 27th, 2025
- * COSI 103A ip2
  */
 public class Player {
     private String name;
     private Deck deck;
     private List<Card> hand;
+    //private Hand hand; 
     private List<Card> discardPile;
     private int money;
 
@@ -25,6 +24,7 @@ public class Player {
     public Player(String name) {
         this.name = name;
         this.deck = new Deck();
+        //this.hand = new Hand(ImmutableList.of(), ImmutableList.of()); //initialize empty hand
         this.hand = new ArrayList<>();
         this.discardPile = new ArrayList<>();
         this.money = 0;
@@ -43,13 +43,18 @@ public class Player {
      * @param handSize The number of cards to draw.
      */
     public void drawHand(int handSize) {
+        //List<Card> playedCards = new ArrayList<>();
+        //List<Card> unplayedCards = new ArrayList<>();
         hand.clear();
         for (int i = 0; i < handSize; i++) {
             if (deck.isEmpty()) {
                 reshuffleDeck();
             }
+            //unplayedCards.add(deck.drawCard());
             hand.add(deck.drawCard());
         }
+        //this.hand = new Hand(ImmutableList.copyOf(playedCards), ImmutableList.copyOf(unplayedCards));
+
     }
     
     /**

@@ -3,10 +3,6 @@ package edu.brandeis.cosi103a.groupe;
 /*
  * This class creates a card that is a cryptocurrency
  * 
- * Emily Szabo
- * emilyszabo@brandeis.edu
- * Jan. 27th, 2025
- * COSI 103A ip2
  */
 class CryptocurrencyCard extends Card{
     private int money;
