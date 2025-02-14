@@ -79,7 +79,7 @@ public class Player {
      */
     public void purchaseCard(Card card, Supply supply) {
         int totalMoneyInHand = getTotalMoneyInHand();
-        if (totalMoneyInHand >= card.getCost() && supply.takeCard(card.getDescription())) {
+        if (totalMoneyInHand >= card.getCost() && supply.takeCard(card.getType())) {
             discardPile.add(card);
             money -= card.getCost();
         } 

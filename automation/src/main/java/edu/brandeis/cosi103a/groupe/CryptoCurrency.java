@@ -7,7 +7,7 @@ import edu.brandeis.cosi.atg.api.cards.Card;
  * 
  */
 class CryptocurrencyCard extends Card{
-    private int ID, money, AP;
+    private int ID, money;
     public Type type;
     private String name;
     
@@ -26,7 +26,6 @@ class CryptocurrencyCard extends Card{
     public void setStuff(int money, String name) {
         this.money = money;
         this.name = name;
-        this.AP = 0;
     }
     
     /**
