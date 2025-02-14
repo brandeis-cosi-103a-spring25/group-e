@@ -26,9 +26,9 @@ class AutomationCard extends Card{
     //  * Gets the Automation Points (AP) of the card.
     //  * @return The AP of the card.
     //  */
-    // @Override
+    // @
     // public int getAp() {
-    //     return ap;
+    //     return this.ap;
     // }
     
     /**

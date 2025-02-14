@@ -20,6 +20,7 @@ import edu.brandeis.cosi.atg.api.decisions.EndPhaseDecision;
 import edu.brandeis.cosi.atg.api.decisions.PlayCardDecision;
 import edu.brandeis.cosi.atg.api.event.EndTurnEvent;
 import edu.brandeis.cosi.atg.api.event.Event;
+import edu.brandeis.cosi.atg.api.event.GainCardEvent;
 import edu.brandeis.cosi.atg.api.event.GameEvent;
 import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
 
@@ -50,32 +51,38 @@ public class GameEngine implements Engine {
     @Override
     public ImmutableList<ScorePair> play() throws PlayerViolationException {
         
-        // Automation cards
-        AutomationCard methodCard = new AutomationCard(Card.Type.METHOD, 1);
-        AutomationCard moduleCard = new AutomationCard(Card.Type.MODULE, 4);
-        AutomationCard frameworkCard = new AutomationCard(Card.Type.FRAMEWORK, 5);
+        // ASSUME 10 OF EACH CARD TYPE- CHANGE IF NEEDED
+        // for (int i =1; i <= 10; i ++) {
+            AutomationCard methodCard = new AutomationCard(Card.Type.METHOD, 1);
+            AutomationCard moduleCard = new AutomationCard(Card.Type.MODULE, 11);
+            AutomationCard frameworkCard = new AutomationCard(Card.Type.FRAMEWORK, 21);
+            CryptocurrencyCard bitcoinCard = new CryptocurrencyCard(Card.Type.BITCOIN, 31);
+            bitcoinCard.setStuff(1, "Bitcoin");
+            CryptocurrencyCard ethereumCard = new CryptocurrencyCard(Card.Type.ETHEREUM, 41);
+            ethereumCard.setStuff(2, "Ethereum");
+            CryptocurrencyCard dogecoinCard = new CryptocurrencyCard(Card.Type.DOGECOIN, 51);
+            dogecoinCard.setStuff(3, "DogeCoin");
+        // }
+        
 
         // Cryptocurrency cards
-        CryptocurrencyCard bitcoinCard = new CryptocurrencyCard(Card.Type.BITCOIN, 0);
-        bitcoinCard.setStuff(1, "Bitcoin");
-        CryptocurrencyCard ethereumCard = new CryptocurrencyCard(Card.Type.ETHEREUM, 2);
-        ethereumCard.setStuff(2, "Ethereum");
-        CryptocurrencyCard dogecoinCard = new CryptocurrencyCard(Card.Type.DOGECOIN, 3);
-        dogecoinCard.setStuff(3, "DogeCoin");
+       
 
         // Distribute starter decks to both players
-        for (int i = 0; i < 7; i++) {
-            player1.addCardToDeck(bitcoinCard);
-            supply.takeCard("Bitcoin");
+        // for (int i = 100; i < 107; i++) {
+            // CryptocurrencyCard bitcoinCard = new CryptocurrencyCard(Card.Type.BITCOIN, i);
+            bitcoinCard.setStuff(1, "Bitcoin");
+            supply.takeCard(Card.Type.BITCOIN);
             player2.addCardToDeck(bitcoinCard);
-            supply.takeCard("Bitcoin");
-        }
-        for (int i = 0; i < 3; i++) {
+            supply.takeCard(Card.Type.BITCOIN);
+        // }
+        // for (int i = 200; i < 203; i++) {
+            //  AutomationCard methodCard = new AutomationCard(Card.Type.METHOD, i);
             player1.addCardToDeck(methodCard);
-            supply.takeCard("Method");
+            supply.takeCard(Card.Type.METHOD);
             player2.addCardToDeck(methodCard);
-            supply.takeCard("Method");
-        }
+            supply.takeCard(Card.Type.METHOD);
+        // }
 
         // Shuffle the decks
         //GameEvent GameEvent = new GameEvent("Deck Shuffled.");
@@ -92,10 +99,8 @@ public class GameEngine implements Engine {
         boolean player1Starts = random.nextBoolean();
 
         // Track the number of turns
-        int turnCounter = 1;
         
         while (supply.getCardQuantity("Framework") > 0) {
-            System.out.println("Turn " + turnCounter);
             
             if (player1Starts) {
                 playerTurn(player1, supply, frameworkCard, bitcoinCard, methodCard, moduleCard, ethereumCard, dogecoinCard);
@@ -105,25 +110,27 @@ public class GameEngine implements Engine {
                 playerTurn(player1, supply, frameworkCard, bitcoinCard, methodCard, moduleCard, ethereumCard, dogecoinCard);
             }
         
-            turnCounter++;
-            System.out.println();
         }
 
         // Determine the winner
         int player1Ap = player1.getTotalAp();
         int player2Ap = player2.getTotalAp();
 
-        System.out.println("Final Scores:");
-        System.out.println("Player 1 - Total AP: " + player1Ap);
-        System.out.println("Player 2 - Total AP: " + player2Ap);
+        String desc = "Final Scores: \nPlayer 1 - Total AP: " + player1Ap + "\nPlayer 2 - Total AP: " + player2Ap;
+        Player winner = null;
 
         if (player1Ap > player2Ap) {
-            System.out.println("Player 1 wins!");
+           desc += "\nPlayer 1 wins!";
+           winner = player1;
         } else if (player2Ap > player1Ap) {
-            System.out.println("Player 2 wins!");
+            desc += "\nPlayer 2 wins!";
+           winner = player2;
         } else {
-            System.out.println("It's a tie!");
+           desc += "\nIt's a tie!";
         }
+        GameEvent endGame = new GameEvent(desc); 
+        GameState endGameState = new GameState(winner.getName(), winner.getHand(), GameState.TurnPhase.CLEANUP, 0, 0, 0, supply.getGameDeck() );
+        this.observer.notifyEvent(endGameState, endGame);
                 return null; //Should be player and score pairs
     }
 
@@ -138,9 +145,7 @@ public class GameEngine implements Engine {
         
         player.playHand();
         int totalMoneyInHand = player.getTotalMoneyInHand();
-        System.out.println(player.getName() + " has " + totalMoneyInHand + " money in hand.");
         
-        System.out.println(player.getName() + "'s hand:");
         for (Card card : player.getCards()) {
             System.out.println("- " + card.getDescription()+ ", (Value: " + card.getCost() + ")");
         }
@@ -148,23 +153,22 @@ public class GameEngine implements Engine {
         Card purchasedCard = randomAvailableCard(supply, totalMoneyInHand, availableCards);
         if (purchasedCard != null) {
             player.purchaseCard(purchasedCard, supply);
-            System.out.println(player.getName() + " buys: " + purchasedCard.getDescription() + " (Cost: " + purchasedCard.getCost() + ", AP: " + purchasedCard.getValue() + ")");
-            System.out.println(player.getName() + " - Total AP: " + player.getTotalAp() + ", Money left: " + player.getMoney());
+            GainCardEvent buyCard = new GainCardEvent(purchasedCard.getType(), player.getName());
+            GameState buyCardState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.BUY, totalMoneyInHand, totalMoneyInHand, totalMoneyInHand, supply.getGameDeck() );
+            this.observer.notifyEvent(buyCardState, buyCard);
 
             // Check if a Framework card was purchased
             if (purchasedCard instanceof AutomationCard && purchasedCard.getDescription().equals("Framework")) {
                 System.out.println(player.getName() + " purchased a Framework card!");
             }
-        } else {
-            System.out.println(player.getName() + " could not buy a card.");
         }
         // Cleanup phase
         player.cleanup();
         EndTurnEvent event = new EndTurnEvent();
-        GameState endTurn = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.CLEANUP, totalMoneyInHand, totalMoneyInHand, totalMoneyInHand, GameDeck ); //Didn't know what to do here
+        GameState endTurn = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.CLEANUP, totalMoneyInHand, totalMoneyInHand, totalMoneyInHand, supply.getGameDeck() ); //Didn't know what to do here
         this.observer.notifyEvent(endTurn, event);
         player.drawHand(5);
-        System.out.println();
+
     }
 
     /**
