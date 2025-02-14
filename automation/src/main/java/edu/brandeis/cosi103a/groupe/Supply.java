@@ -3,6 +3,10 @@ package edu.brandeis.cosi103a.groupe;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
+
+import edu.brandeis.cosi.atg.api.GameDeck;
+
 
 public class Supply {
     private Map<String, Integer> cardQuantities;
@@ -49,5 +53,9 @@ public class Supply {
         for (String cardName : cardQuantities.keySet()) {
             System.out.println(cardName + ": " + cardQuantities.get(cardName));
         }
+    }
+
+    public GameDeck getGameDeck() {
+        return ImmutableMap.copyOf(this, cardQuantities);
     }
 }

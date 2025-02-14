@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import edu.brandeis.cosi.atg.api.cards.Card;
 /*
  * This class creates a deck of cards
  * 
  */
 public class Deck {
-    private LinkedList<GameCard> cards;
+    private LinkedList<Card> cards;
     
     /*
      * Constructor for the deck
@@ -22,7 +23,7 @@ public class Deck {
      * This method adds a card to the deck
      * @param card The card to add to the deck
      */
-    public void addCard(GameCard card) {
+    public void addCard(Card card) {
         cards.add(card);
     }
     
@@ -30,7 +31,7 @@ public class Deck {
      * This method adds a list of cards to the deck
      * @param cards The list of cards to add to the deck
      */
-    public void addCards(List<GameCard> cards) {
+    public void addCards(List<Card> cards) {
         this.cards.addAll(cards);
     }
     
@@ -38,7 +39,7 @@ public class Deck {
      * This method draws a card from the deck
      * @return The card drawn from the deck
      */
-    public GameCard drawCard() {
+    public Card drawCard() {
         return cards.poll();
     }
     
@@ -62,8 +63,8 @@ public class Deck {
      * @param handSize The number of cards to draw.
      * @return The list of drawn cards.
      */
-    public List<GameCard> drawHand(int handSize) {
-        List<GameCard> hand = new ArrayList<>();
+    public List<Card> drawHand(int handSize) {
+        List<Card> hand = new ArrayList<>();
         for (int i = 0; i < handSize && i < cards.size(); i++) {
             hand.add(cards.get(i));
         }
@@ -77,7 +78,7 @@ public class Deck {
     public int getTotalAp() {
         return cards.stream()
                     .filter(card -> card instanceof AutomationCard)
-                    .mapToInt(GameCard::getAp)
+                    .mapToInt(Card::getValue)
                     .sum();
     }
 
@@ -85,6 +86,6 @@ public class Deck {
      * Prints the contents of the deck.
      */
     public void printDeck() {
-        cards.forEach(card -> System.out.println("- " + card.getName() + " (AP: " + card.getAp() + ")"));
+        cards.forEach(card -> System.out.println("- " + card.getDescription() + " (AP: " + card.getValue() + ")"));
     }
 }

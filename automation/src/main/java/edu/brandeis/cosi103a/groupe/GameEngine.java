@@ -7,6 +7,7 @@ import java.util.Random;
 import com.google.common.collect.ImmutableList;
 import edu.brandeis.cosi.atg.api.Engine;
 import edu.brandeis.cosi.atg.api.EngineCreator;
+import edu.brandeis.cosi.atg.api.GameDeck;
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.Hand;
@@ -50,14 +51,17 @@ public class GameEngine implements Engine {
     public ImmutableList<ScorePair> play() throws PlayerViolationException {
         
         // Automation cards
-        GameCard methodCard = new AutomationCard("Method" 
-        GameCard moduleCard = new AutomationCard("Module", 5, 3, MODULE);
-        GameCard frameworkCard = new AutomationCard("Framework", 8, 6, Type.TFRAMEWORK);
+        AutomationCard methodCard = new AutomationCard(Card.Type.METHOD, 1);
+        AutomationCard moduleCard = new AutomationCard(Card.Type.MODULE, 4);
+        AutomationCard frameworkCard = new AutomationCard(Card.Type.FRAMEWORK, 5);
 
         // Cryptocurrency cards
-        GameCard bitcoinCard = new CryptocurrencyCard("Bitcoin", 0, 1, Type.BITCOIN);
-        GameCard ethereumCard = new CryptocurrencyCard("Ethereum", 3, 2, Type.ETHEREUM);
-        GameCard dogecoinCard = new CryptocurrencyCard("Dogecoin", 6, 3, Type.DOGECOIN);
+        CryptocurrencyCard bitcoinCard = new CryptocurrencyCard(Card.Type.BITCOIN, 0);
+        bitcoinCard.setStuff(1, "Bitcoin");
+        CryptocurrencyCard ethereumCard = new CryptocurrencyCard(Card.Type.ETHEREUM, 2);
+        ethereumCard.setStuff(2, "Ethereum");
+        CryptocurrencyCard dogecoinCard = new CryptocurrencyCard(Card.Type.DOGECOIN, 3);
+        dogecoinCard.setStuff(3, "DogeCoin");
 
         // Distribute starter decks to both players
         for (int i = 0; i < 7; i++) {
@@ -129,7 +133,7 @@ public class GameEngine implements Engine {
      * @param supply The supply of cards.
      * @param availableCards The available cards for purchase.
      */
-    private void playerTurn(Player player, Supply supply, GameCard... availableCards) {
+    private void playerTurn(Player player, Supply supply, Card... availableCards) {
         // Buy phase
         
         player.playHand();
@@ -137,18 +141,18 @@ public class GameEngine implements Engine {
         System.out.println(player.getName() + " has " + totalMoneyInHand + " money in hand.");
         
         System.out.println(player.getName() + "'s hand:");
-        for (GameCard card : player.getCards()) {
-            System.out.println("- " + card.getName()+ ", (Value: " + card.getMoney() + ")");
+        for (Card card : player.getCards()) {
+            System.out.println("- " + card.getDescription()+ ", (Value: " + card.getCost() + ")");
         }
 
-        GameCard purchasedCard = randomAvailableCard(supply, totalMoneyInHand, availableCards);
+        Card purchasedCard = randomAvailableCard(supply, totalMoneyInHand, availableCards);
         if (purchasedCard != null) {
             player.purchaseCard(purchasedCard, supply);
-            System.out.println(player.getName() + " buys: " + purchasedCard.getName() + " (Cost: " + purchasedCard.getCost() + ", AP: " + purchasedCard.getAp() + ")");
+            System.out.println(player.getName() + " buys: " + purchasedCard.getDescription() + " (Cost: " + purchasedCard.getCost() + ", AP: " + purchasedCard.getValue() + ")");
             System.out.println(player.getName() + " - Total AP: " + player.getTotalAp() + ", Money left: " + player.getMoney());
 
             // Check if a Framework card was purchased
-            if (purchasedCard instanceof AutomationCard && purchasedCard.getName().equals("Framework")) {
+            if (purchasedCard instanceof AutomationCard && purchasedCard.getDescription().equals("Framework")) {
                 System.out.println(player.getName() + " purchased a Framework card!");
             }
         } else {
@@ -157,7 +161,7 @@ public class GameEngine implements Engine {
         // Cleanup phase
         player.cleanup();
         EndTurnEvent event = new EndTurnEvent();
-        GameState endTurn = new GameState(player.getName(), player.getHand(), null, totalMoneyInHand, totalMoneyInHand, totalMoneyInHand, null);
+        GameState endTurn = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.CLEANUP, totalMoneyInHand, totalMoneyInHand, totalMoneyInHand, GameDeck ); //Didn't know what to do here
         this.observer.notifyEvent(endTurn, event);
         player.drawHand(5);
         System.out.println();
@@ -170,11 +174,11 @@ public class GameEngine implements Engine {
      * @param cards The available cards.
      * @return A randomly selected card that is available in the supply, or null if none are available.
      */
-    private static GameCard randomAvailableCard(Supply supply, int playerMoney, GameCard... cards) {
-        List<GameCard> availableCards = new ArrayList<>();
+    private static Card randomAvailableCard(Supply supply, int playerMoney, Card... cards) {
+        List<Card> availableCards = new ArrayList<>();
 
-        for (GameCard card : cards) {
-            if (supply.getCardQuantity(card.getName()) > 0 && card.getCost() <= playerMoney) {
+        for (Card card : cards) {
+            if (supply.getCardQuantity(card.getDescription()) > 0 && card.getCost() <= playerMoney) {
                 availableCards.add(card);
             }
         }
@@ -189,15 +193,15 @@ public class GameEngine implements Engine {
     
     public List<Decision> generatePossibleDecisions(Player player, Hand hand){
         List<Decision> possibleDecisions = new ArrayList<>();
-        List<GameCard> cards = player.getCards();
+        List<Card> cards = player.getCards();
        
         // Add PlayCardDecisions for each unplayed card
-        for(GameCard card: cards){
+        for(Card card: cards){
            possibleDecisions.add(new PlayCardDecision(card));
         }
 
         // Add BuyDecisions if the player has enough crypto
-        for (GameCard card : availableCardsToBuy()) {
+        for (Card card : availableCardsToBuy()) { //Not sure what this method is
             if (player.getTotalMoneyInHand() >= card.getCost()) {
                 possibleDecisions.add(new BuyDecision(card.getType()));
             }
