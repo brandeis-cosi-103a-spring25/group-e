@@ -1,10 +1,12 @@
 package edu.brandeis.cosi103a.groupe;
 
+import edu.brandeis.cosi.atg.api.cards.Card;
+
 /*
  * This class creates a card that is a cryptocurrency
  * 
  */
-class CryptocurrencyCard extends Card{
+class CryptocurrencyCard extends GameCard{
     private int money;
     
     /**
@@ -13,8 +15,8 @@ class CryptocurrencyCard extends Card{
      * @param cost The cost of the card in cryptocoins.
      * @param money The value of the card in cryptocoins when played.
      */
-    public CryptocurrencyCard(String name, int cost, int money, Type type) {
-        super(name, cost, type);
+    public CryptocurrencyCard(String name, int cost, int money, Card.Type type, int id) {
+        super(name, cost, type, id);
         this.money = money;
     }
     

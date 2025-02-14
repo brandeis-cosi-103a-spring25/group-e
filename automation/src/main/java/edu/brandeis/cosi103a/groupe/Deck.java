@@ -9,7 +9,7 @@ import java.util.List;
  * 
  */
 public class Deck {
-    private LinkedList<Card> cards;
+    private LinkedList<GameCard> cards;
     
     /*
      * Constructor for the deck
@@ -22,7 +22,7 @@ public class Deck {
      * This method adds a card to the deck
      * @param card The card to add to the deck
      */
-    public void addCard(Card card) {
+    public void addCard(GameCard card) {
         cards.add(card);
     }
     
@@ -30,7 +30,7 @@ public class Deck {
      * This method adds a list of cards to the deck
      * @param cards The list of cards to add to the deck
      */
-    public void addCards(List<Card> cards) {
+    public void addCards(List<GameCard> cards) {
         this.cards.addAll(cards);
     }
     
@@ -38,7 +38,7 @@ public class Deck {
      * This method draws a card from the deck
      * @return The card drawn from the deck
      */
-    public Card drawCard() {
+    public GameCard drawCard() {
         return cards.poll();
     }
     
@@ -62,8 +62,8 @@ public class Deck {
      * @param handSize The number of cards to draw.
      * @return The list of drawn cards.
      */
-    public List<Card> drawHand(int handSize) {
-        List<Card> hand = new ArrayList<>();
+    public List<GameCard> drawHand(int handSize) {
+        List<GameCard> hand = new ArrayList<>();
         for (int i = 0; i < handSize && i < cards.size(); i++) {
             hand.add(cards.get(i));
         }
@@ -77,7 +77,7 @@ public class Deck {
     public int getTotalAp() {
         return cards.stream()
                     .filter(card -> card instanceof AutomationCard)
-                    .mapToInt(Card::getAp)
+                    .mapToInt(GameCard::getAp)
                     .sum();
     }
 
