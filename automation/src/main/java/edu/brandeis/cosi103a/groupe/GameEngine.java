@@ -191,6 +191,20 @@ public class GameEngine implements Engine {
         return availableCards.get((int) (Math.random() * availableCards.size()));
     }
     
+    public List<Card> availableCardsToBuy(Player player, List<Card> cards){
+        List<Card> availabletoBuy = new ArrayList<>();
+
+
+        for (Card card : cards) {
+            if (supply.getCardQuantity(card.getDescription()) > 0 && card.getCost() <= player.getTotalMoneyInHand()) {
+                availabletoBuy.add(card);
+            }
+        }
+
+        return availabletoBuy;
+    }
+
+
     public List<Decision> generatePossibleDecisions(Player player, Hand hand){
         List<Decision> possibleDecisions = new ArrayList<>();
         List<Card> cards = player.getCards();
@@ -201,7 +215,7 @@ public class GameEngine implements Engine {
         }
 
         // Add BuyDecisions if the player has enough crypto
-        for (Card card : availableCardsToBuy()) { //Not sure what this method is
+        for (Card card : availableCardsToBuy(player, cards)) { //Not sure what this method is
             if (player.getTotalMoneyInHand() >= card.getCost()) {
                 possibleDecisions.add(new BuyDecision(card.getType()));
             }
