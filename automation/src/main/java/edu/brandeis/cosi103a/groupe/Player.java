@@ -1,8 +1,11 @@
 package edu.brandeis.cosi103a.groupe;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import edu.brandeis.cosi.atg.api.Hand;
 /* 
@@ -44,7 +47,7 @@ public class Player {
      */
     public void drawHand(int handSize) {
         //List<Card> playedCards = new ArrayList<>();
-        //List<Card> unplayedCards = new ArrayList<>();
+        Collection<Card> unplayedCards = new ArrayList<Card>();
         hand.clear();
         for (int i = 0; i < handSize; i++) {
             if (deck.isEmpty()) {
@@ -53,7 +56,6 @@ public class Player {
             //unplayedCards.add(deck.drawCard());
             hand.add(deck.drawCard());
         }
-        //this.hand = new Hand(ImmutableList.copyOf(playedCards), ImmutableList.copyOf(unplayedCards));
 
     }
     
@@ -153,7 +155,13 @@ public class Player {
      * Gets the current hand of cards.
      * @return The current hand of cards.
      */
-    public List<Card> getHand() {
+    public List<Card> getCards() {
         return hand;
+    }
+
+    public Hand makeHand() {
+        ImmutableCollection<Card> playedCards = ImmutableList.copyOf(hand);
+        ImmutableCollection<Card> unplayedCards = ImmutableList.copyOf(hand);
+        Hand thisHand = new Hand(unplayedCards, playedCards);
     }
 }
