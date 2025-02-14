@@ -1,10 +1,12 @@
 package edu.brandeis.cosi103a.groupe;
 
+import edu.brandeis.cosi.atg.api.cards.Card;
+
 /*
  * This class creates a card that is an automation
  * 
  */
-class AutomationCard extends Card{
+class AutomationCard extends GameCard{
     private int ap;
     
     /**
@@ -13,8 +15,8 @@ class AutomationCard extends Card{
      * @param cost The cost of the card in cryptocoins.
      * @param ap The Automation Points (AP) the card provides.
      */
-    public AutomationCard(String name, int cost, int ap, Type type) {
-        super(name, cost, type);
+    public AutomationCard(String name, int cost, int ap, Card.Type type, int id) {
+        super(name, cost, type, id);
         this.ap = ap;
     }
     

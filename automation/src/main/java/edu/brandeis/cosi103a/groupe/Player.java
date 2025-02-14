@@ -15,9 +15,9 @@ import edu.brandeis.cosi.atg.api.Hand;
 public class Player {
     private String name;
     private Deck deck;
-    private List<Card> hand;
+    private List<GameCard> hand;
     //private Hand hand; 
-    private List<Card> discardPile;
+    private List<GameCard> discardPile;
     private int money;
 
     /*
@@ -47,7 +47,7 @@ public class Player {
      */
     public void drawHand(int handSize) {
         //List<Card> playedCards = new ArrayList<>();
-        Collection<Card> unplayedCards = new ArrayList<Card>();
+        //Collection<Card> unplayedCards = new ArrayList<Card>();
         hand.clear();
         for (int i = 0; i < handSize; i++) {
             if (deck.isEmpty()) {
@@ -64,7 +64,7 @@ public class Player {
      */
     public void playHand() {
         money = 0;
-        for (Card card : hand) {
+        for (GameCard card : hand) {
             if (card instanceof CryptocurrencyCard) {
                 money += card.getMoney();
             }
@@ -76,7 +76,7 @@ public class Player {
      * @param card The card to purchase.
      * @param supply The supply to take the card from.
      */
-    public void purchaseCard(Card card, Supply supply) {
+    public void purchaseCard(GameCard card, Supply supply) {
         int totalMoneyInHand = getTotalMoneyInHand();
         if (totalMoneyInHand >= card.getCost() && supply.takeCard(card.getName())) {
             discardPile.add(card);
@@ -99,11 +99,11 @@ public class Player {
         int deckAp = deck.getTotalAp();
         int handAp = hand.stream()
                          .filter(card -> card instanceof AutomationCard)
-                         .mapToInt(Card::getAp)
+                         .mapToInt(GameCard::getAp)
                          .sum();
         int discardPileAp = discardPile.stream()
                                        .filter(card -> card instanceof AutomationCard)
-                                       .mapToInt(Card::getAp)
+                                       .mapToInt(GameCard::getAp)
                                        .sum();
         return deckAp + handAp + discardPileAp;
     }
@@ -123,7 +123,7 @@ public class Player {
     public int getTotalMoneyInHand() {
         return hand.stream()
                    .filter(card -> card instanceof CryptocurrencyCard)
-                   .mapToInt(Card::getMoney)
+                   .mapToInt(GameCard::getMoney)
                    .sum();
     }
     
@@ -131,7 +131,7 @@ public class Player {
      * Adds a card to the deck.
      * @param card The card to add.
      */
-    public void addCardToDeck(Card card) {
+    public void addCardToDeck(GameCard card) {
         deck.addCard(card);
     }
     
@@ -155,13 +155,14 @@ public class Player {
      * Gets the current hand of cards.
      * @return The current hand of cards.
      */
-    public List<Card> getCards() {
+    public List<GameCard> getCards() {
         return hand;
     }
 
     public Hand makeHand() {
-        ImmutableCollection<Card> playedCards = ImmutableList.copyOf(hand);
-        ImmutableCollection<Card> unplayedCards = ImmutableList.copyOf(hand);
-        Hand thisHand = new Hand(unplayedCards, playedCards);
-    }
+        ImmutableCollection<GameCard> playedCards = ImmutableList.of();
+        ImmutableCollection<GameCard> unplayedCards = ImmutableList.copyOf(hand);
+        Hand thisHand = new Hand(playedCards, unplayedCards);
+        return thisHand;
+    }   
 }
