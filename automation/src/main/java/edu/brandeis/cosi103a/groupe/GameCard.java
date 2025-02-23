@@ -1,25 +1,26 @@
 package edu.brandeis.cosi103a.groupe;
 
+import edu.brandeis.cosi.atg.api.cards.Card;  // Import API Card
+import edu.brandeis.cosi.atg.api.cards.Card.Type;  
 /*
  * This class creates a card
  * 
- * Emily Szabo
- * emilyszabo@brandeis.edu
- * Jan. 27th, 2025
- * COSI 103A ip2
  */
-abstract class Card {
+abstract class GameCard extends Card{ 
     private String name;
     private int cost;
+    private Type type;
     
     /**
      * Constructor for the Card class.
      * @param name The name of the card.
      * @param cost The cost of the card in cryptocoins.
      */
-    public Card(String name, int cost) {
+    public GameCard(String name, int cost, Card.Type type, int id) {
+        super(type, id);
         this.name = name;
         this.cost = cost;
+        this.type = type;
     }
     
     /**
@@ -49,4 +50,22 @@ abstract class Card {
      * @return The money value of the card.
      */
     public abstract int getMoney();
+
+    public Card getCard() {
+        return this;
+    }
+        
+    /*public enum Type {
+            MODULE,
+            FRAMEWORK,
+            BITCOIN,
+            ETHEREUM,
+            DOGECOIN, // Standardizing capitalization
+            METHOD;
+    }*/
+        
+    public Type getType() {
+        return this.type; 
+    }
+
 }

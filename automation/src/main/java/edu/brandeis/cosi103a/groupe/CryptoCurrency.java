@@ -1,15 +1,15 @@
 package edu.brandeis.cosi103a.groupe;
 
+import edu.brandeis.cosi.atg.api.cards.Card;
+
 /*
  * This class creates a card that is a cryptocurrency
  * 
- * Emily Szabo
- * emilyszabo@brandeis.edu
- * Jan. 27th, 2025
- * COSI 103A ip2
  */
 class CryptocurrencyCard extends Card{
-    private int money;
+    private int ID, money;
+    public Type type;
+    private String name;
     
     /**
      * Constructor for the CryptocurrencyCard class.
@@ -17,26 +17,39 @@ class CryptocurrencyCard extends Card{
      * @param cost The cost of the card in cryptocoins.
      * @param money The value of the card in cryptocoins when played.
      */
-    public CryptocurrencyCard(String name, int cost, int money) {
-        super(name, cost);
+    public CryptocurrencyCard(Card.Type type, int id) {
+        super(type, id);
+        this.type = type;
+        this.ID = id;
+    }
+
+    public void setStuff(int money, String name) {
         this.money = money;
+        this.name = name;
     }
     
     /**
      * Gets the Automation Points (AP) of the card.
      * @return The AP of the card, which is always 0 for cryptocurrency cards.
      */
-    @Override
     public int getAp() {
         return 0;
     }
     
     /**
-     * Gets the money value of the card.
-     * @return The money value of the card.
+     * Gets the ID of the card.
+     * @return The ID of the card.
      */
-    @Override
+  
+    public int getID() {
+        return this.ID;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+    
     public int getMoney() {
-        return money;
+        return this.money;
     }
 }

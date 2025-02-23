@@ -1,20 +1,23 @@
 package edu.brandeis.cosi103a.groupe;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-/*
+
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import edu.brandeis.cosi.atg.api.Hand;
+import edu.brandeis.cosi.atg.api.cards.*;
+/* 
  * This class creates a player in the game
  * 
- * Emily Szabo
- * emilyszabo@brandeis.edu
- * Jan. 27th, 2025
- * COSI 103A ip2
  */
 public class Player {
     private String name;
     private Deck deck;
     private List<Card> hand;
+    //private Hand hand; 
     private List<Card> discardPile;
     private int money;
 
@@ -25,6 +28,7 @@ public class Player {
     public Player(String name) {
         this.name = name;
         this.deck = new Deck();
+        //this.hand = new Hand(ImmutableList.of(), ImmutableList.of()); //initialize empty hand
         this.hand = new ArrayList<>();
         this.discardPile = new ArrayList<>();
         this.money = 0;
@@ -43,13 +47,17 @@ public class Player {
      * @param handSize The number of cards to draw.
      */
     public void drawHand(int handSize) {
+        //List<Card> playedCards = new ArrayList<>();
+        //Collection<Card> unplayedCards = new ArrayList<Card>();
         hand.clear();
         for (int i = 0; i < handSize; i++) {
             if (deck.isEmpty()) {
                 reshuffleDeck();
             }
+            //unplayedCards.add(deck.drawCard());
             hand.add(deck.drawCard());
         }
+
     }
     
     /**
@@ -59,7 +67,7 @@ public class Player {
         money = 0;
         for (Card card : hand) {
             if (card instanceof CryptocurrencyCard) {
-                money += card.getMoney();
+                money += card.getCost();
             }
         }
     }
@@ -71,7 +79,7 @@ public class Player {
      */
     public void purchaseCard(Card card, Supply supply) {
         int totalMoneyInHand = getTotalMoneyInHand();
-        if (totalMoneyInHand >= card.getCost() && supply.takeCard(card.getName())) {
+        if (totalMoneyInHand >= card.getCost() && supply.takeCard(card.getType())) {
             discardPile.add(card);
             money -= card.getCost();
         } 
@@ -92,11 +100,11 @@ public class Player {
         int deckAp = deck.getTotalAp();
         int handAp = hand.stream()
                          .filter(card -> card instanceof AutomationCard)
-                         .mapToInt(Card::getAp)
+                         .mapToInt(Card::getValue)
                          .sum();
         int discardPileAp = discardPile.stream()
                                        .filter(card -> card instanceof AutomationCard)
-                                       .mapToInt(Card::getAp)
+                                       .mapToInt(Card::getValue)
                                        .sum();
         return deckAp + handAp + discardPileAp;
     }
@@ -116,7 +124,7 @@ public class Player {
     public int getTotalMoneyInHand() {
         return hand.stream()
                    .filter(card -> card instanceof CryptocurrencyCard)
-                   .mapToInt(Card::getMoney)
+                   .mapToInt(Card::getId)
                    .sum();
     }
     
@@ -148,7 +156,18 @@ public class Player {
      * Gets the current hand of cards.
      * @return The current hand of cards.
      */
-    public List<Card> getHand() {
-        return hand;
+    public Hand getHand() {
+        return makeHand();
     }
+
+    public List<Card> getCards() {
+        return this.hand;
+    }
+
+    public Hand makeHand() {
+        ImmutableCollection<Card> playedCards = ImmutableList.of();
+        ImmutableCollection<Card> unplayedCards = ImmutableList.copyOf(hand);
+        Hand thisHand = new Hand(playedCards, unplayedCards);
+        return thisHand;
+    }   
 }

@@ -1,16 +1,22 @@
 package edu.brandeis.cosi103a.groupe;
 
-import java.util.List;
-import java.util.*;
+import edu.brandeis.cosi.atg.api.GameState;
+import edu.brandeis.cosi.atg.api.Decision;
+import edu.brandeis.cosi.atg.api.GameObserver;
+import com.google.common.collect.ImmutableList;
+
+import java.util.Optional;
+import java.util.Scanner;
 
 /**
- * ConsolePlayer class that extends Player and allows user input through the console.
+ * Console-based player implementation that interacts with the user through input.
+ * Extends the existing Player class and implements required methods.
  */
 public class ConsolePlayer extends Player {
-    private Scanner scanner;
+    private final Scanner scanner;
 
     /**
-     * Constructor for the ConsolePlayer.
+     * Constructor for ConsolePlayer.
      * @param name The name of the player.
      */
     public ConsolePlayer(String name) {
@@ -19,90 +25,69 @@ public class ConsolePlayer extends Player {
     }
 
     /**
-     * Makes a decision by prompting the user through the console.
-     * @return The chosen card to play or purchase.
+     * Gets the name of the player.
+     * @return The name of the player.
      */
-    public void playTurn() {
-        System.out.println("It's your turn, " + getName() + "!");
-        displayHand();
-        
-        System.out.println("1. Play Hand");
-        System.out.println("2. Purchase Card");
-        System.out.println("3. Shuffle Deck");
-        System.out.println("Enter your choice: ");
-        
-        int choice = getUserInput(1, 3);
-        
-        switch (choice) {
-            case 1:
-                playHand();
-                System.out.println("Played hand. Your total money: " + getMoney());
-                break;
-            case 2:
-                purchaseCardFromHand();
-                break;
-            case 3:
-                shuffleDeck();
-                System.out.println("Deck shuffled.");
-                break;
-            default:
-                System.out.println("Invalid choice.");
-        }
+    @Override
+    public String getName() {
+        return super.getName();
     }
 
     /**
-     * Displays the player's current hand.
+     * Makes a decision during the game.
+     * Prompts the user to choose from the available decisions.
+     * @param state The current game state.
+     * @param options The available decisions to choose from.
+     * @return The chosen decision.
      */
-    private void displayHand() {
-        List<Card> hand = getHand();
-        System.out.println("Your hand:");
-        for (int i = 0; i < hand.size(); i++) {
-            System.out.println(i + ": " + hand.get(i).toString());
+    @Override
+    public Decision makeDecision(GameState state, ImmutableList<Decision> options) {
+        if (options.isEmpty()) {
+            System.out.println(getName() + ": No decisions available.");
+            return null;
         }
+
+        System.out.println(getName() + ", choose a decision:");
+        for (int i = 0; i < options.size(); i++) {
+            System.out.println((i + 1) + ": " + options.get(i).toString());
+        }
+
+        int choice = getValidChoice(options.size());
+        return options.get(choice - 1);
     }
 
     /**
-     * Allows the user to select a card from hand to purchase.
+     * Gets the observer for this player.
+     * @return An empty Optional since this player does not require event observation.
      */
-    private void purchaseCardFromHand() {
-        if (getHand().isEmpty()) {
-            System.out.println("You have no cards to purchase.");
-            return;
-        }
-        
-        displayHand();
-        System.out.println("Select a card to purchase (enter index): ");
-        
-        int choice = getUserInput(0, getHand().size() - 1);
-        Card selectedCard = getHand().get(choice);
-        
-        System.out.println("Attempting to purchase " + selectedCard.getName());
-        // Assuming a Supply object needs to be provided to purchase the card
-        Supply supply = new Supply(); // This should be properly initialized
-        purchaseCard(selectedCard, supply);
-        
-        System.out.println("Purchased: " + selectedCard.getName());
+    @Override
+    public Optional<GameObserver> getObserver() {
+        return Optional.empty(); // No observer needed for console-based players
     }
 
     /**
-     * Gets user input within a valid range.
-     * @param min The minimum valid input.
+     * Ensures valid user input within a given range.
      * @param max The maximum valid input.
-     * @return The user's chosen input.
+     * @return A valid choice within the given range.
      */
-    private int getUserInput(int min, int max) {
-        int input = -1;
-        while (input < min || input > max) {
-            System.out.print("Enter a number between " + min + " and " + max + ": ");
+    private int getValidChoice(int max) {
+        int choice;
+        while (true) {
+            System.out.print("Enter choice (1-" + max + "): ");
             try {
-                input = Integer.parseInt(scanner.nextLine());
-                if (input < min || input > max) {
-                    System.out.println("Invalid choice, try again.");
+                choice = Integer.parseInt(scanner.nextLine());
+                if (choice >= 1 && choice <= max) {
+                    return choice;
                 }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input, please enter a number.");
-            }
+            } catch (NumberFormatException ignored) {}
+            System.out.println("Invalid input. Please enter a number between 1 and " + max + ".");
         }
-        return input;
+    }
+
+    /**
+     * Cleans up the scanner resource when the game ends.
+     */
+    public void closeScanner() {
+        scanner.close();
     }
 }

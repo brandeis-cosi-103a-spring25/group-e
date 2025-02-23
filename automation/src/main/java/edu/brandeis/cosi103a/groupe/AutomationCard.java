@@ -1,15 +1,14 @@
 package edu.brandeis.cosi103a.groupe;
 
+import edu.brandeis.cosi.atg.api.cards.Card;
+
 /*
  * This class creates a card that is an automation
  * 
- * Emily Szabo
- * emilyszabo@brandeis.edu
- * Jan. 27th, 2025
- * COSI 103A ip2
  */
 class AutomationCard extends Card{
-    private int ap;
+    public Type type;
+    private int ID;
     
     /**
      * Constructor for the AutomationCard class.
@@ -17,26 +16,28 @@ class AutomationCard extends Card{
      * @param cost The cost of the card in cryptocoins.
      * @param ap The Automation Points (AP) the card provides.
      */
-    public AutomationCard(String name, int cost, int ap) {
-        super(name, cost);
-        this.ap = ap;
+    public AutomationCard(Card.Type type, int id) {
+        super(type, id);
+        this.type = type;
+        this.ID = id;
     }
     
-    /**
-     * Gets the Automation Points (AP) of the card.
-     * @return The AP of the card.
-     */
-    @Override
-    public int getAp() {
-        return ap;
-    }
+    // /**
+    //  * Gets the Automation Points (AP) of the card.
+    //  * @return The AP of the card.
+    //  */
+    // @
+    // public int getAp() {
+    //     return this.ap;
+    // }
     
     /**
      * Gets the money value of the card.
      * @return The money value of the card, which is always 0 for automation cards.
      */
-    @Override
-    public int getMoney() {
-        return 0;
+
+    public int getID() {
+        return this.ID;
     }
+
 }

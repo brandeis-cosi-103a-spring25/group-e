@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import edu.brandeis.cosi.atg.api.cards.Card;
 /*
  * This class creates a deck of cards
  * 
- * Emily Szabo
- * emilyszabo@brandeis.edu
- * Jan. 27th, 2025
- * COSI 103A ip2
  */
 public class Deck {
     private LinkedList<Card> cards;
@@ -81,7 +78,7 @@ public class Deck {
     public int getTotalAp() {
         return cards.stream()
                     .filter(card -> card instanceof AutomationCard)
-                    .mapToInt(Card::getAp)
+                    .mapToInt(Card::getValue)
                     .sum();
     }
 
@@ -89,6 +86,6 @@ public class Deck {
      * Prints the contents of the deck.
      */
     public void printDeck() {
-        cards.forEach(card -> System.out.println("- " + card.getName() + " (AP: " + card.getAp() + ")"));
+        cards.forEach(card -> System.out.println("- " + card.getDescription() + " (AP: " + card.getValue() + ")"));
     }
 }
