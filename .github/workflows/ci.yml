@@ -17,4 +17,4 @@ jobs:
         distribution: 'temurin'
 
     - name: Build with Maven
-      run: mvn --file Automation/pom.xml clean install
+      run: mvn --file automation/pom.xml clean install
