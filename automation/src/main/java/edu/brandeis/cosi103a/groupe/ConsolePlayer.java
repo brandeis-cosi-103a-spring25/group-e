@@ -3,24 +3,38 @@ package edu.brandeis.cosi103a.groupe;
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.GameObserver;
-import edu.brandeis.cosi.atg.api.event.GameEvent; 
+import edu.brandeis.cosi.atg.api.event.GameEvent;
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import java.util.Scanner;
 
 /**
  * Console-based player that interacts with the user via input.
+ * Implements the necessary decision-making process while notifying the observer.
  */
 public class ConsolePlayer extends Player {
     private final Scanner scanner;
     private final GameObserver observer; // Store observer locally
 
+    /**
+     * Constructor for ConsolePlayer.
+     * @param name The player's name.
+     * @param observer The game observer to track player decisions.
+     */
     public ConsolePlayer(String name, GameObserver observer) {
         super(name);
         this.scanner = new Scanner(System.in);
         this.observer = observer;
     }
 
+    /**
+     * Prompts the player to make a decision from the given options.
+     * Notifies the game observer after a decision is made.
+     * 
+     * @param state The current game state.
+     * @param options The list of available decisions.
+     * @return The chosen decision.
+     */
     public Decision makeDecision(GameState state, ImmutableList<Decision> options) {
         if (options.isEmpty()) {
             System.out.println(getName() + ": No decisions available.");
@@ -36,19 +50,26 @@ public class ConsolePlayer extends Player {
         Decision chosenDecision = options.get(choice - 1);
 
         // Notify observer using GameEvent
-        getObserver().ifPresent(obs -> obs.notifyEvent(state, new GameEvent("Decision made: " + chosenDecision.getDescription())));
+        getObserver().ifPresent(obs -> obs.notifyEvent(state, new GameEvent(getName() + " chose: " + chosenDecision.getDescription())));
 
         return chosenDecision;
     }
 
     /**
-     * Implements getObserver() without modifying Player.
-     * @return Optional containing the observer if available.
+     * Retrieves the game observer if available.
+     * 
+     * @return An Optional containing the observer.
      */
     public Optional<GameObserver> getObserver() {
         return Optional.ofNullable(observer);
     }
 
+    /**
+     * Ensures the player provides a valid numeric input within a given range.
+     * 
+     * @param max The maximum valid input.
+     * @return A valid choice.
+     */
     private int getValidChoice(int max) {
         int choice;
         while (true) {
@@ -63,6 +84,9 @@ public class ConsolePlayer extends Player {
         }
     }
 
+    /**
+     * Closes the scanner resource when the game ends.
+     */
     public void closeScanner() {
         scanner.close();
     }
