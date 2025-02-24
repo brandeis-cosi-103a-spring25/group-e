@@ -1,8 +1,9 @@
 package edu.brandeis.cosi103a.groupe;
 
 import edu.brandeis.cosi.atg.api.GameState;
-import edu.brandeis.cosi.atg.api.Decision;
+import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.GameObserver;
+import edu.brandeis.cosi.atg.api.event.Event;
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import java.util.Scanner;
@@ -12,15 +13,14 @@ import java.util.Scanner;
  */
 public class ConsolePlayer extends Player {
     private final Scanner scanner;
-    private final GameObserver observer; // Add observer field
+    private final GameObserver observer; // Store observer locally
 
     public ConsolePlayer(String name, GameObserver observer) {
         super(name);
         this.scanner = new Scanner(System.in);
-        this.observer = observer; // Store observer locally
+        this.observer = observer;
     }
 
-    @Override
     public Decision makeDecision(GameState state, ImmutableList<Decision> options) {
         if (options.isEmpty()) {
             System.out.println(getName() + ": No decisions available.");
@@ -35,8 +35,8 @@ public class ConsolePlayer extends Player {
         int choice = getValidChoice(options.size());
         Decision chosenDecision = options.get(choice - 1);
 
-        // Notify observer
-        getObserver().ifPresent(obs -> obs.notifyEvent(state, chosenDecision));
+        // Notify observer using the inner class DecisionEvent
+        getObserver().ifPresent(obs -> obs.notifyEvent(state, (Event) new DecisionEvent(chosenDecision)));
 
         return chosenDecision;
     }
@@ -65,5 +65,22 @@ public class ConsolePlayer extends Player {
 
     public void closeScanner() {
         scanner.close();
+    }
+
+    /**
+     * Inner class to wrap a Decision as an Event.
+     */
+    private class DecisionEvent extends Event {
+        private final Decision decision;
+
+        public DecisionEvent(Decision decision) {
+            super();
+            this.decision = decision;
+        }
+
+        @Override
+        public String toString() {
+            return "DecisionEvent: " + decision.getDescription();
+        }
     }
 }
