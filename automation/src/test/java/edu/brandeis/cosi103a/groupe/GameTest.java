@@ -2,6 +2,7 @@ package edu.brandeis.cosi103a.groupe;
 
 import java.util.HashMap;
 import java.util.Map;
+import edu.brandeis.cosi.atg.api.cards.Card;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -11,6 +12,7 @@ import org.junit.Test;
 /**
  * Unit test for simple App.
  */
+
 public class GameTest 
 {
     // /**

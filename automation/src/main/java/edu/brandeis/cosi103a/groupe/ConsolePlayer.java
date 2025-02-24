@@ -1,5 +1,6 @@
 package edu.brandeis.cosi103a.groupe;
 
+
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.GameObserver;
@@ -12,19 +13,17 @@ import java.util.Scanner;
  * Console-based player that interacts with the user via input.
  * Implements the necessary decision-making process while notifying the observer.
  */
-public class ConsolePlayer extends Player {
+public class ConsolePlayer implements Player {
     private final Scanner scanner;
-    private final GameObserver observer; // Store observer locally
 
     /**
      * Constructor for ConsolePlayer.
      * @param name The player's name.
      * @param observer The game observer to track player decisions.
      */
-    public ConsolePlayer(String name, GameObserver observer) {
+    public ConsolePlayer(String name) {
         super(name);
         this.scanner = new Scanner(System.in);
-        this.observer = observer;
     }
 
     /**
@@ -55,14 +54,7 @@ public class ConsolePlayer extends Player {
         return chosenDecision;
     }
 
-    /**
-     * Retrieves the game observer if available.
-     * 
-     * @return An Optional containing the observer.
-     */
-    public Optional<GameObserver> getObserver() {
-        return Optional.ofNullable(observer);
-    }
+
 
     /**
      * Ensures the player provides a valid numeric input within a given range.
