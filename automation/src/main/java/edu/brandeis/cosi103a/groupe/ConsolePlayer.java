@@ -3,7 +3,7 @@ package edu.brandeis.cosi103a.groupe;
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.GameObserver;
-import edu.brandeis.cosi.atg.api.event.Event;
+import edu.brandeis.cosi.atg.api.event.GameEvent; 
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import java.util.Scanner;
@@ -35,8 +35,8 @@ public class ConsolePlayer extends Player {
         int choice = getValidChoice(options.size());
         Decision chosenDecision = options.get(choice - 1);
 
-        // Notify observer using the inner class DecisionEvent
-        getObserver().ifPresent(obs -> obs.notifyEvent(state, (Event) new DecisionEvent(chosenDecision)));
+        // Notify observer using GameEvent
+        getObserver().ifPresent(obs -> obs.notifyEvent(state, new GameEvent("Decision made: " + chosenDecision.getDescription())));
 
         return chosenDecision;
     }
@@ -65,22 +65,5 @@ public class ConsolePlayer extends Player {
 
     public void closeScanner() {
         scanner.close();
-    }
-
-    /**
-     * Inner class to wrap a Decision as an Event.
-     */
-    private class DecisionEvent extends Event {
-        private final Decision decision;
-
-        public DecisionEvent(Decision decision) {
-            super();
-            this.decision = decision;
-        }
-
-        @Override
-        public String toString() {
-            return "DecisionEvent: " + decision.getDescription();
-        }
     }
 }
