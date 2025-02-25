@@ -13,7 +13,7 @@ import edu.brandeis.cosi.atg.api.cards.*;
  * This class creates a player in the game
  * 
  */
-public class Player {
+//public class Player {
     private String name;
     private Deck deck;
     private List<Card> hand;
