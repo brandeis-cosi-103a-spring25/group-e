@@ -3,7 +3,7 @@ package edu.brandeis.cosi103a.groupe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
+import edu.brandeis.cosi.atg.api.Player;
 import com.google.common.collect.ImmutableList;
 import edu.brandeis.cosi.atg.api.Engine;
 import edu.brandeis.cosi.atg.api.EngineCreator;
