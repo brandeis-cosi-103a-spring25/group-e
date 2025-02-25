@@ -1,4 +1,4 @@
-package edu.brandeis.cosi103a.groupe;
+//package edu.brandeis.cosi103a.groupe;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,7 +13,7 @@ import edu.brandeis.cosi.atg.api.cards.*;
  * This class creates a player in the game
  * 
  */
-//public class Player {
+public class Player {
     private String name;
     private Deck deck;
     private List<Card> hand;

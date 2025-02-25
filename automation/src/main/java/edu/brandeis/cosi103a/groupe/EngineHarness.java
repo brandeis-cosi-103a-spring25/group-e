@@ -4,9 +4,10 @@ import edu.brandeis.cosi.atg.api.Engine;
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.Player.ScorePair;
+import edu.brandeis.cosi.atg.api.PlayerViolationException;
+
 import com.google.common.collect.ImmutableList;
 
-import java.util.Optional;
 import java.util.Scanner;
 
 public class EngineHarness {
@@ -27,12 +28,16 @@ public class EngineHarness {
 
         // Create and run the game engine
         Engine engine = GameEngine.makeEngine(player1, player2, observer);
-        ImmutableList<ScorePair> results = engine.play();
+        try {
+            ImmutableList<ScorePair> results = engine.play();
 
-        // Print Final Scores
-        System.out.println("Game Over! Final Scores:");
-        for (ScorePair result : results) {
-            System.out.println(result.getPlayerName() + ": " + result.getScore() + " points");
+            // Print Final Scores
+            System.out.println("Game Over! Final Scores:");
+            for (ScorePair result : results) {
+                System.out.println(result.player.getName() + ": " + result.getScore() + " points");
+            }
+        } catch (PlayerViolationException e) {
+            System.err.println("A player violated the rules: " + e.getMessage());
         }
     }
 
