@@ -1,4 +1,4 @@
-package edu.brandeis.cosi103a.groupe;
+package edu.brandeis.cosi103a.groupe.Cards;
 
 import edu.brandeis.cosi.atg.api.cards.Card;
 
@@ -6,7 +6,7 @@ import edu.brandeis.cosi.atg.api.cards.Card;
  * This class creates a card that is an automation
  * 
  */
-class AutomationCard extends Card{
+public class AutomationCard extends Card{
     public Type type;
     private int ID;
     

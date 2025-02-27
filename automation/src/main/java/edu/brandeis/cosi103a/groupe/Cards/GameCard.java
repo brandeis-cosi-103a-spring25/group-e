@@ -1,4 +1,4 @@
-package edu.brandeis.cosi103a.groupe;
+package edu.brandeis.cosi103a.groupe.Cards;
 
 import edu.brandeis.cosi.atg.api.cards.Card;  // Import API Card
 import edu.brandeis.cosi.atg.api.cards.Card.Type;  

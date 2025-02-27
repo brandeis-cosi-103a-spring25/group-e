@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import edu.brandeis.cosi.atg.api.cards.Card;
+import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
 /*
  * This class creates a deck of cards
  * 

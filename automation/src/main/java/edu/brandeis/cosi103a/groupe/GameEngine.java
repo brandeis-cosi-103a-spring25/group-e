@@ -23,6 +23,8 @@ import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.event.GainCardEvent;
 import edu.brandeis.cosi.atg.api.event.GameEvent;
 import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
+import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
+import edu.brandeis.cosi103a.groupe.Cards.CryptocurrencyCard;
 
 /*
  * This class simulates simlpified game play for the Automation card game.

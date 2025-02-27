@@ -1,4 +1,4 @@
-package edu.brandeis.cosi103a.groupe;
+package edu.brandeis.cosi103a.groupe.Cards;
 
 import edu.brandeis.cosi.atg.api.cards.Card;
 
@@ -6,7 +6,7 @@ import edu.brandeis.cosi.atg.api.cards.Card;
  * This class creates a card that is a cryptocurrency
  * 
  */
-class CryptocurrencyCard extends Card{
+public class CryptocurrencyCard extends Card{
     private int ID, money;
     public Type type;
     private String name;

@@ -4,6 +4,8 @@ import edu.brandeis.cosi.atg.api.Engine;
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.Player.ScorePair;
+import edu.brandeis.cosi103a.groupe.Players.BigMoneyPlayer;
+import edu.brandeis.cosi103a.groupe.Players.ConsolePlayer;
 import edu.brandeis.cosi.atg.api.PlayerViolationException;
 
 import com.google.common.collect.ImmutableList;
