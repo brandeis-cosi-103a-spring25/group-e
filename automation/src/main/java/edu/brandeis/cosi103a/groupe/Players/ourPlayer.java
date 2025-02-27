@@ -1,3 +1,4 @@
+package edu.brandeis.cosi103a.groupe.Players;
 //package edu.brandeis.cosi103a.groupe;
 
 import java.util.ArrayList;
@@ -9,11 +10,15 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import edu.brandeis.cosi.atg.api.Hand;
 import edu.brandeis.cosi.atg.api.cards.*;
+import edu.brandeis.cosi103a.groupe.Deck;
+import edu.brandeis.cosi103a.groupe.Supply;
+import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
+import edu.brandeis.cosi103a.groupe.Cards.CryptocurrencyCard;
 /* 
  * This class creates a player in the game
  * 
  */
-public class Player {
+public abstract class ourPlayer {
     private String name;
     private Deck deck;
     private List<Card> hand;
@@ -25,7 +30,7 @@ public class Player {
      * Constructor for the player
      * @param name The name of the player.
      */
-    public Player(String name) {
+    public ourPlayer(String name) {
         this.name = name;
         this.deck = new Deck();
         //this.hand = new Hand(ImmutableList.of(), ImmutableList.of()); //initialize empty hand

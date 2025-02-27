@@ -1,11 +1,18 @@
-package edu.brandeis.cosi103a.groupe;
+package edu.brandeis.cosi103a.groupe.Players;
 
 
 import edu.brandeis.cosi.atg.api.GameState;
+import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.GameObserver;
+import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.event.GameEvent;
+import edu.brandeis.cosi103a.groupe.Deck;
+
 import com.google.common.collect.ImmutableList;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -13,9 +20,9 @@ import java.util.Scanner;
  * Console-based player that interacts with the user via input.
  * Implements the necessary decision-making process while notifying the observer.
  */
-public class ConsolePlayer implements Player {
+public class ConsolePlayer extends ourPlayer implements Player {
     private final Scanner scanner;
-
+   
     /**
      * Constructor for ConsolePlayer.
      * @param name The player's name.
@@ -81,5 +88,23 @@ public class ConsolePlayer implements Player {
      */
     public void closeScanner() {
         scanner.close();
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getName'");
+    }
+
+    @Override
+    public Decision makeDecision(GameState state, ImmutableList<Decision> options, Optional<Event> reason) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'makeDecision'");
+    }
+
+    @Override
+    public Optional<GameObserver> getObserver() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getObserver'");
     }
 }
