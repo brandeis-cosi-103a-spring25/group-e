@@ -1,15 +1,20 @@
 package edu.brandeis.cosi103a.groupe.Players;
-//package edu.brandeis.cosi103a.groupe;
+// package edu.brandeis.cosi103a.groupe;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+
+import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.Hand;
+import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.cards.*;
+import edu.brandeis.cosi103a.groupe.ConsoleGameObserver;
 import edu.brandeis.cosi103a.groupe.Deck;
 import edu.brandeis.cosi103a.groupe.Supply;
 import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
@@ -18,11 +23,11 @@ import edu.brandeis.cosi103a.groupe.Cards.CryptocurrencyCard;
  * This class creates a player in the game
  * 
  */
-public abstract class ourPlayer {
+public abstract class ourPlayer implements Player{
     private String name;
     private Deck deck;
     private List<Card> hand;
-    //private Hand hand; 
+    private GameObserver observer;
     private List<Card> discardPile;
     private int money;
 
@@ -122,6 +127,8 @@ public abstract class ourPlayer {
         return money;
     }
 
+    
+
     /**
      * Gets the total money in the player's hand.
      * @return The total money in the hand.
@@ -155,6 +162,14 @@ public abstract class ourPlayer {
         deck.addCards(discardPile);
         discardPile.clear();
         deck.shuffle();
+    }
+
+    public void setObserver(GameObserver observer) {
+       this.observer = observer;
+    }
+
+    public Optional getObserver() {
+        return Optional.empty();
     }
 
      /**

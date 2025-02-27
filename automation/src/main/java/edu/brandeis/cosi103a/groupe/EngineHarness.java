@@ -7,23 +7,24 @@ import edu.brandeis.cosi.atg.api.Player.ScorePair;
 import edu.brandeis.cosi103a.groupe.Players.BigMoneyPlayer;
 import edu.brandeis.cosi103a.groupe.Players.ConsolePlayer;
 import edu.brandeis.cosi.atg.api.PlayerViolationException;
+import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 
 import com.google.common.collect.ImmutableList;
 
 import java.util.Scanner;
 
-public class EngineHarness {
+public class EngineHarness{
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to Automation: The Game!");
 
         // Select Player 1 Type
         System.out.print("Select Player 1 (1: Human, 2: AI BigMoney): ");
-        Player player1 = createPlayer(scanner, "Player 1");
+        ourPlayer player1 = createPlayer(scanner, "Player 1");
 
         // Select Player 2 Type
         System.out.print("Select Player 2 (1: Human, 2: AI BigMoney): ");
-        Player player2 = createPlayer(scanner, "Player 2");
+        ourPlayer player2 = createPlayer(scanner, "Player 2");
 
         // Initialize Observer to print game events
         GameObserver observer = new ConsoleGameObserver();
@@ -46,7 +47,7 @@ public class EngineHarness {
     /**
      * Helper method to create either a human or AI player.
      */
-    private static Player createPlayer(Scanner scanner, String playerName) {
+    private static ourPlayer createPlayer(Scanner scanner, String playerName) {
         while (true) {
             String choice = scanner.nextLine().trim();
             switch (choice) {
