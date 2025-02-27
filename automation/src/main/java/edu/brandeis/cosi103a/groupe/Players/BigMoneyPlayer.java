@@ -11,10 +11,12 @@ import edu.brandeis.cosi.atg.api.GameObserver;
 
 import java.util.Optional;
 
-public class BigMoneyPlayer implements Player {
+public class BigMoneyPlayer extends ourPlayer{
+   
     private final String name;
 
     public BigMoneyPlayer(String name) {
+        super(name);
         this.name = name;
     }
 
@@ -23,10 +25,7 @@ public class BigMoneyPlayer implements Player {
         return name;
     }
 
-    @Override
-    public Optional<GameObserver> getObserver() {
-        return Optional.empty();
-    }
+ 
 
     @Override
     public Decision makeDecision(GameState state, ImmutableList<Decision> options, Optional<Event> reason) {

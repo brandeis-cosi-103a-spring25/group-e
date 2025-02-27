@@ -20,7 +20,7 @@ import java.util.Scanner;
  * Console-based player that interacts with the user via input.
  * Implements the necessary decision-making process while notifying the observer.
  */
-public class ConsolePlayer extends ourPlayer implements Player {
+public class ConsolePlayer extends ourPlayer{
     private final Scanner scanner;
    
     /**
@@ -56,7 +56,7 @@ public class ConsolePlayer extends ourPlayer implements Player {
         Decision chosenDecision = options.get(choice - 1);
 
         // Notify observer using GameEvent
-        getObserver().ifPresent(obs -> obs.notifyEvent(state, new GameEvent(getName() + " chose: " + chosenDecision.getDescription())));
+        getObserver().ifPresent(obs -> ((GameObserver) obs).notifyEvent(state, new GameEvent(getName() + " chose: " + chosenDecision.getDescription())));
 
         return chosenDecision;
     }
@@ -91,20 +91,15 @@ public class ConsolePlayer extends ourPlayer implements Player {
     }
 
     @Override
-    public String getName() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getName'");
-    }
-
-    @Override
     public Decision makeDecision(GameState state, ImmutableList<Decision> options, Optional<Event> reason) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'makeDecision'");
     }
 
-    @Override
-    public Optional<GameObserver> getObserver() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getObserver'");
-    }
+  
+
+  
+
+ 
+    
 }

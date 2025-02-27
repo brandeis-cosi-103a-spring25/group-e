@@ -3,6 +3,7 @@ import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.event.Event;
 
+//for_review
 
 public class ConsoleGameObserver implements GameObserver {
       public void notifyEvent(GameState state, Event event) {

@@ -3,6 +3,7 @@ package edu.brandeis.cosi103a.groupe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import edu.brandeis.cosi.atg.api.*;
 import edu.brandeis.cosi.atg.api.Player;
 import com.google.common.collect.ImmutableList;
 import edu.brandeis.cosi.atg.api.Engine;
@@ -25,6 +26,7 @@ import edu.brandeis.cosi.atg.api.event.GameEvent;
 import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
 import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
 import edu.brandeis.cosi103a.groupe.Cards.CryptocurrencyCard;
+import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 
 /*
  * This class simulates simlpified game play for the Automation card game.
@@ -33,10 +35,10 @@ import edu.brandeis.cosi103a.groupe.Cards.CryptocurrencyCard;
  */
 public class GameEngine implements Engine {
     private final GameObserver observer;
-    private final Player player1, player2;
+    private final ourPlayer player1, player2;
     private final Supply supply;
     
-    public GameEngine(Player player1, Player player2, GameObserver observer) {
+    public GameEngine(ourPlayer player1, ourPlayer player2, GameObserver observer) {
         this.player1 = player1;
         this.player2 = player2;
         this.supply = new Supply();
@@ -44,7 +46,7 @@ public class GameEngine implements Engine {
     }
     
     @EngineCreator
-    public static Engine makeEngine(Player player1, Player player2, GameObserver observer){
+    public static Engine makeEngine(ourPlayer player1, ourPlayer player2, GameObserver observer){
         Engine thisEngine = new GameEngine(player1, player2, observer);
         return thisEngine;
 
@@ -67,24 +69,23 @@ public class GameEngine implements Engine {
         // }
         
 
-        // Cryptocurrency cards
        
 
         // Distribute starter decks to both players
-        // for (int i = 100; i < 107; i++) {
+        for (int i = 0; i < 7; i++) {
             // CryptocurrencyCard bitcoinCard = new CryptocurrencyCard(Card.Type.BITCOIN, i);
             bitcoinCard.setStuff(1, "Bitcoin");
             supply.takeCard(Card.Type.BITCOIN);
             player2.addCardToDeck(bitcoinCard);
             supply.takeCard(Card.Type.BITCOIN);
-        // }
-        // for (int i = 200; i < 203; i++) {
+        }
+        for (int i = 0; i < 203; i++) {
             //  AutomationCard methodCard = new AutomationCard(Card.Type.METHOD, i);
             player1.addCardToDeck(methodCard);
             supply.takeCard(Card.Type.METHOD);
             player2.addCardToDeck(methodCard);
             supply.takeCard(Card.Type.METHOD);
-        // }
+        }
 
         // Shuffle the decks
         //GameEvent GameEvent = new GameEvent("Deck Shuffled.");
@@ -119,7 +120,7 @@ public class GameEngine implements Engine {
         int player2Ap = player2.getTotalAp();
 
         String desc = "Final Scores: \nPlayer 1 - Total AP: " + player1Ap + "\nPlayer 2 - Total AP: " + player2Ap;
-        Player winner = null;
+        ourPlayer winner = null;
 
         if (player1Ap > player2Ap) {
            desc += "\nPlayer 1 wins!";
@@ -142,7 +143,7 @@ public class GameEngine implements Engine {
      * @param supply The supply of cards.
      * @param availableCards The available cards for purchase.
      */
-    private void playerTurn(Player player, Supply supply, Card... availableCards) {
+    private void playerTurn(ourPlayer player, Supply supply, Card... availableCards) {
         // Buy phase
         
         player.playHand();
@@ -197,7 +198,7 @@ public class GameEngine implements Engine {
         return availableCards.get((int) (Math.random() * availableCards.size()));
     }
     
-    public List<Card> availableCardsToBuy(Player player, List<Card> cards){
+    public List<Card> availableCardsToBuy(ourPlayer player, List<Card> cards){
         List<Card> availabletoBuy = new ArrayList<>();
 
 
@@ -211,7 +212,7 @@ public class GameEngine implements Engine {
     }
 
 
-    public List<Decision> generatePossibleDecisions(Player player, Hand hand){
+    public List<Decision> generatePossibleDecisions(ourPlayer player, Hand hand){
         List<Decision> possibleDecisions = new ArrayList<>();
         List<Card> cards = player.getCards();
        
