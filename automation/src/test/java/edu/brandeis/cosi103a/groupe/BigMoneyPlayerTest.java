@@ -1,7 +1,11 @@
 package edu.brandeis.cosi103a.groupe;
 
+import static org.junit.Assert.*;
+
 import com.google.common.collect.ImmutableList;
-import edu.brandeis.cosi.atg.api.GameState;
+import edu.brandeis.cosi.atg.api.*;
+import edu.brandeis.cosi.atg.api.cards.Card;
+import edu.brandeis.cosi.atg.api.decisions.BuyDecision;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi103a.groupe.Players.BigMoneyPlayer;
@@ -11,87 +15,56 @@ import org.junit.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-
 public class BigMoneyPlayerTest {
-    private BigMoneyPlayer bigMoneyPlayer;
-    private GameState dummyGameState;
-
-    // Simple Decision class for testing
-    private static final class TestDecision implements Decision {
-        private final String name;
-        private final int cost;
-
-        public TestDecision(String name, int cost) {
-            this.name = name;
-            this.cost = cost;
-        }
-
-        public int getCost() {
-            return cost;
-        }
-
-        @Override
-        public String toString() {
-            return name + " (Cost: " + cost + ")";
-        }
-
-        @Override
-        public String getDescription() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'getDescription'");
-        }
-    }
+    private BigMoneyPlayer player;
+    private GameState gameState;
+    private BuyDecision moneyDecision;
+    private BuyDecision frameworkDecision;
 
     @Before
     public void setUp() {
-        bigMoneyPlayer = new BigMoneyPlayer("BigMoneyBot");
-        dummyGameState = new GameState(); // Assume default constructor for testing
+        player = new BigMoneyPlayer("TestPlayer");
+
+        // Create real BuyDecision instances using card types
+        moneyDecision = new BuyDecision(Card.Type.BITCOIN);      // Assume MONEY is a valid card type
+        frameworkDecision = new BuyDecision(Card.Type.FRAMEWORK); // Assume FRAMEWORK is a valid card type
+
+        // Create a real GameState (assuming buy phase)
+        gameState = new GameState(
+            "TestPlayer",
+            null,  // Hand is not needed for this test
+            GameState.TurnPhase.BUY, // Assume it's the buy phase
+            1, // Available actions (not used in this test but required)
+            6, // Spendable money
+            1, // Available buys
+            null // Deck is not needed for this test
+        );
     }
 
     @Test
-    public void testMakeDecision_PrioritizesFramework() {
-        // Given both a Framework and Money option, it should choose Framework
-        Decision frameworkDecision = new TestDecision("Framework", 5);
-        Decision moneyDecision = new TestDecision("Money", 3);
+    public void testMakeDecision_BuysFrameworkWhenAffordable() {
+        ImmutableList<Decision> options = ImmutableList.of(moneyDecision, frameworkDecision);
+        Decision decision = player.makeDecision(gameState, options, Optional.empty());
 
-        ImmutableList<Decision> options = ImmutableList.of(frameworkDecision, moneyDecision);
-
-        Decision chosenDecision = bigMoneyPlayer.makeDecision(dummyGameState, options, Optional.empty());
-
-        assertEquals("Framework (Cost: 5)", chosenDecision.toString());
+        assertEquals(frameworkDecision, decision);
     }
 
     @Test
-    public void testMakeDecision_ChoosesBestMoneyCardWhenNoFramework() {
-        // When only Money cards are available, it should pick the highest-cost one
-        Decision moneyDecision1 = new TestDecision("Money", 3);
-        Decision moneyDecision2 = new TestDecision("Money", 6);
+    public void testMakeDecision_BuysMoneyWhenFrameworkTooExpensive() {
+        // Modify gameState to have only 4 money (can't afford Framework)
+        gameState = new GameState(
+            "TestPlayer",
+            null,
+            GameState.TurnPhase.BUY,
+            1, // Available actions
+            4, // Only 4 money available
+            1, // Available buys
+            null
+        );
 
-        ImmutableList<Decision> options = ImmutableList.of(moneyDecision1, moneyDecision2);
+        ImmutableList<Decision> options = ImmutableList.of(moneyDecision, frameworkDecision);
+        Decision decision = player.makeDecision(gameState, options, Optional.empty());
 
-        Decision chosenDecision = bigMoneyPlayer.makeDecision(dummyGameState, options, Optional.empty());
-
-        assertEquals("Money (Cost: 6)", chosenDecision.toString());
-    }
-
-    @Test
-    public void testMakeDecision_WithReasonDisplayed() {
-        // Ensure the reason (event) is correctly handled
-        Event testEvent = new Event() {
-            @Override
-            public String toString() {
-                return "You must buy a card";
-            }
-        };
-
-        Decision frameworkDecision = new TestDecision("Framework", 5);
-        Decision moneyDecision = new TestDecision("Money", 3);
-
-        ImmutableList<Decision> options = ImmutableList.of(frameworkDecision, moneyDecision);
-
-        Decision chosenDecision = bigMoneyPlayer.makeDecision(dummyGameState, options, Optional.of(testEvent));
-
-        assertEquals("Framework (Cost: 5)", chosenDecision.toString());
+        assertEquals(moneyDecision, decision);
     }
 }
