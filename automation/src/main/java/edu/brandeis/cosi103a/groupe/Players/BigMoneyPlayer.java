@@ -7,16 +7,15 @@ import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.GameObserver;
+import edu.brandeis.cosi.atg.api.cards.Card;
 
 
 import java.util.Optional;
 
-public class BigMoneyPlayer extends ourPlayer{
-   
+public class BigMoneyPlayer implements Player {
     private final String name;
 
     public BigMoneyPlayer(String name) {
-        super(name);
         this.name = name;
     }
 
@@ -25,7 +24,10 @@ public class BigMoneyPlayer extends ourPlayer{
         return name;
     }
 
- 
+    @Override
+    public Optional<GameObserver> getObserver() {
+        return Optional.empty();
+    }
 
     @Override
     public Decision makeDecision(GameState state, ImmutableList<Decision> options, Optional<Event> reason) {
@@ -60,20 +62,29 @@ public class BigMoneyPlayer extends ourPlayer{
             }
         }
 
-        // Prefer buying a Framework if possible; otherwise, buy the best Money card
-        BuyDecision chosenDecision = (bestFramework != null) ? bestFramework : bestMoneyCard;
+        // Always prefer buying a Framework if it is affordable; otherwise, buy the best Money card
+        if (bestFramework != null) {
+            System.out.println("Big Money Player chose: " + bestFramework.getCardType().name());
+            return bestFramework;
+        } else if (bestMoneyCard != null) {
+            System.out.println("Big Money Player chose: " + bestMoneyCard.getCardType().name());
+            return bestMoneyCard;
+        } else {
+            System.out.println("Big Money Player chose: No valid decision");
+        }
 
-        System.out.println("Big Money Player chose: " + (chosenDecision != null ? chosenDecision.getCardType().name() : "No valid decision"));
-        return chosenDecision != null ? chosenDecision : options.get(0); // Fallback if no valid purchase
+        return options.get(0); // Fallback if no valid purchase
     }
 
     // Determines if a decision is for a Framework purchase
     private boolean isFramework(BuyDecision decision) {
-        return decision.getCardType().name().toLowerCase().contains("framework");
+       
+       return decision.getCardType() == Card.Type.FRAMEWORK;
     }
 
     // Determines if a decision is for a Money card purchase
     private boolean isMoneyCard(BuyDecision decision) {
-        return decision.getCardType().name().toLowerCase().contains("money");
+        return decision.getCardType().getCategory() == Card.Type.Category.MONEY;
     }
 }
+

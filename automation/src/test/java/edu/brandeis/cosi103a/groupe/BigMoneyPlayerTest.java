@@ -7,7 +7,6 @@ import edu.brandeis.cosi.atg.api.*;
 import edu.brandeis.cosi.atg.api.cards.Card;
 import edu.brandeis.cosi.atg.api.decisions.BuyDecision;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
-import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi103a.groupe.Players.BigMoneyPlayer;
 
 import org.junit.Before;
@@ -35,7 +34,7 @@ public class BigMoneyPlayerTest {
             null,  // Hand is not needed for this test
             GameState.TurnPhase.BUY, // Assume it's the buy phase
             1, // Available actions (not used in this test but required)
-            6, // Spendable money
+            0, // Spendable money
             1, // Available buys
             null // Deck is not needed for this test
         );
@@ -43,6 +42,15 @@ public class BigMoneyPlayerTest {
 
     @Test
     public void testMakeDecision_BuysFrameworkWhenAffordable() {
+        gameState = new GameState(
+            "TestPlayer",
+            null,  // Hand is not needed for this test
+            GameState.TurnPhase.BUY, // Assume it's the buy phase
+            1, // Available actions (not used in this test but required)
+            8, // Spendable money
+            1, // Available buys
+            null // Deck is not needed for this test
+        );
         ImmutableList<Decision> options = ImmutableList.of(moneyDecision, frameworkDecision);
         Decision decision = player.makeDecision(gameState, options, Optional.empty());
 
@@ -68,3 +76,4 @@ public class BigMoneyPlayerTest {
         assertEquals(moneyDecision, decision);
     }
 }
+
