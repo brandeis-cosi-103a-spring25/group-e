@@ -61,7 +61,7 @@
             </goals>
             <configuration>
               <includes>
-                <include>edu/brandeis/cosi103a/groupe/MyClass.class</include>
+                <include>edu/brandeis/cosi103a/groupe/BigMoneyPlayer.class</include>
               </includes>
             </configuration>
           </execution>
