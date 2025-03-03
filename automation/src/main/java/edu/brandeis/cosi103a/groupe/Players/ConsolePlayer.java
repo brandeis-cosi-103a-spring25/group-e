@@ -1,47 +1,71 @@
 package edu.brandeis.cosi103a.groupe.Players;
 
-
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.Player;
-import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.GameObserver;
+import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.event.GameEvent;
-import edu.brandeis.cosi103a.groupe.Deck;
-
 import com.google.common.collect.ImmutableList;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
 /**
  * Console-based player that interacts with the user via input.
- * Implements the necessary decision-making process while notifying the observer.
+ * Implements the necessary decision-making process.
  */
-public class ConsolePlayer extends ourPlayer{
+public class ConsolePlayer implements Player {
     private final Scanner scanner;
-   
+    private final String name;
+    private Optional<GameObserver> observer; // Observer is optional
+
     /**
      * Constructor for ConsolePlayer.
      * @param name The player's name.
-     * @param observer The game observer to track player decisions.
      */
     public ConsolePlayer(String name) {
-        super(name);
+        this.name = name;
         this.scanner = new Scanner(System.in);
+        this.observer = Optional.empty(); // Default to no observer
     }
 
     /**
-     * Prompts the player to make a decision from the given options.
-     * Notifies the game observer after a decision is made.
-     * 
-     * @param state The current game state.
+     * Constructor with Observer.
+     * @param name The player's name.
+     * @param observer The observer for game events.
+     */
+    public ConsolePlayer(String name, GameObserver observer) {
+        this.name = name;
+        this.scanner = new Scanner(System.in);
+        this.observer = Optional.ofNullable(observer);
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Implements `getObserver()` required by the Player interface.
+     * @return Optional containing the observer if available.
+     */
+    @Override
+    public Optional<GameObserver> getObserver() {
+        return observer;
+    }
+
+    /**
+     * Implements `makeDecision()`, prompting the player to choose an action.
+     * Notifies the observer (if present) after a decision is made.
+     *
+     * @param state  The current game state.
      * @param options The list of available decisions.
+     * @param reason The reason for prompting this decision.
      * @return The chosen decision.
      */
-    public Decision makeDecision(GameState state, ImmutableList<Decision> options) {
+    @Override
+    public Decision makeDecision(GameState state, ImmutableList<Decision> options, Optional<Event> reason) {
         if (options.isEmpty()) {
             System.out.println(getName() + ": No decisions available.");
             return null;
@@ -55,17 +79,15 @@ public class ConsolePlayer extends ourPlayer{
         int choice = getValidChoice(options.size());
         Decision chosenDecision = options.get(choice - 1);
 
-        // Notify observer using GameEvent
-        getObserver().ifPresent(obs -> ((GameObserver) obs).notifyEvent(state, new GameEvent(getName() + " chose: " + chosenDecision.getDescription())));
+        // Notify observer of the decision
+        observer.ifPresent(obs -> obs.notifyEvent(state, new GameEvent(getName() + " chose: " + chosenDecision.getDescription())));
 
         return chosenDecision;
     }
 
-
-
     /**
      * Ensures the player provides a valid numeric input within a given range.
-     * 
+     *
      * @param max The maximum valid input.
      * @return A valid choice.
      */
@@ -89,17 +111,4 @@ public class ConsolePlayer extends ourPlayer{
     public void closeScanner() {
         scanner.close();
     }
-
-    @Override
-    public Decision makeDecision(GameState state, ImmutableList<Decision> options, Optional<Event> reason) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'makeDecision'");
-    }
-
-  
-
-  
-
- 
-    
 }

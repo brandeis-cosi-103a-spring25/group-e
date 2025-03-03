@@ -1,6 +1,8 @@
 package edu.brandeis.cosi103a.groupe;
 
 import com.google.common.collect.ImmutableList;
+import com.plotsquared.core.player.ConsolePlayer;
+
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.event.Event;
