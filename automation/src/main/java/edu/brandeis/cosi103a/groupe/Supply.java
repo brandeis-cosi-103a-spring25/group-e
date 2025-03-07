@@ -41,10 +41,12 @@ public class Supply {
      * @return True if the card was successfully taken from the supply, false if the card is out of stock.
      */
     public boolean takeCard(Card.Type type) {
-        int quantity = cardQuantities.getOrDefault(type, 0);
+        GameDeck deck = getGameDeck();
+        int available = deck.getNumAvailable(type);
+        //int quantity = cardQuantities.getOrDefault(type, 0);
         
-        if (quantity > 0) {
-            cardQuantities.put(type, quantity - 1);
+        if (available > 0) {
+            cardQuantities.put(type, available - 1);
             return true;
         }
         return false;

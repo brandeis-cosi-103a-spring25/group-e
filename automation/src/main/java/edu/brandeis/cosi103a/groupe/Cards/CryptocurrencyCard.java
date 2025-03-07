@@ -7,25 +7,18 @@ import edu.brandeis.cosi.atg.api.cards.Card;
  * 
  */
 public class CryptocurrencyCard extends Card{
-    private int ID, money;
+    private int ID;
     public Type type;
-    private String name;
     
     /**
      * Constructor for the CryptocurrencyCard class.
-     * @param name The name of the card.
      * @param cost The cost of the card in cryptocoins.
      * @param money The value of the card in cryptocoins when played.
      */
     public CryptocurrencyCard(Card.Type type, int id) {
         super(type, id);
-        this.type = type;
         this.ID = id;
-    }
-
-    public void setStuff(int money, String name) {
-        this.money = money;
-        this.name = name;
+        this.type = type;
     }
     
     /**
@@ -45,11 +38,19 @@ public class CryptocurrencyCard extends Card{
         return this.ID;
     }
 
-    public String getName() {
-        return this.name;
+    /*
+     * Gets the cost of the card.
+     * @return The cost of the card.
+     */
+    public int getCost() {
+        return this.type.getCost();
     }
     
-    public int getMoney() {
-        return this.money;
+    /*
+     * Gets the value of the card.
+     * @return The value of the card.
+     */
+    public int getValue() {
+        return this.type.getValue();
     }
 }

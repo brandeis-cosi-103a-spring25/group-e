@@ -13,7 +13,6 @@ public class supplyTest {
         // Create a new supply
         Supply supply = new Supply();
        
-        assertEquals(true, supply.takeCard(Card.Type.METHOD));
-        
+        assertEquals(true, supply.takeCard(Card.Type.METHOD));  
     }
 }

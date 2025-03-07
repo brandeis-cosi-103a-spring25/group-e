@@ -168,8 +168,8 @@ public abstract class ourPlayer implements Player{
        this.observer = observer;
     }
 
-    public Optional getObserver() {
-        return Optional.empty();
+    public Optional<GameObserver> getObserver() {
+        return Optional.ofNullable(observer);
     }
 
      /**

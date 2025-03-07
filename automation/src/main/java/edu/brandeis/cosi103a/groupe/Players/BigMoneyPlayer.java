@@ -12,11 +12,11 @@ import edu.brandeis.cosi.atg.api.cards.Card;
 
 import java.util.Optional;
 
-public class BigMoneyPlayer implements Player {
-    private final String name;
+public class BigMoneyPlayer extends ourPlayer {
+    private String name;
 
     public BigMoneyPlayer(String name) {
-        this.name = name;
+        super(name);
     }
 
     @Override

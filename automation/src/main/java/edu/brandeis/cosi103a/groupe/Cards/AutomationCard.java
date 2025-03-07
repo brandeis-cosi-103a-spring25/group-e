@@ -12,24 +12,22 @@ public class AutomationCard extends Card{
     
     /**
      * Constructor for the AutomationCard class.
-     * @param name The name of the card.
      * @param cost The cost of the card in cryptocoins.
      * @param ap The Automation Points (AP) the card provides.
      */
     public AutomationCard(Card.Type type, int id) {
         super(type, id);
-        this.type = type;
         this.ID = id;
+        this.type = type;
     }
     
-    // /**
-    //  * Gets the Automation Points (AP) of the card.
-    //  * @return The AP of the card.
-    //  */
-    // @
-    // public int getAp() {
-    //     return this.ap;
-    // }
+    /**
+    * Gets the Automation Points (AP) of the card.
+    * @return The AP of the card.
+    */
+    public int getAp() {
+      return this.type.getValue();
+    }
     
     /**
      * Gets the money value of the card.
@@ -39,5 +37,12 @@ public class AutomationCard extends Card{
     public int getID() {
         return this.ID;
     }
-
+    
+    /*
+     * Gets the cost of the card.
+     * @return The cost of the card.
+     */
+    public int getCost() {
+        return this.type.getCost();
+    }
 }
