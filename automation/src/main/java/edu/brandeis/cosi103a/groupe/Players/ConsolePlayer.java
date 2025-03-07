@@ -15,9 +15,10 @@ import java.util.Scanner;
  * Console-based player that interacts with the user via input.
  * Implements the necessary decision-making process.
  */
-public class ConsolePlayer implements Player {
+//extend ourplayer 
+public class ConsolePlayer extends ourPlayer {
     private final Scanner scanner;
-    private final String name;
+    //private String name;
     private Optional<GameObserver> observer; // Observer is optional
 
     /**
@@ -25,7 +26,8 @@ public class ConsolePlayer implements Player {
      * @param name The player's name.
      */
     public ConsolePlayer(String name) {
-        this.name = name;
+        //this.name = name;
+        super(name);
         this.scanner = new Scanner(System.in);
         this.observer = Optional.empty(); // Default to no observer
     }
@@ -35,16 +37,11 @@ public class ConsolePlayer implements Player {
      * @param name The player's name.
      * @param observer The observer for game events.
      */
-    public ConsolePlayer(String name, GameObserver observer) {
+    /*public ConsolePlayer(String name, GameObserver observer) {
         this.name = name;
         this.scanner = new Scanner(System.in);
         this.observer = Optional.ofNullable(observer);
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
+    }*/
 
     /**
      * Implements `getObserver()` required by the Player interface.

@@ -4,7 +4,6 @@ import org.junit.Test;
 import static org.mockito.Mockito.*;
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi103a.groupe.ConsoleGameObserver;
-import edu.brandeis.cosi103a.groupe.Player;
 import edu.brandeis.cosi.atg.api.event.Event;
 
 import org.mockito.Mock;

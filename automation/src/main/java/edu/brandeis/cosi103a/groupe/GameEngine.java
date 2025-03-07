@@ -57,39 +57,36 @@ public class GameEngine implements Engine {
         
         // ASSUME 10 OF EACH CARD TYPE- CHANGE IF NEEDED
         // for (int i =1; i <= 10; i ++) {
-            AutomationCard methodCard = new AutomationCard(Card.Type.METHOD, 1);
-            AutomationCard moduleCard = new AutomationCard(Card.Type.MODULE, 11);
-            AutomationCard frameworkCard = new AutomationCard(Card.Type.FRAMEWORK, 21);
-            CryptocurrencyCard bitcoinCard = new CryptocurrencyCard(Card.Type.BITCOIN, 31);
-            bitcoinCard.setStuff(1, "Bitcoin");
-            CryptocurrencyCard ethereumCard = new CryptocurrencyCard(Card.Type.ETHEREUM, 41);
-            ethereumCard.setStuff(2, "Ethereum");
-            CryptocurrencyCard dogecoinCard = new CryptocurrencyCard(Card.Type.DOGECOIN, 51);
-            dogecoinCard.setStuff(3, "DogeCoin");
+        AutomationCard methodCard = new AutomationCard(Card.Type.METHOD, 1);
+        AutomationCard moduleCard = new AutomationCard(Card.Type.MODULE, 11);
+        AutomationCard frameworkCard = new AutomationCard(Card.Type.FRAMEWORK, 21);
+        CryptocurrencyCard bitcoinCard = new CryptocurrencyCard(Card.Type.BITCOIN, 31);
+        CryptocurrencyCard ethereumCard = new CryptocurrencyCard(Card.Type.ETHEREUM, 41);
+        CryptocurrencyCard dogecoinCard = new CryptocurrencyCard(Card.Type.DOGECOIN, 51);
         // }
-        
-
-       
+    
+       distributeCards(player1, player2, supply, methodCard, bitcoinCard);
 
         // Distribute starter decks to both players
-        for (int i = 0; i < 7; i++) {
-            // CryptocurrencyCard bitcoinCard = new CryptocurrencyCard(Card.Type.BITCOIN, i);
-            bitcoinCard.setStuff(1, "Bitcoin");
+        /*for (int i = 0; i < 7; i++) {
+            player1.addCardToDeck(bitcoinCard);
             supply.takeCard(Card.Type.BITCOIN);
             player2.addCardToDeck(bitcoinCard);
             supply.takeCard(Card.Type.BITCOIN);
-        }
-        for (int i = 0; i < 203; i++) {
+        }*/
+        /*for (int i = 0; i < 3; i++) {
             //  AutomationCard methodCard = new AutomationCard(Card.Type.METHOD, i);
             player1.addCardToDeck(methodCard);
             supply.takeCard(Card.Type.METHOD);
             player2.addCardToDeck(methodCard);
             supply.takeCard(Card.Type.METHOD);
-        }
+        }*/
 
         // Shuffle the decks
-        //GameEvent GameEvent = new GameEvent("Deck Shuffled.");
-        //this.observer.notifyEvent(game, GameEvent);
+        //GameEvent GameEvent = new GameEvent("Game Start");
+        //GameState start = new GameState(player1.getName(), player1.getHand(), GameState.TurnPhase.BUY, 0, 0, 0, supply.getGameDeck() );
+        //this.observer.notifyEvent(start, new GameEvent("Game Start"));
+        System.out.println("Game Start");
         player1.shuffleDeck();
         player2.shuffleDeck();
 
@@ -167,9 +164,9 @@ public class GameEngine implements Engine {
         }
         // Cleanup phase
         player.cleanup();
-        EndTurnEvent event = new EndTurnEvent();
+        //EndTurnEvent event = new EndTurnEvent();
         GameState endTurn = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.CLEANUP, totalMoneyInHand, totalMoneyInHand, totalMoneyInHand, supply.getGameDeck() ); //Didn't know what to do here
-        this.observer.notifyEvent(endTurn, event);
+        this.observer.notifyEvent(endTurn, new EndTurnEvent());
         player.drawHand(5);
 
     }
@@ -232,6 +229,32 @@ public class GameEngine implements Engine {
         possibleDecisions.add(new EndPhaseDecision(GameState.TurnPhase.BUY));
 
         return possibleDecisions;
+    }
+    
+    /*
+     * This method distributes the staring cards to the players
+     * @param player1 The first player
+     * @param player2 The second player
+     * @param supply The supply of cards
+     * @param methodCard The method card
+     * @param 
+     */
+    public void distributeCards(ourPlayer player1, ourPlayer player2, Supply supply, AutomationCard methodCard, CryptocurrencyCard bitcoinCard){
+
+         // Distribute starter decks to both players
+         for (int i = 0; i < 7; i++) {
+            player1.addCardToDeck(bitcoinCard);
+            supply.takeCard(Card.Type.BITCOIN);
+            player2.addCardToDeck(bitcoinCard);
+            supply.takeCard(Card.Type.BITCOIN);
+        }
+        for (int i = 0; i < 3; i++) {
+            //  AutomationCard methodCard = new AutomationCard(Card.Type.METHOD, i);
+            player1.addCardToDeck(methodCard);
+            supply.takeCard(Card.Type.METHOD);
+            player2.addCardToDeck(methodCard);
+            supply.takeCard(Card.Type.METHOD);
+        } 
     }
 
 }
