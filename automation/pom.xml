@@ -63,6 +63,7 @@
               <includes>
                 <include>edu/brandeis/cosi103a/groupe/BigMoneyPlayer.class</include>
               </includes>
+              <classifier>big-money-player</classifier> 
             </configuration>
           </execution>
         </executions>
