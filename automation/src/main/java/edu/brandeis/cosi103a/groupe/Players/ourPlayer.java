@@ -189,5 +189,13 @@ public abstract class ourPlayer implements Player{
         ImmutableCollection<Card> unplayedCards = ImmutableList.copyOf(hand);
         Hand thisHand = new Hand(playedCards, unplayedCards);
         return thisHand;
-    }   
+    }
+    
+    //not sure
+    public void playCard(Card card) {
+        // Implement the logic to play a card
+        // For example, remove the card from hand and add it to the played cards
+        hand.remove(card);
+        discardPile.add(card);
+    } 
 }
