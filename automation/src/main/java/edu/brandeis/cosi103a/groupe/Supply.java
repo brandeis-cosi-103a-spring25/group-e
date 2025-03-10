@@ -31,7 +31,7 @@ public class Supply {
      * @param cardName The name of the card.
      * @return The quantity of the card in the supply.
      */
-    public int getCardQuantity(String cardName) {
+    public int getCardQuantity(Card.Type cardName) {
         return cardQuantities.getOrDefault(cardName, 0);
     }
 
