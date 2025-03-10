@@ -2,6 +2,7 @@ package edu.brandeis.cosi103a.groupe;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import edu.brandeis.cosi.atg.api.*;
 import edu.brandeis.cosi.atg.api.Player;
@@ -30,154 +31,148 @@ import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 
 /*
  * This class simulates simlpified game play for the Automation card game.
- * 
  *
  */
 public class GameEngine implements Engine {
     private final GameObserver observer;
     private final ourPlayer player1, player2;
     private final Supply supply;
-    
+
     public GameEngine(ourPlayer player1, ourPlayer player2, GameObserver observer) {
         this.player1 = player1;
         this.player2 = player2;
         this.supply = new Supply();
         this.observer = observer;
     }
-    
-    @EngineCreator
-    public static Engine makeEngine(ourPlayer player1, ourPlayer player2, GameObserver observer){
-        Engine thisEngine = new GameEngine(player1, player2, observer);
-        return thisEngine;
 
+    @EngineCreator
+    public static Engine makeEngine(ourPlayer player1, ourPlayer player2, GameObserver observer) {
+        return new GameEngine(player1, player2, observer);
     }
 
     @Override
     public ImmutableList<ScorePair> play() throws PlayerViolationException {
-        
-        // ASSUME 10 OF EACH CARD TYPE- CHANGE IF NEEDED
-        // for (int i =1; i <= 10; i ++) {
-        AutomationCard methodCard = new AutomationCard(Card.Type.METHOD, 1);
-        AutomationCard moduleCard = new AutomationCard(Card.Type.MODULE, 11);
-        AutomationCard frameworkCard = new AutomationCard(Card.Type.FRAMEWORK, 21);
-        CryptocurrencyCard bitcoinCard = new CryptocurrencyCard(Card.Type.BITCOIN, 31);
-        CryptocurrencyCard ethereumCard = new CryptocurrencyCard(Card.Type.ETHEREUM, 41);
-        CryptocurrencyCard dogecoinCard = new CryptocurrencyCard(Card.Type.DOGECOIN, 51);
-        // }
-    
-       distributeCards(player1, player2, supply, methodCard, bitcoinCard);
-
-        // Distribute starter decks to both players
-        /*for (int i = 0; i < 7; i++) {
-            player1.addCardToDeck(bitcoinCard);
-            supply.takeCard(Card.Type.BITCOIN);
-            player2.addCardToDeck(bitcoinCard);
-            supply.takeCard(Card.Type.BITCOIN);
-        }*/
-        /*for (int i = 0; i < 3; i++) {
-            //  AutomationCard methodCard = new AutomationCard(Card.Type.METHOD, i);
-            player1.addCardToDeck(methodCard);
-            supply.takeCard(Card.Type.METHOD);
-            player2.addCardToDeck(methodCard);
-            supply.takeCard(Card.Type.METHOD);
-        }*/
-
-        // Shuffle the decks
-        //GameEvent GameEvent = new GameEvent("Game Start");
-        //GameState start = new GameState(player1.getName(), player1.getHand(), GameState.TurnPhase.BUY, 0, 0, 0, supply.getGameDeck() );
-        //this.observer.notifyEvent(start, new GameEvent("Game Start"));
-        System.out.println("Game Start");
+        distributeCards(player1, player2, supply);
         player1.shuffleDeck();
         player2.shuffleDeck();
-
-        // Deal initial hands
         player1.drawHand(5);
         player2.drawHand(5);
 
-        // Randomly choose the starting player
         Random random = new Random();
         boolean player1Starts = random.nextBoolean();
 
-        // Track the number of turns
-        
         while (supply.getCardQuantity("Framework") > 0) {
-            
             if (player1Starts) {
-                playerTurn(player1, supply, frameworkCard, bitcoinCard, methodCard, moduleCard, ethereumCard, dogecoinCard);
-                playerTurn(player2, supply, frameworkCard, bitcoinCard, methodCard, moduleCard, ethereumCard, dogecoinCard);
+                playFullTurn(player1);
+                playFullTurn(player2);
             } else {
-                playerTurn(player2, supply, frameworkCard, bitcoinCard, methodCard, moduleCard, ethereumCard, dogecoinCard);
-                playerTurn(player1, supply, frameworkCard, bitcoinCard, methodCard, moduleCard, ethereumCard, dogecoinCard);
+                playFullTurn(player2);
+                playFullTurn(player1);
             }
-        
         }
 
-        // Determine the winner
-        int player1Ap = player1.getTotalAp();
-        int player2Ap = player2.getTotalAp();
-
-        String desc = "Final Scores: \nPlayer 1 - Total AP: " + player1Ap + "\nPlayer 2 - Total AP: " + player2Ap;
-        ourPlayer winner = null;
-
-        if (player1Ap > player2Ap) {
-           desc += "\nPlayer 1 wins!";
-           winner = player1;
-        } else if (player2Ap > player1Ap) {
-            desc += "\nPlayer 2 wins!";
-           winner = player2;
-        } else {
-           desc += "\nIt's a tie!";
-        }
-        GameEvent endGame = new GameEvent(desc); 
-        GameState endGameState = new GameState(winner.getName(), winner.getHand(), GameState.TurnPhase.CLEANUP, 0, 0, 0, supply.getGameDeck() );
-        this.observer.notifyEvent(endGameState, endGame);
-                return null; //Should be player and score pairs
+        return determineWinner();
     }
 
-    /**
-     * Simulates a player's turn, including the buy phase and cleanup phase.
-     * @param player The player taking the turn.
-     * @param supply The supply of cards.
-     * @param availableCards The available cards for purchase.
-     */
-    private void playerTurn(ourPlayer player, Supply supply, Card... availableCards) {
-        // Buy phase
-        
-        player.playHand();
+    public void distributeCards(ourPlayer player1, ourPlayer player2, Supply supply) {
+        for (int i = 0; i < 7; i++) {
+            player1.addCardToDeck(new CryptocurrencyCard(Card.Type.BITCOIN, 31));
+            supply.takeCard(Card.Type.BITCOIN);
+            player2.addCardToDeck(new CryptocurrencyCard(Card.Type.BITCOIN, 31));
+            supply.takeCard(Card.Type.BITCOIN);
+        }
+        for (int i = 0; i < 3; i++) {
+            player1.addCardToDeck(new AutomationCard(Card.Type.METHOD, 1));
+            supply.takeCard(Card.Type.METHOD);
+            player2.addCardToDeck(new AutomationCard(Card.Type.METHOD, 1));
+            supply.takeCard(Card.Type.METHOD);
+        }
+    }
+
+    private void playFullTurn(ourPlayer player) throws PlayerViolationException {
+        moneyPhase(player);
+        buyPhase(player);
+        cleanupPhase(player);
+    }
+
+    // MONEY PHASE
+    public void moneyPhase(ourPlayer player) throws PlayerViolationException {
+        boolean endPhaseSelected = false;
+        int totalMoneyInHand = 0;
+
+        while (!endPhaseSelected) {
+            List<Decision> possibleDecisions = generatePossibleDecisions(player, player.getHand());
+            GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.MONEY, totalMoneyInHand, 0, 0, supply.getGameDeck());
+            Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions), Optional.empty());
+
+            if (decision instanceof PlayCardDecision) {
+                PlayCardDecision playDecision = (PlayCardDecision) decision;
+                Card playedCard = playDecision.getCard();
+
+                if (playedCard instanceof CryptocurrencyCard) {
+                    totalMoneyInHand += playedCard.getValue();
+                    System.out.println(player.getName() + " played " + playedCard.getDescription() + 
+                                      " (Value: " + playedCard.getValue() + ")");
+                    player.playCard(playedCard);
+
+                    PlayCardEvent playEvent = new PlayCardEvent(playedCard, player.getName());
+                    GameState playState = new GameState(player.getName(), player.getHand(), 
+                                                         GameState.TurnPhase.MONEY, totalMoneyInHand, 0, 0, 
+                                                         supply.getGameDeck());
+                    observer.notifyEvent(playState, playEvent);
+                } 
+            } else if (decision instanceof EndPhaseDecision) {
+                System.out.println(player.getName() + " ended the MONEY phase with " + totalMoneyInHand + " coins.");
+                endPhaseSelected = true;
+            }
+        }
+    }
+
+    // BUY PHASE
+    public void buyPhase(ourPlayer player) throws PlayerViolationException {
+        boolean endPhaseSelected = false;
         int totalMoneyInHand = player.getTotalMoneyInHand();
-        
-        for (Card card : player.getCards()) {
-            System.out.println("- " + card.getDescription()+ ", (Value: " + card.getCost() + ")");
-        }
 
-        Card purchasedCard = randomAvailableCard(supply, totalMoneyInHand, availableCards);
-        if (purchasedCard != null) {
-            player.purchaseCard(purchasedCard, supply);
-            GainCardEvent buyCard = new GainCardEvent(purchasedCard.getType(), player.getName());
-            GameState buyCardState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.BUY, totalMoneyInHand, totalMoneyInHand, totalMoneyInHand, supply.getGameDeck() );
-            this.observer.notifyEvent(buyCardState, buyCard);
+        while (!endPhaseSelected) {
+            List<Decision> possibleDecisions = generatePossibleDecisions(player, player.getHand());
+            GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.BUY, totalMoneyInHand, 0, 0, supply.getGameDeck());
+            Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions), Optional.empty());
 
-            // Check if a Framework card was purchased
-            if (purchasedCard instanceof AutomationCard && purchasedCard.getDescription().equals("Framework")) {
-                System.out.println(player.getName() + " purchased a Framework card!");
+            if (decision instanceof BuyDecision) {
+                BuyDecision buyDecision = (BuyDecision) decision;
+                Card purchasedCard = new Card(buyDecision.getCardType(), 0);
+                
+                if (supply.getCardQuantity(purchasedCard.getDescription()) > 0 && player.getTotalMoneyInHand() >= purchasedCard.getCost()) {
+                    player.purchaseCard(purchasedCard, supply);
+                    GainCardEvent buyCardEvent = new GainCardEvent(purchasedCard.getType(), player.getName());
+                    GameState buyCardState = new GameState(player.getName(), player.getHand(), 
+                                                           GameState.TurnPhase.BUY, 
+                                                           totalMoneyInHand, totalMoneyInHand, totalMoneyInHand, 
+                                                           supply.getGameDeck());
+                    observer.notifyEvent(buyCardState, buyCardEvent);
+
+                  if (purchasedCard instanceof AutomationCard && purchasedCard.getDescription().equals("Framework")) {
+                        System.out.println(player.getName() + " purchased a Framework card!");
+                   }
+                } else {
+                    throw new PlayerViolationException("Invalid purchase attempt.");
+                }
+            } else if (decision instanceof EndPhaseDecision) {
+                System.out.println(player.getName() + " ended the BUY phase.");
+                endPhaseSelected = true;
             }
         }
-        // Cleanup phase
-        player.cleanup();
-        //EndTurnEvent event = new EndTurnEvent();
-        GameState endTurn = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.CLEANUP, totalMoneyInHand, totalMoneyInHand, totalMoneyInHand, supply.getGameDeck() ); //Didn't know what to do here
-        this.observer.notifyEvent(endTurn, new EndTurnEvent());
-        player.drawHand(5);
-
     }
 
-    /**
-     * Selects a random card from the available cards that are in the supply.
-     * @param supply The supply of cards.
-     * @param playerMoney The amount of money the player has in hand.
-     * @param cards The available cards.
-     * @return A randomly selected card that is available in the supply, or null if none are available.
-     */
+    // CLEANUP PHASE
+    public void cleanupPhase(ourPlayer player) {
+        player.cleanup();
+        observer.notifyEvent(new GameState(player.getName(), player.getHand(), GameState.TurnPhase.CLEANUP, 0, 0, 0, supply.getGameDeck()),
+                             new EndTurnEvent());
+        player.drawHand(5);
+    }
+
+    // Selects a random card from the available cards that are in the supply
     private static Card randomAvailableCard(Supply supply, int playerMoney, Card... cards) {
         List<Card> availableCards = new ArrayList<>();
 
@@ -191,70 +186,52 @@ public class GameEngine implements Engine {
             return null;
         }
 
-        
         return availableCards.get((int) (Math.random() * availableCards.size()));
     }
-    
-    public List<Card> availableCardsToBuy(ourPlayer player, List<Card> cards){
-        List<Card> availabletoBuy = new ArrayList<>();
 
+    public List<Card> availableCardsToBuy(ourPlayer player, List<Card> cards) {
+        List<Card> availableToBuy = new ArrayList<>();
 
         for (Card card : cards) {
             if (supply.getCardQuantity(card.getDescription()) > 0 && card.getCost() <= player.getTotalMoneyInHand()) {
-                availabletoBuy.add(card);
+                availableToBuy.add(card);
             }
         }
 
-        return availabletoBuy;
+        return availableToBuy;
     }
 
-
-    public List<Decision> generatePossibleDecisions(ourPlayer player, Hand hand){
+    public List<Decision> generatePossibleDecisions(ourPlayer player, Hand hand) {
         List<Decision> possibleDecisions = new ArrayList<>();
         List<Card> cards = player.getCards();
-       
+
         // Add PlayCardDecisions for each unplayed card
-        for(Card card: cards){
-           possibleDecisions.add(new PlayCardDecision(card));
+        for (Card card : cards) {
+            possibleDecisions.add(new PlayCardDecision(card));
         }
 
         // Add BuyDecisions if the player has enough crypto
-        for (Card card : availableCardsToBuy(player, cards)) { //Not sure what this method is
+        for (Card card : availableCardsToBuy(player, cards)) {
             if (player.getTotalMoneyInHand() >= card.getCost()) {
                 possibleDecisions.add(new BuyDecision(card.getType()));
             }
         }
-        
+
         // Always allow ending the phase
         possibleDecisions.add(new EndPhaseDecision(GameState.TurnPhase.BUY));
 
         return possibleDecisions;
     }
-    
-    /*
-     * This method distributes the staring cards to the players
-     * @param player1 The first player
-     * @param player2 The second player
-     * @param supply The supply of cards
-     * @param methodCard The method card
-     * @param 
-     */
-    public void distributeCards(ourPlayer player1, ourPlayer player2, Supply supply, AutomationCard methodCard, CryptocurrencyCard bitcoinCard){
 
-         // Distribute starter decks to both players
-         for (int i = 0; i < 7; i++) {
-            player1.addCardToDeck(bitcoinCard);
-            supply.takeCard(Card.Type.BITCOIN);
-            player2.addCardToDeck(bitcoinCard);
-            supply.takeCard(Card.Type.BITCOIN);
-        }
-        for (int i = 0; i < 3; i++) {
-            //  AutomationCard methodCard = new AutomationCard(Card.Type.METHOD, i);
-            player1.addCardToDeck(methodCard);
-            supply.takeCard(Card.Type.METHOD);
-            player2.addCardToDeck(methodCard);
-            supply.takeCard(Card.Type.METHOD);
-        } 
+    // WINNING LOGIC
+    public ImmutableList<ScorePair> determineWinner() {
+        int player1Ap = player1.getTotalAp();
+        int player2Ap = player2.getTotalAp();
+
+        List<ScorePair> scores = new ArrayList<>();
+        scores.add(new ScorePair(player1, player1Ap));
+        scores.add(new ScorePair(player2, player2Ap));
+
+        return ImmutableList.copyOf(scores);
     }
-
 }

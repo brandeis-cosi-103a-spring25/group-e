@@ -17,6 +17,7 @@ public class BigMoneyPlayer extends ourPlayer {
 
     public BigMoneyPlayer(String name) {
         super(name);
+        this.name = name;
     }
 
     @Override
