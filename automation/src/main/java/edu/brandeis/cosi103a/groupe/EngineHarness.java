@@ -25,6 +25,7 @@ public class EngineHarness{
         // Select Player 2 Type
         System.out.print("Select Player 2 (1: Human, 2: AI BigMoney): ");
         ourPlayer player2 = createPlayer(scanner, "Player 2");
+        System.out.println(player1.getName() + " vs. " + player2.getName());
 
         // Initialize Observer to print game events
         GameObserver observer = new ConsoleGameObserver();
@@ -36,9 +37,11 @@ public class EngineHarness{
 
             // Print Final Scores
             System.out.println("Game Over! Final Scores:");
+            if (results != null) {
             for (ScorePair result : results) {
                 System.out.println(result.player.getName() + ": " + result.getScore() + " points");
             }
+        }
         } catch (PlayerViolationException e) {
             System.err.println("A player violated the rules: " + e.getMessage());
         }
@@ -54,6 +57,7 @@ public class EngineHarness{
                 case "1":
                     return new ConsolePlayer(playerName);
                 case "2":
+                
                     return new BigMoneyPlayer(playerName);
                 default:
                     System.out.print("Invalid choice. Enter 1 (Human) or 2 (AI BigMoney): ");

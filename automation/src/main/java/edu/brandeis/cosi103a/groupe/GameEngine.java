@@ -27,6 +27,8 @@ import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
 import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
 import edu.brandeis.cosi103a.groupe.Cards.CryptocurrencyCard;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
+import edu.brandeis.cosi.atg.api.Player.ScorePair;
+
 
 /*
  * This class simulates simlpified game play for the Automation card game.
@@ -39,6 +41,7 @@ public class GameEngine implements Engine {
     private final Supply supply;
     
     public GameEngine(ourPlayer player1, ourPlayer player2, GameObserver observer) {
+     
         this.player1 = player1;
         this.player2 = player2;
         this.supply = new Supply();
@@ -48,6 +51,8 @@ public class GameEngine implements Engine {
     @EngineCreator
     public static Engine makeEngine(ourPlayer player1, ourPlayer player2, GameObserver observer){
         Engine thisEngine = new GameEngine(player1, player2, observer);
+        System.out.println(player2.getName());
+        System.out.println(player1.getName());
         return thisEngine;
 
     }
@@ -63,29 +68,10 @@ public class GameEngine implements Engine {
         CryptocurrencyCard bitcoinCard = new CryptocurrencyCard(Card.Type.BITCOIN, 31);
         CryptocurrencyCard ethereumCard = new CryptocurrencyCard(Card.Type.ETHEREUM, 41);
         CryptocurrencyCard dogecoinCard = new CryptocurrencyCard(Card.Type.DOGECOIN, 51);
-        // }
     
        distributeCards(player1, player2, supply, methodCard, bitcoinCard);
 
-        // Distribute starter decks to both players
-        /*for (int i = 0; i < 7; i++) {
-            player1.addCardToDeck(bitcoinCard);
-            supply.takeCard(Card.Type.BITCOIN);
-            player2.addCardToDeck(bitcoinCard);
-            supply.takeCard(Card.Type.BITCOIN);
-        }*/
-        /*for (int i = 0; i < 3; i++) {
-            //  AutomationCard methodCard = new AutomationCard(Card.Type.METHOD, i);
-            player1.addCardToDeck(methodCard);
-            supply.takeCard(Card.Type.METHOD);
-            player2.addCardToDeck(methodCard);
-            supply.takeCard(Card.Type.METHOD);
-        }*/
-
-        // Shuffle the decks
-        //GameEvent GameEvent = new GameEvent("Game Start");
-        //GameState start = new GameState(player1.getName(), player1.getHand(), GameState.TurnPhase.BUY, 0, 0, 0, supply.getGameDeck() );
-        //this.observer.notifyEvent(start, new GameEvent("Game Start"));
+      
         System.out.println("Game Start");
         player1.shuffleDeck();
         player2.shuffleDeck();
@@ -117,7 +103,7 @@ public class GameEngine implements Engine {
         int player2Ap = player2.getTotalAp();
 
         String desc = "Final Scores: \nPlayer 1 - Total AP: " + player1Ap + "\nPlayer 2 - Total AP: " + player2Ap;
-        ourPlayer winner = null;
+        Player winner = null;
 
         if (player1Ap > player2Ap) {
            desc += "\nPlayer 1 wins!";
@@ -129,9 +115,19 @@ public class GameEngine implements Engine {
            desc += "\nIt's a tie!";
         }
         GameEvent endGame = new GameEvent(desc); 
-        GameState endGameState = new GameState(winner.getName(), winner.getHand(), GameState.TurnPhase.CLEANUP, 0, 0, 0, supply.getGameDeck() );
-        this.observer.notifyEvent(endGameState, endGame);
-                return null; //Should be player and score pairs
+        if (winner != null) {
+            GameState endGameState = new GameState(((ourPlayer)winner).getName(), ((ourPlayer) winner).getHand(), GameState.TurnPhase.CLEANUP, 0, 0, 0, supply.getGameDeck() );
+
+            this.observer.notifyEvent(endGameState, endGame);
+        }
+        else {
+          GameState endGameState = new GameState("No Winner", player1.getHand(), GameState.TurnPhase.CLEANUP, 0, 0, 0, supply.getGameDeck() );
+            this.observer.notifyEvent(endGameState, endGame);
+
+        }
+        ImmutableList<ScorePair> results;
+        results = ImmutableList.of(new ScorePair((ourPlayer) player1, player1Ap), new ScorePair((ourPlayer) player2, player2Ap));
+                return results; //Should be player and score pairs
     }
 
     /**
