@@ -61,7 +61,8 @@ public class GameEngine implements Engine {
         Random random = new Random();
         boolean player1Starts = random.nextBoolean();
 
-        while (supply.getCardQuantity("Framework") > 0) {
+        while (supply.getCardQuantity(Card.Type.FRAMEWORK) > 0) {
+
             if (player1Starts) {
                 playFullTurn(player1);
                 playFullTurn(player2);
@@ -76,20 +77,21 @@ public class GameEngine implements Engine {
 
     public void distributeCards(ourPlayer player1, ourPlayer player2, Supply supply) {
         for (int i = 0; i < 7; i++) {
-            player1.addCardToDeck(new CryptocurrencyCard(Card.Type.BITCOIN, 31));
+            player1.addCardToDeck(new Card(Card.Type.BITCOIN, 31));
             supply.takeCard(Card.Type.BITCOIN);
-            player2.addCardToDeck(new CryptocurrencyCard(Card.Type.BITCOIN, 31));
+            player2.addCardToDeck(new Card(Card.Type.BITCOIN, 31));
             supply.takeCard(Card.Type.BITCOIN);
         }
         for (int i = 0; i < 3; i++) {
-            player1.addCardToDeck(new AutomationCard(Card.Type.METHOD, 1));
+            player1.addCardToDeck(new Card(Card.Type.METHOD, 1));
             supply.takeCard(Card.Type.METHOD);
-            player2.addCardToDeck(new AutomationCard(Card.Type.METHOD, 1));
+            player2.addCardToDeck(new Card(Card.Type.METHOD, 1));
             supply.takeCard(Card.Type.METHOD);
         }
     }
 
     private void playFullTurn(ourPlayer player) throws PlayerViolationException {
+
         moneyPhase(player);
         buyPhase(player);
         cleanupPhase(player);
@@ -99,8 +101,8 @@ public class GameEngine implements Engine {
     public void moneyPhase(ourPlayer player) throws PlayerViolationException {
         boolean endPhaseSelected = false;
         int totalMoneyInHand = 0;
-
         while (!endPhaseSelected) {
+         
             List<Decision> possibleDecisions = generatePossibleDecisions(player, player.getHand());
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.MONEY, totalMoneyInHand, 0, 0, supply.getGameDeck());
             Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions), Optional.empty());
@@ -142,7 +144,7 @@ public class GameEngine implements Engine {
                 BuyDecision buyDecision = (BuyDecision) decision;
                 Card purchasedCard = new Card(buyDecision.getCardType(), 0);
                 
-                if (supply.getCardQuantity(purchasedCard.getDescription()) > 0 && player.getTotalMoneyInHand() >= purchasedCard.getCost()) {
+                if (supply.getCardQuantity(purchasedCard.getType()) > 0 && player.getTotalMoneyInHand() >= purchasedCard.getCost()) {
                     player.purchaseCard(purchasedCard, supply);
                     GainCardEvent buyCardEvent = new GainCardEvent(purchasedCard.getType(), player.getName());
                     GameState buyCardState = new GameState(player.getName(), player.getHand(), 
@@ -177,7 +179,7 @@ public class GameEngine implements Engine {
         List<Card> availableCards = new ArrayList<>();
 
         for (Card card : cards) {
-            if (supply.getCardQuantity(card.getDescription()) > 0 && card.getCost() <= playerMoney) {
+            if (supply.getCardQuantity(card.getType()) > 0 && card.getCost() <= playerMoney) {
                 availableCards.add(card);
             }
         }
@@ -193,7 +195,7 @@ public class GameEngine implements Engine {
         List<Card> availableToBuy = new ArrayList<>();
 
         for (Card card : cards) {
-            if (supply.getCardQuantity(card.getDescription()) > 0 && card.getCost() <= player.getTotalMoneyInHand()) {
+            if (supply.getCardQuantity(card.getType()) > 0 && card.getCost() <= player.getTotalMoneyInHand()) {
                 availableToBuy.add(card);
             }
         }
