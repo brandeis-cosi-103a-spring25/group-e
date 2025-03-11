@@ -101,12 +101,17 @@ public class GameEngine implements Engine {
     public void moneyPhase(ourPlayer player) throws PlayerViolationException {
         boolean endPhaseSelected = false;
         int totalMoneyInHand = 0;
+        player.playHand();
         while (!endPhaseSelected) {
          
             List<Decision> possibleDecisions = generatePossibleDecisions(player, player.getHand());
+
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.MONEY, totalMoneyInHand, 0, 0, supply.getGameDeck());
             Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions), Optional.empty());
 
+            if (decision == null) {
+                endPhaseSelected = true;
+            }
             if (decision instanceof PlayCardDecision) {
                 PlayCardDecision playDecision = (PlayCardDecision) decision;
                 Card playedCard = playDecision.getCard();
@@ -140,9 +145,14 @@ public class GameEngine implements Engine {
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.BUY, totalMoneyInHand, 0, 0, supply.getGameDeck());
             Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions), Optional.empty());
 
+            if (decision == null) {
+                endPhaseSelected = true;
+            }
             if (decision instanceof BuyDecision) {
                 BuyDecision buyDecision = (BuyDecision) decision;
                 Card purchasedCard = new Card(buyDecision.getCardType(), 0);
+                Card.Type cardType = purchasedCard.getType();
+                supply.takeCard(cardType);
                 
                 if (supply.getCardQuantity(purchasedCard.getType()) > 0 && player.getTotalMoneyInHand() >= purchasedCard.getCost()) {
                     player.purchaseCard(purchasedCard, supply);
@@ -221,7 +231,6 @@ public class GameEngine implements Engine {
 
         // Always allow ending the phase
         possibleDecisions.add(new EndPhaseDecision(GameState.TurnPhase.BUY));
-
         return possibleDecisions;
     }
 

@@ -39,11 +39,13 @@ public class BigMoneyPlayer extends ourPlayer {
         System.out.println("\n----- Big Money Player Turn: " + name + " -----");
         reason.ifPresent(event -> System.out.println("Reason: " + event.getDescription()));
 
-        int availableMoney = state.getSpendableMoney();
+        int availableMoney = getMoney();
+        System.out.println("Available Money: " + availableMoney);
+        System.out.println(getCards().toString());
         int availableBuys = state.getAvailableBuys();
-        if (availableBuys <= 0) {
+        if (availableBuys <= 0 || availableMoney <= 0) {
             System.out.println("No available buys left.");
-            return options.get(0); // Default fallback decision
+            return null; // Default fallback decision
         }
 
         BuyDecision bestMoneyCard = null;
@@ -59,6 +61,7 @@ public class BigMoneyPlayer extends ourPlayer {
                     } else if (isMoneyCard(buyDecision) && (bestMoneyCard == null || cost > bestMoneyCard.getCardType().getCost())) {
                         bestMoneyCard = buyDecision;
                     }
+                    availableMoney -= cost;
                 }
             }
         }

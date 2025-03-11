@@ -38,7 +38,6 @@ public abstract class ourPlayer implements Player{
     public ourPlayer(String name) {
         this.name = name;
         this.deck = new Deck();
-        //this.hand = new Hand(ImmutableList.of(), ImmutableList.of()); //initialize empty hand
         this.hand = new ArrayList<>();
         this.discardPile = new ArrayList<>();
         this.money = 0;
@@ -57,14 +56,11 @@ public abstract class ourPlayer implements Player{
      * @param handSize The number of cards to draw.
      */
     public void drawHand(int handSize) {
-        //List<Card> playedCards = new ArrayList<>();
-        //Collection<Card> unplayedCards = new ArrayList<Card>();
         hand.clear();
         for (int i = 0; i < handSize; i++) {
             if (deck.isEmpty()) {
                 reshuffleDeck();
             }
-            //unplayedCards.add(deck.drawCard());
             hand.add(deck.drawCard());
         }
 
@@ -76,11 +72,18 @@ public abstract class ourPlayer implements Player{
     public void playHand() {
         money = 0;
         for (Card card : hand) {
-            if (card instanceof CryptocurrencyCard) {
-                money += card.getCost();
+            System.out.println("adding card to hand" + card);
+            if (card.getType() == Card.Type.BITCOIN) {
+                money += 1;
             }
+            else if (card.getType() == Card.Type.ETHEREUM) {
+                money +=3;
+            }
+            else if (card.getType() == Card.Type.DOGECOIN) {
+                money += 5;
         }
     }
+}
     
     /**
      * Purchases a card from the hand, adding it to the discard pile.
