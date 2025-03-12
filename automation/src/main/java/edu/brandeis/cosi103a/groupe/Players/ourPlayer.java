@@ -24,11 +24,13 @@ import edu.brandeis.cosi103a.groupe.Cards.CryptocurrencyCard;
  * 
  */
 public abstract class ourPlayer implements Player{
-    private String name;
+    private String name, phase;
     private Deck deck;
     private List<Card> hand;
     private GameObserver observer;
     private List<Card> discardPile;
+    private ImmutableCollection<Card> playedCards;
+    private ImmutableCollection<Card> unplayedCards;
     private int money;
 
     /*
@@ -72,7 +74,6 @@ public abstract class ourPlayer implements Player{
     public void playHand() {
         money = 0;
         for (Card card : hand) {
-            System.out.println("adding card to hand" + card);
             if (card.getType() == Card.Type.BITCOIN) {
                 money += 1;
             }
@@ -91,7 +92,7 @@ public abstract class ourPlayer implements Player{
      * @param supply The supply to take the card from.
      */
     public void purchaseCard(Card card, Supply supply) {
-        int totalMoneyInHand = getTotalMoneyInHand();
+        int totalMoneyInHand = getMoney();
         if (totalMoneyInHand >= card.getCost() && supply.takeCard(card.getType())) {
             discardPile.add(card);
             money -= card.getCost();
@@ -127,21 +128,26 @@ public abstract class ourPlayer implements Player{
      * @return The current money.
      */
     public int getMoney() {
+        // playHand();
         return money;
+    }
+
+    public void setPhase(String phase) {
+        this.phase = phase;
     }
 
     
 
-    /**
-     * Gets the total money in the player's hand.
-     * @return The total money in the hand.
-     */
-    public int getTotalMoneyInHand() {
-        return hand.stream()
-                   .filter(card -> card instanceof CryptocurrencyCard)
-                   .mapToInt(Card::getId)
-                   .sum();
-    }
+    // /**
+    //  * Gets the total money in the player's hand.
+    //  * @return The total money in the hand.
+    //  */
+    // public int getTotalMoneyInHand() {
+    //     return hand.stream()
+    //                .filter(card -> card instanceof CryptocurrencyCard)
+    //                .mapToInt(Card::getId)
+    //                .sum();
+    // }
     
     /**
      * Adds a card to the deck.
@@ -156,6 +162,14 @@ public abstract class ourPlayer implements Player{
      */
     public void shuffleDeck() {
         deck.shuffle();
+    }
+
+    public void setPlayedCards(ImmutableList<Card> newUsedCards) {
+        playedCards = newUsedCards;
+    }
+
+    public ImmutableCollection<Card> getPlayedCards() {
+        return this.playedCards;
     }
     
     /**
@@ -188,8 +202,8 @@ public abstract class ourPlayer implements Player{
     }
 
     public Hand makeHand() {
-        ImmutableCollection<Card> playedCards = ImmutableList.of();
-        ImmutableCollection<Card> unplayedCards = ImmutableList.copyOf(hand);
+       playedCards = ImmutableList.of();
+       unplayedCards = ImmutableList.copyOf(hand);
         Hand thisHand = new Hand(playedCards, unplayedCards);
         return thisHand;
     }

@@ -104,9 +104,10 @@ public class GameEngine implements Engine {
         player.playHand();
         while (!endPhaseSelected) {
          
-            List<Decision> possibleDecisions = generatePossibleDecisions(player, player.getHand());
+            List<Decision> possibleDecisions = generatePossiblePlayDecisions(player, player.getHand());
 
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.MONEY, totalMoneyInHand, 0, 0, supply.getGameDeck());
+            player.setPhase("Play");
             Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions), Optional.empty());
 
             if (decision == null) {
@@ -116,10 +117,9 @@ public class GameEngine implements Engine {
                 PlayCardDecision playDecision = (PlayCardDecision) decision;
                 Card playedCard = playDecision.getCard();
 
-                if (playedCard instanceof CryptocurrencyCard) {
+                if (playedCard.getType() == Card.Type.BITCOIN || playedCard.getType() == Card.Type.ETHEREUM || playedCard.getType() == Card.Type.DOGECOIN) {
+              
                     totalMoneyInHand += playedCard.getValue();
-                    System.out.println(player.getName() + " played " + playedCard.getDescription() + 
-                                      " (Value: " + playedCard.getValue() + ")");
                     player.playCard(playedCard);
 
                     PlayCardEvent playEvent = new PlayCardEvent(playedCard, player.getName());
@@ -129,7 +129,7 @@ public class GameEngine implements Engine {
                     observer.notifyEvent(playState, playEvent);
                 } 
             } else if (decision instanceof EndPhaseDecision) {
-                System.out.println(player.getName() + " ended the MONEY phase with " + totalMoneyInHand + " coins.");
+                // System.out.println(player.getName() + " ended the MONEY phase with " + totalMoneyInHand + " coins.");
                 endPhaseSelected = true;
             }
         }
@@ -138,11 +138,12 @@ public class GameEngine implements Engine {
     // BUY PHASE
     public void buyPhase(ourPlayer player) throws PlayerViolationException {
         boolean endPhaseSelected = false;
-        int totalMoneyInHand = player.getTotalMoneyInHand();
+        int totalMoneyInHand = player.getMoney();
 
         while (!endPhaseSelected) {
-            List<Decision> possibleDecisions = generatePossibleDecisions(player, player.getHand());
+            List<Decision> possibleDecisions = generatePossibleBuyDecisions(player, player.getHand());
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.BUY, totalMoneyInHand, 0, 0, supply.getGameDeck());
+            player.setPhase("Buy");
             Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions), Optional.empty());
 
             if (decision == null) {
@@ -154,7 +155,7 @@ public class GameEngine implements Engine {
                 Card.Type cardType = purchasedCard.getType();
                 supply.takeCard(cardType);
                 
-                if (supply.getCardQuantity(purchasedCard.getType()) > 0 && player.getTotalMoneyInHand() >= purchasedCard.getCost()) {
+                if (supply.getCardQuantity(purchasedCard.getType()) > 0 && player.getMoney() >= purchasedCard.getCost()) {
                     player.purchaseCard(purchasedCard, supply);
                     GainCardEvent buyCardEvent = new GainCardEvent(purchasedCard.getType(), player.getName());
                     GameState buyCardState = new GameState(player.getName(), player.getHand(), 
@@ -170,7 +171,7 @@ public class GameEngine implements Engine {
                     throw new PlayerViolationException("Invalid purchase attempt.");
                 }
             } else if (decision instanceof EndPhaseDecision) {
-                System.out.println(player.getName() + " ended the BUY phase.");
+                // System.out.println(player.getName() + " ended the BUY phase.");
                 endPhaseSelected = true;
             }
         }
@@ -205,7 +206,7 @@ public class GameEngine implements Engine {
         List<Card> availableToBuy = new ArrayList<>();
 
         for (Card card : cards) {
-            if (supply.getCardQuantity(card.getType()) > 0 && card.getCost() <= player.getTotalMoneyInHand()) {
+            if (supply.getCardQuantity(card.getType()) > 0 && card.getCost() <= player.getMoney()) {
                 availableToBuy.add(card);
             }
         }
@@ -213,26 +214,46 @@ public class GameEngine implements Engine {
         return availableToBuy;
     }
 
-    public List<Decision> generatePossibleDecisions(ourPlayer player, Hand hand) {
-        List<Decision> possibleDecisions = new ArrayList<>();
+    public List<Decision> generatePossibleBuyDecisions(ourPlayer player, Hand hand) {
+        List<Decision> possibleBuyDecisions = new ArrayList<>();
         List<Card> cards = player.getCards();
 
-        // Add PlayCardDecisions for each unplayed card
-        for (Card card : cards) {
-            possibleDecisions.add(new PlayCardDecision(card));
-        }
+     
 
         // Add BuyDecisions if the player has enough crypto
         for (Card card : availableCardsToBuy(player, cards)) {
-            if (player.getTotalMoneyInHand() >= card.getCost()) {
-                possibleDecisions.add(new BuyDecision(card.getType()));
+            if (player.getMoney() >= card.getCost()) {
+                possibleBuyDecisions.add(new BuyDecision(card.getType()));
             }
         }
 
         // Always allow ending the phase
-        possibleDecisions.add(new EndPhaseDecision(GameState.TurnPhase.BUY));
-        return possibleDecisions;
+        possibleBuyDecisions.add(new EndPhaseDecision(GameState.TurnPhase.BUY));
+        return possibleBuyDecisions;
     }
+    public List<Decision> generatePossiblePlayDecisions(ourPlayer player, Hand hand) {
+        List<Decision> possiblePlayDecisions = new ArrayList<>();
+        List<Card> cards = player.getCards();
+
+        // Add PlayCardDecisions for each unplayed card
+        for (Card card : cards) {
+            if (card.getType() == Card.Type.BITCOIN) {
+                possiblePlayDecisions.add(new PlayCardDecision(card));        
+            }
+            else if (card.getType() == Card.Type.ETHEREUM) {
+                possiblePlayDecisions.add(new PlayCardDecision(card));        
+            }
+            else if (card.getType() == Card.Type.DOGECOIN) {
+                possiblePlayDecisions.add(new PlayCardDecision(card));        
+        }
+        }
+
+
+        // Always allow ending the phase
+        possiblePlayDecisions.add(new EndPhaseDecision(GameState.TurnPhase.MONEY));
+        return possiblePlayDecisions;
+    }
+  
 
     // WINNING LOGIC
     public ImmutableList<ScorePair> determineWinner() {
