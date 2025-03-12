@@ -2,12 +2,16 @@ package edu.brandeis.cosi103a.groupe.Players;
 
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.Player;
+import edu.brandeis.cosi.atg.api.cards.Card;
 import edu.brandeis.cosi.atg.api.GameObserver;
+import edu.brandeis.cosi.atg.api.decisions.BuyDecision;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.event.GameEvent;
 import com.google.common.collect.ImmutableList;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -18,7 +22,7 @@ import java.util.Scanner;
 //extend ourplayer 
 public class ConsolePlayer extends ourPlayer {
     private final Scanner scanner;
-    //private String name;
+    private String phase, name;
     private Optional<GameObserver> observer; // Observer is optional
 
     /**
@@ -26,8 +30,8 @@ public class ConsolePlayer extends ourPlayer {
      * @param name The player's name.
      */
     public ConsolePlayer(String name) {
-        //this.name = name;
         super(name);
+         this.name = name;
         this.scanner = new Scanner(System.in);
         this.observer = Optional.empty(); // Default to no observer
     }
@@ -52,6 +56,10 @@ public class ConsolePlayer extends ourPlayer {
         return observer;
     }
 
+    public void setPhase(String phase) {
+        this.phase = phase;
+    }
+
     /**
      * Implements `makeDecision()`, prompting the player to choose an action.
      * Notifies the observer (if present) after a decision is made.
@@ -68,18 +76,32 @@ public class ConsolePlayer extends ourPlayer {
             return null;
         }
 
+        System.out.println("\n----- " + phase + " Phase: Console Player Turn: " + name + " -----");
+
+        
         System.out.println(getName() + ", choose a decision:");
         for (int i = 0; i < options.size(); i++) {
             System.out.println((i + 1) + ": " + options.get(i).getDescription());
         }
-
+        int availableMoney = getMoney();
         int choice = getValidChoice(options.size());
         Decision chosenDecision = options.get(choice - 1);
 
         // Notify observer of the decision
-        observer.ifPresent(obs -> obs.notifyEvent(state, new GameEvent(getName() + " chose: " + chosenDecision.getDescription())));
+                    if (chosenDecision instanceof BuyDecision buyDecision) {
+                        int cost = buyDecision.getCardType().getCost();
+                        availableMoney -= cost;
+                    }
 
+
+        observer.ifPresent(obs -> obs.notifyEvent(state, new GameEvent(getName() + " chose: " + chosenDecision.getDescription())));
+        // ArrayList<Card> playedCards = new ArrayList<>();
+        // List<Card> allCards = getCards();
+        // playedCards.add(allCards.get(choice)); 
+        
+        // setPlayedCards(ImmutableList.copyOf(playedCards));
         return chosenDecision;
+                
     }
 
     /**

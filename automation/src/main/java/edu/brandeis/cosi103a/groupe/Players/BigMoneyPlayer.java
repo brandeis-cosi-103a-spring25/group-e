@@ -13,11 +13,12 @@ import edu.brandeis.cosi.atg.api.cards.Card;
 import java.util.Optional;
 
 public class BigMoneyPlayer extends ourPlayer {
-    private String name;
+    private String name, phase;
 
     public BigMoneyPlayer(String name) {
         super(name);
         this.name = name;
+    
     }
 
     @Override
@@ -30,21 +31,27 @@ public class BigMoneyPlayer extends ourPlayer {
         return Optional.empty();
     }
 
+    public void setPhase(String phase) {
+        this.phase = phase;
+    }
     @Override
     public Decision makeDecision(GameState state, ImmutableList<Decision> options, Optional<Event> reason) {
         if (options.isEmpty()) {
             throw new IllegalStateException("No available decisions!");
         }
 
-        System.out.println("\n----- Big Money Player Turn: " + name + " -----");
+        System.out.println("\n----- " + phase + " Phase: Big Money Player Turn: " + name + " -----");
         reason.ifPresent(event -> System.out.println("Reason: " + event.getDescription()));
+        int availableMoney = getMoney();
 
-        int availableMoney = state.getSpendableMoney();
+        if (phase.equals("Buy")) {
+        // System.out.println("Available Money: " + availableMoney);
         int availableBuys = state.getAvailableBuys();
-        if (availableBuys <= 0) {
+        if (availableBuys <= 0 || availableMoney <= 0) {
             System.out.println("No available buys left.");
-            return options.get(0); // Default fallback decision
+            return null; // Default fallback decision
         }
+    
 
         BuyDecision bestMoneyCard = null;
         BuyDecision bestFramework = null;
@@ -59,9 +66,10 @@ public class BigMoneyPlayer extends ourPlayer {
                     } else if (isMoneyCard(buyDecision) && (bestMoneyCard == null || cost > bestMoneyCard.getCardType().getCost())) {
                         bestMoneyCard = buyDecision;
                     }
+                    availableMoney -= cost;
                 }
             }
-        }
+        
 
         // Always prefer buying a Framework if it is affordable; otherwise, buy the best Money card
         if (bestFramework != null) {
@@ -76,6 +84,13 @@ public class BigMoneyPlayer extends ourPlayer {
 
         return options.get(0); // Fallback if no valid purchase
     }
+}
+else {
+    playHand(); 
+}
+    return null; // Default fallback decision
+
+}
 
     // Determines if a decision is for a Framework purchase
     private boolean isFramework(BuyDecision decision) {
@@ -87,5 +102,6 @@ public class BigMoneyPlayer extends ourPlayer {
     private boolean isMoneyCard(BuyDecision decision) {
         return decision.getCardType().getCategory() == Card.Type.Category.MONEY;
     }
+
 }
 
