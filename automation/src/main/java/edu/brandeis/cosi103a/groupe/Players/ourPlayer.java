@@ -71,19 +71,20 @@ public abstract class ourPlayer implements Player{
     /**
      * Plays the hand of cards, adding the money from each card to the player's total.
      */
-    public void playHand() {
-        money = 0;
+    public int playHand() {
+       int playMoney = 0;
         for (Card card : hand) {
             if (card.getType() == Card.Type.BITCOIN) {
-                money += 1;
+                playMoney += 1;
             }
             else if (card.getType() == Card.Type.ETHEREUM) {
-                money +=3;
+                playMoney +=3;
             }
             else if (card.getType() == Card.Type.DOGECOIN) {
-                money += 5;
+                playMoney += 5;
         }
     }
+    return playMoney;
 }
     
     /**
@@ -97,6 +98,11 @@ public abstract class ourPlayer implements Player{
             discardPile.add(card);
             money -= card.getCost();
         } 
+    }
+
+
+    public void setMoney(int val) {
+        this.money = val;
     }
     /**
      * Cleans up the player's hand and discard pile.
