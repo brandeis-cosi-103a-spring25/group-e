@@ -55,6 +55,7 @@ public class BigMoneyPlayer extends ourPlayer {
      */
     @Override
     public Decision makeDecision(GameState state, ImmutableList<Decision> options, Optional<Event> reason) {
+     
         if (options.isEmpty()) {
             System.out.println(getName() + ": No decisions available.");
             return null;
@@ -66,7 +67,7 @@ public class BigMoneyPlayer extends ourPlayer {
         if ("Buy".equalsIgnoreCase(phase)) {
             return makeBuyDecision(state, options);
         } else {
-            playHand();
+            setMoney(playHand());
             return null;
         }
     }
@@ -78,9 +79,12 @@ public class BigMoneyPlayer extends ourPlayer {
      * @return The chosen Buy decision, or null if no valid purchase is possible.
      */
     private Decision makeBuyDecision(GameState state, ImmutableList<Decision> options) {
+        int boughtCard = 0;
         int availableMoney = getMoney();
-        int availableBuys = state.getAvailableBuys();
 
+        if (boughtCard < 1) {
+        int availableBuys = state.getAvailableBuys();
+        System.out.println("buy option amount: " + availableBuys);
         if (availableBuys <= 0 || availableMoney <= 0) {
             System.out.println(name + ": No available buys left.");
             return options.get(0); // Safe fallback
@@ -88,6 +92,8 @@ public class BigMoneyPlayer extends ourPlayer {
 
         final BuyDecision[] bestPurchase = {null};
         for (Decision decision : options) {
+            System.out.println("money " + availableMoney);
+
             if (decision instanceof BuyDecision buyDecision) {
                 int cost = buyDecision.getCardType().getCost();
                 if (cost <= availableMoney) { // Only consider affordable purchases
@@ -99,14 +105,18 @@ public class BigMoneyPlayer extends ourPlayer {
         }
 
         if (bestPurchase[0] != null) {
+            
             System.out.println(name + " chose to buy: " + bestPurchase[0].getCardType().name());
             observer.ifPresent(obs -> obs.notifyEvent(state, new GameEvent(name + " bought " + bestPurchase[0].getCardType().name())));
+            boughtCard ++;
             return bestPurchase[0];
+           
         }
-
+    }
         System.out.println(name + ": No valid buy available.");
         return options.get(0); // Safe fallback to prevent errors
     }
+
 
     public void setObserver(GameObserver observer) {
         this.observer = Optional.ofNullable(observer);

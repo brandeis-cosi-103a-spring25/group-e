@@ -99,14 +99,16 @@ public class GameEngine implements Engine {
 
     // MONEY PHASE
     public void moneyPhase(ourPlayer player) throws PlayerViolationException {
+
         boolean endPhaseSelected = false;
-        int totalMoneyInHand = 0;
-        player.playHand();
+        int totalMoneyInHand = player.getMoney();
+        // player.playHand();
+        System.out.println("current money: " + player.getMoney());
         while (!endPhaseSelected) {
          
             List<Decision> possibleDecisions = generatePossiblePlayDecisions(player, player.getHand());
 
-            GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.MONEY, totalMoneyInHand, 0, 0, supply.getGameDeck());
+            GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.MONEY, possibleDecisions.size()-1, totalMoneyInHand, 0, supply.getGameDeck());
             player.setPhase("Play");
             Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions), Optional.empty());
 
@@ -121,15 +123,15 @@ public class GameEngine implements Engine {
               
                     totalMoneyInHand += playedCard.getValue();
                     player.playCard(playedCard);
+                    player.setMoney(totalMoneyInHand);
 
                     PlayCardEvent playEvent = new PlayCardEvent(playedCard, player.getName());
                     GameState playState = new GameState(player.getName(), player.getHand(), 
-                                                         GameState.TurnPhase.MONEY, totalMoneyInHand, 0, 0, 
+                                                         GameState.TurnPhase.MONEY, possibleDecisions.size()-1, player.getMoney(), 0, 
                                                          supply.getGameDeck());
                     observer.notifyEvent(playState, playEvent);
                 } 
             } else if (decision instanceof EndPhaseDecision) {
-                // System.out.println(player.getName() + " ended the MONEY phase with " + totalMoneyInHand + " coins.");
                 endPhaseSelected = true;
             }
         }
@@ -137,12 +139,13 @@ public class GameEngine implements Engine {
 
     // BUY PHASE
     public void buyPhase(ourPlayer player) throws PlayerViolationException {
+        System.out.println("current money: " + player.getMoney());
+
         boolean endPhaseSelected = false;
-        int totalMoneyInHand = player.getMoney();
 
         while (!endPhaseSelected) {
             List<Decision> possibleDecisions = generatePossibleBuyDecisions(player, player.getHand());
-            GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.BUY, totalMoneyInHand, 0, 0, supply.getGameDeck());
+            GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.BUY, 0, player.getMoney(), possibleDecisions.size()-1, supply.getGameDeck());
             player.setPhase("Buy");
             Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions), Optional.empty());
 
@@ -160,7 +163,7 @@ public class GameEngine implements Engine {
                     GainCardEvent buyCardEvent = new GainCardEvent(purchasedCard.getType(), player.getName());
                     GameState buyCardState = new GameState(player.getName(), player.getHand(), 
                                                            GameState.TurnPhase.BUY, 
-                                                           totalMoneyInHand, totalMoneyInHand, totalMoneyInHand, 
+                                                           0, player.getMoney(), possibleDecisions.size()-1, 
                                                            supply.getGameDeck());
                     observer.notifyEvent(buyCardState, buyCardEvent);
 
