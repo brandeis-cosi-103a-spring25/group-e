@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import edu.brandeis.cosi.atg.api.*;
-import edu.brandeis.cosi.atg.api.Player;
 import com.google.common.collect.ImmutableList;
 import edu.brandeis.cosi.atg.api.Engine;
 import edu.brandeis.cosi.atg.api.EngineCreator;
-import edu.brandeis.cosi.atg.api.GameDeck;
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.Hand;
@@ -21,12 +18,9 @@ import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.decisions.EndPhaseDecision;
 import edu.brandeis.cosi.atg.api.decisions.PlayCardDecision;
 import edu.brandeis.cosi.atg.api.event.EndTurnEvent;
-import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.event.GainCardEvent;
-import edu.brandeis.cosi.atg.api.event.GameEvent;
 import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
 import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
-import edu.brandeis.cosi103a.groupe.Cards.CryptocurrencyCard;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 
 /*
@@ -144,7 +138,7 @@ public class GameEngine implements Engine {
         boolean endPhaseSelected = false;
 
         while (!endPhaseSelected) {
-            List<Decision> possibleDecisions = generatePossibleBuyDecisions(player, player.getHand());
+            List<Decision> possibleDecisions = generatePossibleBuyDecisions(player, supply);
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.BUY, 0, player.getMoney(), possibleDecisions.size()-1, supply.getGameDeck());
             player.setPhase("Buy");
             Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions), Optional.empty());
@@ -189,22 +183,7 @@ public class GameEngine implements Engine {
     }
 
     // Selects a random card from the available cards that are in the supply
-    private static Card randomAvailableCard(Supply supply, int playerMoney, Card... cards) {
-        List<Card> availableCards = new ArrayList<>();
-
-        for (Card card : cards) {
-            if (supply.getCardQuantity(card.getType()) > 0 && card.getCost() <= playerMoney) {
-                availableCards.add(card);
-            }
-        }
-
-        if (availableCards.isEmpty()) {
-            return null;
-        }
-
-        return availableCards.get((int) (Math.random() * availableCards.size()));
-    }
-
+   
     public List<Card> availableCardsToBuy(ourPlayer player, List<Card> cards) {
         List<Card> availableToBuy = new ArrayList<>();
 
@@ -217,10 +196,9 @@ public class GameEngine implements Engine {
         return availableToBuy;
     }
 
-    public List<Decision> generatePossibleBuyDecisions(ourPlayer player, Hand hand) {
+    public List<Decision> generatePossibleBuyDecisions(ourPlayer player, Supply supply) {
         List<Decision> possibleBuyDecisions = new ArrayList<>();
-        List<Card> cards = player.getCards();
-
+        List<Card> cards = supply.getAvailableCardsInSupply();
      
 
         // Add BuyDecisions if the player has enough crypto

@@ -119,12 +119,12 @@ public abstract class ourPlayer implements Player{
     public int getTotalAp() {
         int deckAp = deck.getTotalAp();
         int handAp = hand.stream()
-                         .filter(card -> card instanceof AutomationCard)
+                         .filter(card -> card.getType() == Card.Type.MODULE || card.getType() == Card.Type.METHOD || card.getType() == Card.Type.FRAMEWORK)   
                          .mapToInt(Card::getValue)
                          .sum();
         int discardPileAp = discardPile.stream()
-                                       .filter(card -> card instanceof AutomationCard)
-                                       .mapToInt(Card::getValue)
+        .filter(card -> card.getType() == Card.Type.MODULE || card.getType() == Card.Type.METHOD || card.getType() == Card.Type.FRAMEWORK)   
+        .mapToInt(Card::getValue)
                                        .sum();
         return deckAp + handAp + discardPileAp;
     }
@@ -141,19 +141,6 @@ public abstract class ourPlayer implements Player{
     public void setPhase(String phase) {
         this.phase = phase;
     }
-
-    
-
-    // /**
-    //  * Gets the total money in the player's hand.
-    //  * @return The total money in the hand.
-    //  */
-    // public int getTotalMoneyInHand() {
-    //     return hand.stream()
-    //                .filter(card -> card instanceof CryptocurrencyCard)
-    //                .mapToInt(Card::getId)
-    //                .sum();
-    // }
     
     /**
      * Adds a card to the deck.

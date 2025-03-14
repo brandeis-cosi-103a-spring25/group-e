@@ -31,7 +31,7 @@ public class ConsoleGameObserver implements GameObserver {
         // Get the turn phase from GameState
         GameState.TurnPhase turnPhase = state.getTurnPhase();
 
-        // Format the output to be more descriptive and user-friendly
+         // Format the output to be more descriptive and user-friendly
         System.out.println("Event occurred: " + eventDescription + 
             " at game state (Player: " + currentPlayerName + 
             ", Phase: " + turnPhase + 
