@@ -1,6 +1,8 @@
 package edu.brandeis.cosi103a.groupe;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
@@ -33,6 +35,36 @@ public class Supply {
      */
     public int getCardQuantity(Card.Type cardName) {
         return cardQuantities.getOrDefault(cardName, 0);
+    }
+
+
+    public List <Card> getAvailableCardsInSupply() {
+        List<Card> availableCards = new ArrayList<Card>();
+        if (getCardQuantity(Card.Type.METHOD) >= 1) {
+            Card thisCard = new Card(Card.Type.METHOD, 1);
+            availableCards.add(thisCard);
+        }
+        if (getCardQuantity(Card.Type.MODULE) >= 1) {
+            Card thisCard = new Card(Card.Type.MODULE, 2);
+            availableCards.add(thisCard);
+        }
+        if (getCardQuantity(Card.Type.FRAMEWORK) >= 1) {
+            Card thisCard = new Card(Card.Type.FRAMEWORK, 3);
+            availableCards.add(thisCard);
+        }
+        if (getCardQuantity(Card.Type.BITCOIN) >= 1) {
+            Card thisCard = new Card(Card.Type.BITCOIN, 4);
+            availableCards.add(thisCard);
+        }
+        if (getCardQuantity(Card.Type.ETHEREUM) >= 1) {
+            Card thisCard = new Card(Card.Type.ETHEREUM, 5);
+            availableCards.add(thisCard);
+        }
+        if (getCardQuantity(Card.Type.DOGECOIN) >= 1) {
+            Card thisCard = new Card(Card.Type.DOGECOIN, 6);
+            availableCards.add(thisCard);
+        }
+        return availableCards;
     }
 
     /**
