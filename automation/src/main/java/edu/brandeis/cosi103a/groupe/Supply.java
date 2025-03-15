@@ -14,18 +14,28 @@ import edu.brandeis.cosi.atg.api.cards.Card;
 
 public class Supply {
     private Map<Card.Type, Integer> cardQuantities;
+    private final Map<Card.Type, Integer> cardTypeIds;
+    
     
     /*
      * Constructor for the supply
      */
     public Supply() {
         cardQuantities = new HashMap<>();
+        cardTypeIds = new HashMap<>();
         cardQuantities.put(Card.Type.METHOD, 14);
         cardQuantities.put(Card.Type.MODULE, 8);
         cardQuantities.put(Card.Type.FRAMEWORK, 8);
         cardQuantities.put(Card.Type.BITCOIN, 60);
         cardQuantities.put(Card.Type.ETHEREUM, 40);
         cardQuantities.put(Card.Type.DOGECOIN, 30);
+
+        cardTypeIds.put(Card.Type.MODULE, 1);
+        cardTypeIds.put(Card.Type.METHOD, 2);
+        cardTypeIds.put(Card.Type.FRAMEWORK, 3);
+        cardTypeIds.put(Card.Type.BITCOIN, 4);
+        cardTypeIds.put(Card.Type.ETHEREUM, 5);
+        cardTypeIds.put(Card.Type.DOGECOIN, 6);
     }
 
     /**
@@ -38,31 +48,12 @@ public class Supply {
     }
 
 
-    public List <Card> getAvailableCardsInSupply() {
-        List<Card> availableCards = new ArrayList<Card>();
-        if (getCardQuantity(Card.Type.METHOD) >= 1) {
-            Card thisCard = new Card(Card.Type.METHOD, 1);
-            availableCards.add(thisCard);
-        }
-        if (getCardQuantity(Card.Type.MODULE) >= 1) {
-            Card thisCard = new Card(Card.Type.MODULE, 2);
-            availableCards.add(thisCard);
-        }
-        if (getCardQuantity(Card.Type.FRAMEWORK) >= 1) {
-            Card thisCard = new Card(Card.Type.FRAMEWORK, 3);
-            availableCards.add(thisCard);
-        }
-        if (getCardQuantity(Card.Type.BITCOIN) >= 1) {
-            Card thisCard = new Card(Card.Type.BITCOIN, 4);
-            availableCards.add(thisCard);
-        }
-        if (getCardQuantity(Card.Type.ETHEREUM) >= 1) {
-            Card thisCard = new Card(Card.Type.ETHEREUM, 5);
-            availableCards.add(thisCard);
-        }
-        if (getCardQuantity(Card.Type.DOGECOIN) >= 1) {
-            Card thisCard = new Card(Card.Type.DOGECOIN, 6);
-            availableCards.add(thisCard);
+    public List<Card> getAvailableCardsInSupply() {
+        List<Card> availableCards = new ArrayList<>();
+        for (Card.Type type : cardQuantities.keySet()) {
+            if (getCardQuantity(type) > 0) {
+                availableCards.add(new Card(type, cardTypeIds.get(type)));
+            }
         }
         return availableCards;
     }
