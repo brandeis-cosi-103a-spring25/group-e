@@ -49,13 +49,16 @@ public class GameEngine implements Engine {
         distributeCards(player1, player2, supply);
         player1.shuffleDeck();
         player2.shuffleDeck();
+        
+
         player1.drawHand(5);
         player2.drawHand(5);
 
         Random random = new Random();
         boolean player1Starts = random.nextBoolean();
-
-        while (supply.getCardQuantity(Card.Type.FRAMEWORK) > 0) {
+        //supply.getCardQuantity(Card.Type.FRAMEWORK) > 0
+        int i = 2;
+        while (i > 0) {
 
             if (player1Starts) {
                 playFullTurn(player1);
@@ -64,8 +67,9 @@ public class GameEngine implements Engine {
                 playFullTurn(player2);
                 playFullTurn(player1);
             }
+            i = i - 1;
         }
-
+   
         return determineWinner();
     }
 
@@ -95,9 +99,9 @@ public class GameEngine implements Engine {
     public void moneyPhase(ourPlayer player) throws PlayerViolationException {
 
         boolean endPhaseSelected = false;
-        int totalMoneyInHand = player.getMoney();
+        int totalMoneyInHand = 0;
         // player.playHand();
-        System.out.println("current money: " + player.getMoney());
+        System.out.println("Current money: " + player.getMoney());
         while (!endPhaseSelected) {
          
             List<Decision> possibleDecisions = generatePossiblePlayDecisions(player, player.getHand());
@@ -114,7 +118,6 @@ public class GameEngine implements Engine {
                 Card playedCard = playDecision.getCard();
 
                 if (playedCard.getType() == Card.Type.BITCOIN || playedCard.getType() == Card.Type.ETHEREUM || playedCard.getType() == Card.Type.DOGECOIN) {
-              
                     totalMoneyInHand += playedCard.getValue();
                     player.playCard(playedCard);
                     player.setMoney(totalMoneyInHand);
@@ -160,7 +163,7 @@ public class GameEngine implements Engine {
                                                            0, player.getMoney(), possibleDecisions.size()-1, 
                                                            supply.getGameDeck());
                     observer.notifyEvent(buyCardState, buyCardEvent);
-
+                  //purchasedCard instanceof AutomationCard && purchasedCard.getDescription().equals("Framework")
                   if (purchasedCard instanceof AutomationCard && purchasedCard.getDescription().equals("Framework")) {
                         System.out.println(player.getName() + " purchased a Framework card!");
                    }
@@ -212,6 +215,7 @@ public class GameEngine implements Engine {
         possibleBuyDecisions.add(new EndPhaseDecision(GameState.TurnPhase.BUY));
         return possibleBuyDecisions;
     }
+    
     public List<Decision> generatePossiblePlayDecisions(ourPlayer player, Hand hand) {
         List<Decision> possiblePlayDecisions = new ArrayList<>();
         List<Card> cards = player.getCards();
@@ -228,7 +232,6 @@ public class GameEngine implements Engine {
                 possiblePlayDecisions.add(new PlayCardDecision(card));        
         }
         }
-
 
         // Always allow ending the phase
         possiblePlayDecisions.add(new EndPhaseDecision(GameState.TurnPhase.MONEY));

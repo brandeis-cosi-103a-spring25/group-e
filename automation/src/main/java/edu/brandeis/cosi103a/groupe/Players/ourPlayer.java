@@ -197,8 +197,8 @@ public abstract class ourPlayer implements Player{
     public Hand makeHand() {
        playedCards = ImmutableList.of();
        unplayedCards = ImmutableList.copyOf(hand);
-        Hand thisHand = new Hand(playedCards, unplayedCards);
-        return thisHand;
+       Hand thisHand = new Hand(playedCards, unplayedCards);
+       return thisHand;
     }
     
     //not sure
