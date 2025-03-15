@@ -3,6 +3,7 @@ package edu.brandeis;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -116,15 +117,21 @@ public class GameEngineTest {
         
         GameEngine engine = new GameEngine(mockPlayer1, mockPlayer2, new ConsoleGameObserver());
     
-       // Test card distribution logic
+        // Test card distribution logic
         engine.distributeCards(mockPlayer1, mockPlayer2, mockSupply);
 
-        verify(mockPlayer1, times(7)).addCardToDeck(any(CryptocurrencyCard.class));
-        verify(mockPlayer2, times(7)).addCardToDeck(any(CryptocurrencyCard.class));
-        verify(mockSupply, times(14)).takeCard(Card.Type.BITCOIN); // 7 cards for each player
+        // Verify 7 Bitcoin cards were added to each player's deck
+        verify(mockPlayer1, times(7)).addCardToDeck(argThat(card -> card.getType() == Card.Type.BITCOIN));
+        verify(mockPlayer2, times(7)).addCardToDeck(argThat(card -> card.getType() == Card.Type.BITCOIN));
 
-        verify(mockPlayer1, times(3)).addCardToDeck(any(AutomationCard.class));
-        verify(mockPlayer2, times(3)).addCardToDeck(any(AutomationCard.class));
-        verify(mockSupply, times(6)).takeCard(Card.Type.METHOD); // 3 cards for each player
+        // Verify 14 Bitcoin cards were taken from the supply
+        verify(mockSupply, times(14)).takeCard(Card.Type.BITCOIN); 
+
+        // Verify 3 Method cards were added to each player's deck
+        verify(mockPlayer1, times(3)).addCardToDeck(argThat(card -> card.getType() == Card.Type.METHOD));
+        verify(mockPlayer2, times(3)).addCardToDeck(argThat(card -> card.getType() == Card.Type.METHOD));
+
+        // Verify 6 Method cards were taken from the supply
+        verify(mockSupply, times(6)).takeCard(Card.Type.METHOD); 
     }
 }

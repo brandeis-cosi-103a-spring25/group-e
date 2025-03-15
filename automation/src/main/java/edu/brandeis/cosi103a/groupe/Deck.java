@@ -78,7 +78,7 @@ public class Deck {
      */
     public int getTotalAp() {
         return cards.stream()
-                    .filter(card -> card instanceof AutomationCard)
+                    .filter(card -> card.getType() == Card.Type.MODULE || card.getType() == Card.Type.METHOD || card.getType() == Card.Type.FRAMEWORK)
                     .mapToInt(Card::getValue)
                     .sum();
     }
@@ -87,6 +87,6 @@ public class Deck {
      * Prints the contents of the deck.
      */
     public void printDeck() {
-        cards.forEach(card -> System.out.println("- " + card.getDescription() + " (AP: " + card.getValue() + ")"));
+        cards.forEach(card -> System.out.println("- " + card.getDescription() + " (Value: " + card.getValue()+ ")"));
     }
 }

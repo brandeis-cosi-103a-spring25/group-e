@@ -3,10 +3,13 @@ package edu.brandeis.cosi103a.groupe.Players;
 import com.google.common.collect.ImmutableList;
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.GameState;
+import edu.brandeis.cosi.atg.api.GameState.TurnPhase;
 import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.cards.Card;
 import edu.brandeis.cosi.atg.api.decisions.BuyDecision;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
+import edu.brandeis.cosi.atg.api.decisions.EndPhaseDecision;
+import edu.brandeis.cosi.atg.api.decisions.PlayCardDecision;
 import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.event.GameEvent;
 import java.util.Optional;
@@ -66,7 +69,8 @@ public class BigMoneyPlayer extends ourPlayer {
 
         if ("Buy".equalsIgnoreCase(phase)) {
             return makeBuyDecision(state, options);
-        } else {
+        } 
+        else{
             setMoney(playHand());
             return null;
         }
@@ -84,15 +88,16 @@ public class BigMoneyPlayer extends ourPlayer {
 
         if (boughtCard < 1) {
         int availableBuys = state.getAvailableBuys();
-        System.out.println("buy option amount: " + availableBuys);
+        System.out.println("Buy option amount: " + availableBuys);
         if (availableBuys <= 0 || availableMoney <= 0) {
             System.out.println(name + ": No available buys left.");
             return options.get(0); // Safe fallback
         }
-
+        
+        System.out.println("Money " + availableMoney);
         final BuyDecision[] bestPurchase = {null};
         for (Decision decision : options) {
-            System.out.println("money " + availableMoney);
+            System.out.println(decision.toString());//
 
             if (decision instanceof BuyDecision buyDecision) {
                 int cost = buyDecision.getCardType().getCost();
