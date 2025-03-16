@@ -93,6 +93,31 @@ public class GameEngine implements Engine {
         moneyPhase(player);
         buyPhase(player);
         cleanupPhase(player);
+        actionPhase(player);
+    }
+
+    public void actionPhase(ourPlayer player) throws PlayerViolationException {
+        boolean endPhaseSelected = false;
+        System.out.println("Action phase for " + player.getName());
+        player.setPhase("Action");
+        List<Decision> possibleDecisions = generatePossibleActionDecisions(player, player.getHand());
+        GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.ACTION, possibleDecisions.size()-1, player.getMoney(), 0, supply.getGameDeck());
+        Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions), Optional.empty());
+
+        if (decision instanceof PlayCardDecision) {
+            PlayCardDecision playDecision = (PlayCardDecision) decision;
+            Card playedCard = playDecision.getCard();
+            if (playedCard.getType() == Card.Type.METHOD) {
+                player.playCard(playedCard);
+                PlayCardEvent playEvent = new PlayCardEvent(playedCard, player.getName());
+                GameState playState = new GameState(player.getName(), player.getHand(), 
+                                                     GameState.TurnPhase.ACTION, possibleDecisions.size()-1, player.getMoney(), 0, 
+                                                     supply.getGameDeck());
+                observer.notifyEvent(playState, playEvent);
+            }
+        } else if (decision instanceof EndPhaseDecision) {
+            endPhaseSelected = true;
+        }
     }
 
     // MONEY PHASE
@@ -214,6 +239,21 @@ public class GameEngine implements Engine {
         // Always allow ending the phase
         possibleBuyDecisions.add(new EndPhaseDecision(GameState.TurnPhase.BUY));
         return possibleBuyDecisions;
+    }
+    public List<Decision> generatePossibleActionDecisions(ourPlayer player, Hand hand) {
+        List<Decision> possibleActionDecisions = new ArrayList<>();
+        List<Card> cards = player.getCards();
+
+        // Add ActionDecisions for each unplayed action card
+        for (Card card : cards) {
+            if (card.getCategory() == Card.Type.Category.ACTION) {
+                possibleActionDecisions.add(new PlayCardDecision(card));        
+            }
+        }
+
+        // Always allow ending the phase
+        possibleActionDecisions.add(new EndPhaseDecision(GameState.TurnPhase.ACTION));
+        return possibleActionDecisions;
     }
     
     public List<Decision> generatePossiblePlayDecisions(ourPlayer player, Hand hand) {
