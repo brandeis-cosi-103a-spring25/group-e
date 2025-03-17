@@ -169,7 +169,7 @@ public class GameEngine implements Engine {
                             }
                             break;
                         case TECH_DEBT:
-                            player.drawHand(1);
+                            player.draw(1);
                             player.incrementActions(1);
                             player.incrementMoney(1);
                             int emptyPiles = supply.getEmptyPileCount();
