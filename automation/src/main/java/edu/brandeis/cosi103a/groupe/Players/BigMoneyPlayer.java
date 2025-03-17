@@ -84,43 +84,49 @@ public class BigMoneyPlayer extends ourPlayer {
      */
     private Decision makeBuyDecision(GameState state, ImmutableList<Decision> options) {
         int boughtCard = 0;
-        int availableMoney = getMoney();
-
-        if (boughtCard < 1) {
-        int availableBuys = state.getAvailableBuys();
-        System.out.println("Buy option amount: " + availableBuys);
-        if (availableBuys <= 0 || availableMoney <= 0) {
-            System.out.println(name + ": No available buys left.");
-            return options.get(0); // Safe fallback
-        }
+        int availableMoney = state.getSpendableMoney(); 
+        //int availableMoney = getMoney();  // Make sure this is correct
+    
+        System.out.println("Checking buy decision for " + getName());
+        System.out.println("Available money: " + availableMoney);
+        System.out.println("Available buys: " + state.getAvailableBuys());
         
-        System.out.println("Money " + availableMoney);
-        final BuyDecision[] bestPurchase = {null};
-        for (Decision decision : options) {
-            System.out.println(decision.toString());//
-
-            if (decision instanceof BuyDecision buyDecision) {
-                int cost = buyDecision.getCardType().getCost();
-                if (cost <= availableMoney) { // Only consider affordable purchases
-                    if (bestPurchase[0] == null || cost > bestPurchase[0].getCardType().getCost()) {
-                        bestPurchase[0] = buyDecision;
+        if (boughtCard < 1) {
+            int availableBuys = state.getAvailableBuys();
+            if (availableBuys <= 0 || availableMoney <= 0) {
+                System.out.println(getName() + ": No available buys left. Returning options.get(0)");
+                return options.get(0); // Safe fallback
+            }
+            
+            System.out.println("Valid buy phase, checking best card...");
+    
+            BuyDecision[] bestPurchase = {null};
+            for (Decision decision : options) {
+                if (decision instanceof BuyDecision buyDecision) {
+                    int cost = buyDecision.getCardType().getCost();
+                    System.out.println("Checking card: " + buyDecision.getCardType().name() + " Cost: " + cost);
+                    
+                    if (cost <= availableMoney) { // Only consider affordable purchases
+                        if (bestPurchase[0] == null || cost > bestPurchase[0].getCardType().getCost()) {
+                            System.out.println("Selecting: " + buyDecision.getCardType().name());
+                            bestPurchase[0] = buyDecision;
+                        }
                     }
                 }
             }
+    
+            if (bestPurchase[0] != null) {
+                System.out.println(getName() + " chose to buy: " + bestPurchase[0].getCardType().name());
+                observer.ifPresent(obs -> obs.notifyEvent(state, new GameEvent(getName() + " bought " + bestPurchase[0].getCardType().name())));
+                boughtCard++;
+                return bestPurchase[0];
+            }
         }
-
-        if (bestPurchase[0] != null) {
-            
-            System.out.println(name + " chose to buy: " + bestPurchase[0].getCardType().name());
-            observer.ifPresent(obs -> obs.notifyEvent(state, new GameEvent(name + " bought " + bestPurchase[0].getCardType().name())));
-            boughtCard ++;
-            return bestPurchase[0];
-           
-        }
+        
+        System.out.println(getName() + ": No valid buy available. Returning options.get(0)");
+        return options.get(0); // Safe fallback
     }
-        System.out.println(name + ": No valid buy available.");
-        return options.get(0); // Safe fallback to prevent errors
-    }
+    
 
 
     public void setObserver(GameObserver observer) {

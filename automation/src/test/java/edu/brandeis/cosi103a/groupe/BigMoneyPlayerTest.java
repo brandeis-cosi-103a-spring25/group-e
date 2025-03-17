@@ -23,20 +23,21 @@ public class BigMoneyPlayerTest {
     @Before
     public void setUp() {
         player = new BigMoneyPlayer("TestPlayer");
+        player.setPhase("Buy");  // Ensure phase is set for correct logic execution
 
-        // Create real BuyDecision instances using card types
-        moneyDecision = new BuyDecision(Card.Type.BITCOIN);      // Assume MONEY is a valid card type
-        frameworkDecision = new BuyDecision(Card.Type.FRAMEWORK); // Assume FRAMEWORK is a valid card type
+        // Create BuyDecision instances using proper parameters
+        moneyDecision = new BuyDecision(Card.Type.BITCOIN);      // Adjusted to match the expected constructor
+        frameworkDecision = new BuyDecision(Card.Type.FRAMEWORK); // Adjusted to match the expected constructor
 
-        // Create a real GameState (assuming buy phase)
+        // Mock GameState with enough money for testing
         gameState = new GameState(
             "TestPlayer",
-            null,  // Hand is not needed for this test
-            GameState.TurnPhase.BUY, // Assume it's the buy phase
-            1, // Available actions (not used in this test but required)
-            0, // Spendable money
-            1, // Available buys
-            null // Deck is not needed for this test
+            null,  // No hand needed
+            GameState.TurnPhase.BUY,
+            1,  // Available actions
+            0, // Plenty of money
+            1,  // Available buys
+            null // Deck not needed
         );
     }
 
@@ -44,36 +45,34 @@ public class BigMoneyPlayerTest {
     public void testMakeDecision_BuysFrameworkWhenAffordable() {
         gameState = new GameState(
             "TestPlayer",
-            null,  // Hand is not needed for this test
-            GameState.TurnPhase.BUY, // Assume it's the buy phase
-            1, // Available actions (not used in this test but required)
-            8, // Spendable money
-            1, // Available buys
-            null // Deck is not needed for this test
+            null,
+            GameState.TurnPhase.BUY,
+            2, 
+            10, // Enough money for Framework
+            2, 
+            null
         );
         ImmutableList<Decision> options = ImmutableList.of(moneyDecision, frameworkDecision);
         Decision decision = player.makeDecision(gameState, options, Optional.empty());
 
-        assertEquals(frameworkDecision, decision);
+        assertEquals(frameworkDecision, decision); // Framework is more expensive, so should be chosen
     }
 
     @Test
     public void testMakeDecision_BuysMoneyWhenFrameworkTooExpensive() {
-        // Modify gameState to have only 4 money (can't afford Framework)
         gameState = new GameState(
             "TestPlayer",
             null,
             GameState.TurnPhase.BUY,
-            1, // Available actions
-            4, // Only 4 money available
-            1, // Available buys
+            2, 
+            4, // Not enough for Framework
+            2, 
             null
         );
 
         ImmutableList<Decision> options = ImmutableList.of(moneyDecision, frameworkDecision);
         Decision decision = player.makeDecision(gameState, options, Optional.empty());
 
-        assertEquals(moneyDecision, decision);
+        assertEquals(moneyDecision, decision); // Chooses money when Framework is too expensive
     }
 }
-

@@ -239,7 +239,7 @@ public abstract class ourPlayer implements Player{
         }
     }
 
-    public Card chooseActionCardToPlay() {
+    public Card chooseActionCardToPlay() { 
         for (Card card : hand) {
             if (card.getCategory() == Card.Type.Category.ACTION) {
                 return card;
@@ -248,7 +248,7 @@ public abstract class ourPlayer implements Player{
         return null;
     }
 
-    public Card trashCardFromHand() {
+    public Card trashCardFromHand() { //need to fix
         if (!hand.isEmpty()) {
             return hand.remove(0);
         }
@@ -259,7 +259,7 @@ public abstract class ourPlayer implements Player{
         return new Card(Card.Type.BITCOIN, cost);
     }
 
-    public void gainCard(Card card) {
+    public void gainCard(Card card) { //need to fix?
         discardPile.add(card);
     }
 
