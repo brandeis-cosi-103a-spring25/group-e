@@ -22,6 +22,7 @@ import edu.brandeis.cosi.atg.api.event.GainCardEvent;
 import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
 import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
+import edu.brandeis.cosi103a.groupe.Cards.ActionCard;
 
 /*
  * This class simulates simlpified game play for the Automation card game.
@@ -31,6 +32,8 @@ public class GameEngine implements Engine {
     private final GameObserver observer;
     private final ourPlayer player1, player2;
     private final Supply supply;
+    private ActionCard actionCardHandler = new ActionCard();
+
 
     public GameEngine(ourPlayer player1, ourPlayer player2, GameObserver observer) {
         this.player1 = player1;
@@ -89,34 +92,50 @@ public class GameEngine implements Engine {
     }
 
     private void playFullTurn(ourPlayer player) throws PlayerViolationException {
-
+        actionPhase(player);
         moneyPhase(player);
         buyPhase(player);
         cleanupPhase(player);
-        actionPhase(player);
     }
 
     public void actionPhase(ourPlayer player) throws PlayerViolationException {
         boolean endPhaseSelected = false;
         System.out.println("Action phase for " + player.getName());
         player.setPhase("Action");
-        List<Decision> possibleDecisions = generatePossibleActionDecisions(player, player.getHand());
-        GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.ACTION, possibleDecisions.size()-1, player.getMoney(), 0, supply.getGameDeck());
-        Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions), Optional.empty());
 
-        if (decision instanceof PlayCardDecision) {
-            PlayCardDecision playDecision = (PlayCardDecision) decision;
-            Card playedCard = playDecision.getCard();
-            if (playedCard.getType() == Card.Type.METHOD) {
+        while (!endPhaseSelected) {
+            List<Decision> possibleDecisions = generatePossibleActionDecisions(player, player.getHand());
+
+            if (possibleDecisions.isEmpty()) {
+                endPhaseSelected = true;
+                continue;
+            }
+
+            GameState currentState = new GameState(
+                player.getName(),
+                player.getHand(),
+                GameState.TurnPhase.ACTION,
+                possibleDecisions.size(),
+                player.getMoney(),
+                0,
+                supply.getGameDeck()
+            );
+
+            Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions), Optional.empty());
+
+            if (decision instanceof PlayCardDecision) {
+                PlayCardDecision playDecision = (PlayCardDecision) decision;
+                Card playedCard = playDecision.getCard();
+
                 player.playCard(playedCard);
                 PlayCardEvent playEvent = new PlayCardEvent(playedCard, player.getName());
-                GameState playState = new GameState(player.getName(), player.getHand(), 
-                                                     GameState.TurnPhase.ACTION, possibleDecisions.size()-1, player.getMoney(), 0, 
-                                                     supply.getGameDeck());
-                observer.notifyEvent(playState, playEvent);
+                observer.notifyEvent(currentState, playEvent);
+
+                actionCardHandler.playActionCard(playedCard, player);
+
+            } else if (decision instanceof EndPhaseDecision) {
+                endPhaseSelected = true;
             }
-        } else if (decision instanceof EndPhaseDecision) {
-            endPhaseSelected = true;
         }
     }
 
@@ -240,18 +259,16 @@ public class GameEngine implements Engine {
         possibleBuyDecisions.add(new EndPhaseDecision(GameState.TurnPhase.BUY));
         return possibleBuyDecisions;
     }
+    
     public List<Decision> generatePossibleActionDecisions(ourPlayer player, Hand hand) {
         List<Decision> possibleActionDecisions = new ArrayList<>();
-        List<Card> cards = player.getCards();
 
-        // Add ActionDecisions for each unplayed action card
-        for (Card card : cards) {
-            if (card.getCategory() == Card.Type.Category.ACTION) {
-                possibleActionDecisions.add(new PlayCardDecision(card));        
+        for (Card card : hand.getAllCards()) {
+            if (card.getType().getCategory() == Card.Type.Category.ACTION) {
+                possibleActionDecisions.add(new PlayCardDecision(card));
             }
         }
 
-        // Always allow ending the phase
         possibleActionDecisions.add(new EndPhaseDecision(GameState.TurnPhase.ACTION));
         return possibleActionDecisions;
     }
@@ -290,4 +307,6 @@ public class GameEngine implements Engine {
 
         return ImmutableList.copyOf(scores);
     }
+
+
 }
