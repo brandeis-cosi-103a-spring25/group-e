@@ -49,14 +49,13 @@ public class GameEngine implements Engine {
         distributeCards(player1, player2, supply);
         player1.shuffleDeck();
         player2.shuffleDeck();
-        
 
         player1.drawHand(5);
         player2.drawHand(5);
 
         Random random = new Random();
         boolean player1Starts = random.nextBoolean();
-        //supply.getCardQuantity(Card.Type.FRAMEWORK) > 0
+        // supply.getCardQuantity(Card.Type.FRAMEWORK) > 0
         int i = 2;
         while (i > 0) {
 
@@ -69,7 +68,7 @@ public class GameEngine implements Engine {
             }
             i = i - 1;
         }
-   
+
         return determineWinner();
     }
 
@@ -99,25 +98,94 @@ public class GameEngine implements Engine {
     public void actionPhase(ourPlayer player) throws PlayerViolationException {
         boolean endPhaseSelected = false;
         System.out.println("Action phase for " + player.getName());
-        player.setPhase("Action");
-        List<Decision> possibleDecisions = generatePossibleActionDecisions(player, player.getHand());
-        GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.ACTION, possibleDecisions.size()-1, player.getMoney(), 0, supply.getGameDeck());
-        Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions), Optional.empty());
+        while (!endPhaseSelected) {
+            player.setPhase("Action");
+            List<Decision> possibleDecisions = generatePossibleActionDecisions(player, player.getHand());
+            GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.ACTION,
+                    possibleDecisions.size() - 1, player.getMoney(), 0, supply.getGameDeck());
+            Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
+                    Optional.empty());
 
-        if (decision instanceof PlayCardDecision) {
-            PlayCardDecision playDecision = (PlayCardDecision) decision;
-            Card playedCard = playDecision.getCard();
-            if (playedCard.getType() == Card.Type.METHOD) {
-                player.playCard(playedCard);
-                PlayCardEvent playEvent = new PlayCardEvent(playedCard, player.getName());
-                GameState playState = new GameState(player.getName(), player.getHand(), 
-                                                     GameState.TurnPhase.ACTION, possibleDecisions.size()-1, player.getMoney(), 0, 
-                                                     supply.getGameDeck());
-                observer.notifyEvent(playState, playEvent);
+            if (decision instanceof PlayCardDecision) {
+                PlayCardDecision playDecision = (PlayCardDecision) decision;
+                Card playedCard = playDecision.getCard();
+                if (playedCard.getCategory() == Card.Type.Category.ACTION
+                        && playedCard.getType() != Card.Type.MONITORING) {
+
+                    player.playCard(playedCard);
+                    PlayCardEvent playEvent = new PlayCardEvent(playedCard, player.getName());
+                    GameState playState = new GameState(player.getName(), player.getHand(),
+                            GameState.TurnPhase.ACTION, possibleDecisions.size() - 1, player.getMoney(), 0,
+                            supply.getGameDeck());
+                    observer.notifyEvent(playState, playEvent);
+
+                    switch (playedCard.getType()) {
+                        case BACKLOG:
+                            player.incrementActions(1);
+                            int discarded = player.discardAnyNumberOfCards();
+                            player.draw(discarded);
+                            break;
+                        case CODE_REVIEW:
+                            player.draw(1);
+                            player.incrementActions(2);
+                            break;
+                        case DAILY_SCRUM:
+                            player.drawHand(4);
+                            player.incrementBuys(1);
+                            for (ourPlayer opponent : getOpponents(player)) {
+                                opponent.drawHand(1);
+                            }
+                            break;
+                        case EVERGREEN_TEST:
+                            player.drawHand(2);
+                            for (ourPlayer opponent : getOpponents(player)) {
+                                opponent.gainCard(new Card(Card.Type.BUG, 0));
+                            }
+                            break;
+                        case HACK:
+                            player.incrementMoney(2);
+                            for (ourPlayer opponent : getOpponents(player)) {
+                                opponent.discardDownTo(3);
+                            }
+                            break;
+                        case IPO:
+                            player.drawHand(2);
+                            player.incrementActions(1);
+                            player.incrementMoney(2);
+                            break;
+                        case PARALLELIZATION:
+                            Card actionCard = player.chooseActionCardToPlay();
+                            if (actionCard != null) {
+                                player.playCard(actionCard);
+                                player.playCard(actionCard);
+                            }
+                            break;
+                        case REFACTOR:
+                            Card trashedCard = player.trashCardFromHand();
+                            if (trashedCard != null) {
+                                int costLimit = trashedCard.getCost() + 2;
+                                Card gainedCard = player.gainCardUpToCost(costLimit);
+                                player.gainCard(gainedCard);
+                            }
+                            break;
+                        case TECH_DEBT:
+                            player.drawHand(1);
+                            player.incrementActions(1);
+                            player.incrementMoney(1);
+                            int emptyPiles = supply.getEmptyPileCount();
+                            for (int i = 0; i < emptyPiles; i++) {
+                                player.discardCard();
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            } else if (decision instanceof EndPhaseDecision) {
+                endPhaseSelected = true;
             }
-        } else if (decision instanceof EndPhaseDecision) {
-            endPhaseSelected = true;
         }
+
     }
 
     // MONEY PHASE
@@ -128,12 +196,14 @@ public class GameEngine implements Engine {
         // player.playHand();
         System.out.println("Current money: " + player.getMoney());
         while (!endPhaseSelected) {
-         
+
             List<Decision> possibleDecisions = generatePossiblePlayDecisions(player, player.getHand());
 
-            GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.MONEY, possibleDecisions.size()-1, totalMoneyInHand, 0, supply.getGameDeck());
+            GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.MONEY,
+                    possibleDecisions.size() - 1, totalMoneyInHand, 0, supply.getGameDeck());
             player.setPhase("Play");
-            Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions), Optional.empty());
+            Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
+                    Optional.empty());
 
             if (decision == null) {
                 endPhaseSelected = true;
@@ -142,17 +212,18 @@ public class GameEngine implements Engine {
                 PlayCardDecision playDecision = (PlayCardDecision) decision;
                 Card playedCard = playDecision.getCard();
 
-                if (playedCard.getType() == Card.Type.BITCOIN || playedCard.getType() == Card.Type.ETHEREUM || playedCard.getType() == Card.Type.DOGECOIN) {
+                if (playedCard.getType() == Card.Type.BITCOIN || playedCard.getType() == Card.Type.ETHEREUM
+                        || playedCard.getType() == Card.Type.DOGECOIN) {
                     totalMoneyInHand += playedCard.getValue();
                     player.playCard(playedCard);
                     player.setMoney(totalMoneyInHand);
 
                     PlayCardEvent playEvent = new PlayCardEvent(playedCard, player.getName());
-                    GameState playState = new GameState(player.getName(), player.getHand(), 
-                                                         GameState.TurnPhase.MONEY, possibleDecisions.size()-1, player.getMoney(), 0, 
-                                                         supply.getGameDeck());
+                    GameState playState = new GameState(player.getName(), player.getHand(),
+                            GameState.TurnPhase.MONEY, possibleDecisions.size() - 1, player.getMoney(), 0,
+                            supply.getGameDeck());
                     observer.notifyEvent(playState, playEvent);
-                } 
+                }
             } else if (decision instanceof EndPhaseDecision) {
                 endPhaseSelected = true;
             }
@@ -167,9 +238,11 @@ public class GameEngine implements Engine {
 
         while (!endPhaseSelected) {
             List<Decision> possibleDecisions = generatePossibleBuyDecisions(player, supply);
-            GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.BUY, 0, player.getMoney(), possibleDecisions.size()-1, supply.getGameDeck());
+            GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.BUY, 0,
+                    player.getMoney(), possibleDecisions.size() - 1, supply.getGameDeck());
             player.setPhase("Buy");
-            Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions), Optional.empty());
+            Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
+                    Optional.empty());
 
             if (decision == null) {
                 endPhaseSelected = true;
@@ -179,19 +252,21 @@ public class GameEngine implements Engine {
                 Card purchasedCard = new Card(buyDecision.getCardType(), 0);
                 Card.Type cardType = purchasedCard.getType();
                 supply.takeCard(cardType);
-                
-                if (supply.getCardQuantity(purchasedCard.getType()) > 0 && player.getMoney() >= purchasedCard.getCost()) {
+
+                if (supply.getCardQuantity(purchasedCard.getType()) > 0
+                        && player.getMoney() >= purchasedCard.getCost()) {
                     player.purchaseCard(purchasedCard, supply);
                     GainCardEvent buyCardEvent = new GainCardEvent(purchasedCard.getType(), player.getName());
-                    GameState buyCardState = new GameState(player.getName(), player.getHand(), 
-                                                           GameState.TurnPhase.BUY, 
-                                                           0, player.getMoney(), possibleDecisions.size()-1, 
-                                                           supply.getGameDeck());
+                    GameState buyCardState = new GameState(player.getName(), player.getHand(),
+                            GameState.TurnPhase.BUY,
+                            0, player.getMoney(), possibleDecisions.size() - 1,
+                            supply.getGameDeck());
                     observer.notifyEvent(buyCardState, buyCardEvent);
-                  //purchasedCard instanceof AutomationCard && purchasedCard.getDescription().equals("Framework")
-                  if (purchasedCard instanceof AutomationCard && purchasedCard.getDescription().equals("Framework")) {
+                    // purchasedCard instanceof AutomationCard &&
+                    // purchasedCard.getDescription().equals("Framework")
+                    if (purchasedCard instanceof AutomationCard && purchasedCard.getDescription().equals("Framework")) {
                         System.out.println(player.getName() + " purchased a Framework card!");
-                   }
+                    }
                 } else {
                     throw new PlayerViolationException("Invalid purchase attempt.");
                 }
@@ -205,13 +280,15 @@ public class GameEngine implements Engine {
     // CLEANUP PHASE
     public void cleanupPhase(ourPlayer player) {
         player.cleanup();
-        observer.notifyEvent(new GameState(player.getName(), player.getHand(), GameState.TurnPhase.CLEANUP, 0, 0, 0, supply.getGameDeck()),
-                             new EndTurnEvent());
+        observer.notifyEvent(
+                new GameState(player.getName(), player.getHand(), GameState.TurnPhase.CLEANUP, 0, 0, 0,
+                        supply.getGameDeck()),
+                new EndTurnEvent());
         player.drawHand(5);
     }
 
     // Selects a random card from the available cards that are in the supply
-   
+
     public List<Card> availableCardsToBuy(ourPlayer player, List<Card> cards) {
         List<Card> availableToBuy = new ArrayList<>();
 
@@ -227,7 +304,6 @@ public class GameEngine implements Engine {
     public List<Decision> generatePossibleBuyDecisions(ourPlayer player, Supply supply) {
         List<Decision> possibleBuyDecisions = new ArrayList<>();
         List<Card> cards = supply.getAvailableCardsInSupply();
-     
 
         // Add BuyDecisions if the player has enough crypto
         for (Card card : availableCardsToBuy(player, cards)) {
@@ -240,6 +316,7 @@ public class GameEngine implements Engine {
         possibleBuyDecisions.add(new EndPhaseDecision(GameState.TurnPhase.BUY));
         return possibleBuyDecisions;
     }
+
     public List<Decision> generatePossibleActionDecisions(ourPlayer player, Hand hand) {
         List<Decision> possibleActionDecisions = new ArrayList<>();
         List<Card> cards = player.getCards();
@@ -247,7 +324,7 @@ public class GameEngine implements Engine {
         // Add ActionDecisions for each unplayed action card
         for (Card card : cards) {
             if (card.getCategory() == Card.Type.Category.ACTION) {
-                possibleActionDecisions.add(new PlayCardDecision(card));        
+                possibleActionDecisions.add(new PlayCardDecision(card));
             }
         }
 
@@ -255,7 +332,7 @@ public class GameEngine implements Engine {
         possibleActionDecisions.add(new EndPhaseDecision(GameState.TurnPhase.ACTION));
         return possibleActionDecisions;
     }
-    
+
     public List<Decision> generatePossiblePlayDecisions(ourPlayer player, Hand hand) {
         List<Decision> possiblePlayDecisions = new ArrayList<>();
         List<Card> cards = player.getCards();
@@ -263,21 +340,30 @@ public class GameEngine implements Engine {
         // Add PlayCardDecisions for each unplayed card
         for (Card card : cards) {
             if (card.getType() == Card.Type.BITCOIN) {
-                possiblePlayDecisions.add(new PlayCardDecision(card));        
+                possiblePlayDecisions.add(new PlayCardDecision(card));
+            } else if (card.getType() == Card.Type.ETHEREUM) {
+                possiblePlayDecisions.add(new PlayCardDecision(card));
+            } else if (card.getType() == Card.Type.DOGECOIN) {
+                possiblePlayDecisions.add(new PlayCardDecision(card));
             }
-            else if (card.getType() == Card.Type.ETHEREUM) {
-                possiblePlayDecisions.add(new PlayCardDecision(card));        
-            }
-            else if (card.getType() == Card.Type.DOGECOIN) {
-                possiblePlayDecisions.add(new PlayCardDecision(card));        
-        }
         }
 
         // Always allow ending the phase
         possiblePlayDecisions.add(new EndPhaseDecision(GameState.TurnPhase.MONEY));
         return possiblePlayDecisions;
     }
-  
+
+    // Helper method to get opponents of a player
+    private List<ourPlayer> getOpponents(ourPlayer player) {
+        List<ourPlayer> opponents = new ArrayList<>();
+        if (!player.equals(player1)) {
+            opponents.add(player1);
+        }
+        if (!player.equals(player2)) {
+            opponents.add(player2);
+        }
+        return opponents;
+    }
 
     // WINNING LOGIC
     public ImmutableList<ScorePair> determineWinner() {

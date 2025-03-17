@@ -32,6 +32,8 @@ public abstract class ourPlayer implements Player{
     private ImmutableCollection<Card> playedCards;
     private ImmutableCollection<Card> unplayedCards;
     private int money;
+    private int actions; // Tracks the number of actions the player has
+    private int buys; // Tracks the number of buys the player has
 
     /*
      * Constructor for the player
@@ -208,4 +210,64 @@ public abstract class ourPlayer implements Player{
         hand.remove(card);
         discardPile.add(card);
     } 
+    public void incrementActions(int amount) {
+        actions += amount;
+    }
+
+    public void incrementBuys(int amount) {
+        buys += amount;
+    }
+
+    public void incrementMoney(int amount) {
+        money += amount;
+    }
+
+    public int discardAnyNumberOfCards() {
+        int discarded = hand.size();
+        discardPile.addAll(hand);
+        hand.clear();
+        return discarded;
+    }
+
+    public void draw(int count) {
+        // Simulated draw logic
+    }
+
+    public void discardDownTo(int count) {
+        while (hand.size() > count) {
+            discardPile.add(hand.remove(0));
+        }
+    }
+
+    public Card chooseActionCardToPlay() {
+        for (Card card : hand) {
+            if (card.getCategory() == Card.Type.Category.ACTION) {
+                return card;
+            }
+        }
+        return null;
+    }
+
+    public Card trashCardFromHand() {
+        if (!hand.isEmpty()) {
+            return hand.remove(0);
+        }
+        return null;
+    }
+
+    public Card gainCardUpToCost(int cost) { //need to fix
+        return new Card(Card.Type.BITCOIN, cost);
+    }
+
+    public void gainCard(Card card) {
+        discardPile.add(card);
+    }
+
+    public void discardCard() {
+        if (!hand.isEmpty()) {
+            discardPile.add(hand.remove(0));
+        }
+    }
+
+   
 }

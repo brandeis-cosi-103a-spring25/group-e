@@ -85,4 +85,14 @@ public class Supply {
     public GameDeck getGameDeck() {
         return new GameDeck(ImmutableMap.copyOf(cardQuantities));
     }
+    
+    public int getEmptyPileCount() {
+        int emptyCount = 0;
+        for (int quantity : cardQuantities.values()) {
+            if (quantity == 0) {
+                emptyCount++;
+            }
+        }
+        return emptyCount;
+    }
 }
