@@ -92,7 +92,7 @@ public class GameEngine implements Engine {
         moneyPhase(player);
         buyPhase(player);
         cleanupPhase(player);
-        actionPhase(player);
+        //actionPhase(player);
     }
 
     public void actionPhase(ourPlayer player) throws PlayerViolationException {
