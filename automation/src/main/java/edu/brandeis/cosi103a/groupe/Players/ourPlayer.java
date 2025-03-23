@@ -268,6 +268,8 @@ public abstract class ourPlayer implements Player{
             discardPile.add(hand.remove(0));
         }
     }
-
+    public int getHandSize() {
+        return hand.size();
+    }
    
 }

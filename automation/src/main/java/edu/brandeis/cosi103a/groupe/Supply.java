@@ -29,6 +29,16 @@ public class Supply {
         cardQuantities.put(Card.Type.BITCOIN, 60);
         cardQuantities.put(Card.Type.ETHEREUM, 40);
         cardQuantities.put(Card.Type.DOGECOIN, 30);
+        cardQuantities.put(Card.Type.BACKLOG, 10);
+        cardQuantities.put(Card.Type.CODE_REVIEW, 10);
+        cardQuantities.put(Card.Type.DAILY_SCRUM, 10);
+        cardQuantities.put(Card.Type.EVERGREEN_TEST, 10);
+        cardQuantities.put(Card.Type.HACK, 10);
+        cardQuantities.put(Card.Type.IPO, 10);
+        cardQuantities.put(Card.Type.PARALLELIZATION, 10);
+        cardQuantities.put(Card.Type.REFACTOR, 10);
+        cardQuantities.put(Card.Type.TECH_DEBT, 10);
+        cardQuantities.put(Card.Type.MONITORING, 10);
 
         cardTypeIds.put(Card.Type.MODULE, 1);
         cardTypeIds.put(Card.Type.METHOD, 2);
@@ -36,6 +46,16 @@ public class Supply {
         cardTypeIds.put(Card.Type.BITCOIN, 4);
         cardTypeIds.put(Card.Type.ETHEREUM, 5);
         cardTypeIds.put(Card.Type.DOGECOIN, 6);
+        cardTypeIds.put(Card.Type.BACKLOG, 7);
+        cardTypeIds.put(Card.Type.CODE_REVIEW, 8);
+        cardTypeIds.put(Card.Type.DAILY_SCRUM, 9);
+        cardTypeIds.put(Card.Type.EVERGREEN_TEST, 10);
+        cardTypeIds.put(Card.Type.HACK, 11);
+        cardTypeIds.put(Card.Type.IPO, 12);
+        cardTypeIds.put(Card.Type.PARALLELIZATION, 13);
+        cardTypeIds.put(Card.Type.REFACTOR, 14);
+        cardTypeIds.put(Card.Type.TECH_DEBT, 15);
+        cardTypeIds.put(Card.Type.MONITORING, 16);
     }
 
     /**
