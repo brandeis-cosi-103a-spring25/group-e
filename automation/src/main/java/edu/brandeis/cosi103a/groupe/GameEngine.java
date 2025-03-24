@@ -20,6 +20,7 @@ import edu.brandeis.cosi.atg.api.decisions.PlayCardDecision;
 import edu.brandeis.cosi.atg.api.event.EndTurnEvent;
 import edu.brandeis.cosi.atg.api.event.GainCardEvent;
 import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
+import edu.brandeis.cosi103a.groupe.Cards.ActionCard;
 import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 
@@ -31,11 +32,13 @@ public class GameEngine implements Engine {
     private final GameObserver observer;
     private final ourPlayer player1, player2;
     private final Supply supply;
+    private ActionCard actionCardHandler;
 
     public GameEngine(ourPlayer player1, ourPlayer player2, GameObserver observer) {
         this.player1 = player1;
         this.player2 = player2;
         this.supply = new Supply();
+        this.actionCardHandler = new ActionCard(supply, this);
         this.observer = observer;
     }
 
@@ -92,7 +95,7 @@ public class GameEngine implements Engine {
         moneyPhase(player);
         buyPhase(player);
         cleanupPhase(player);
-        //actionPhase(player);
+        actionPhase(player);
     }
 
     public void actionPhase(ourPlayer player) throws PlayerViolationException {
@@ -109,8 +112,7 @@ public class GameEngine implements Engine {
             if (decision instanceof PlayCardDecision) {
                 PlayCardDecision playDecision = (PlayCardDecision) decision;
                 Card playedCard = playDecision.getCard();
-                if (playedCard.getCategory() == Card.Type.Category.ACTION
-                        && playedCard.getType() != Card.Type.MONITORING) {
+                if (playedCard.getCategory() == Card.Type.Category.ACTION) {
 
                     player.playCard(playedCard);
                     PlayCardEvent playEvent = new PlayCardEvent(playedCard, player.getName());
@@ -118,68 +120,9 @@ public class GameEngine implements Engine {
                             GameState.TurnPhase.ACTION, possibleDecisions.size() - 1, player.getMoney(), 0,
                             supply.getGameDeck());
                     observer.notifyEvent(playState, playEvent);
+                    actionCardHandler.playActionCard(playedCard, player);
 
-                    switch (playedCard.getType()) {
-                        case BACKLOG:
-                            player.incrementActions(1);
-                            int discarded = player.discardAnyNumberOfCards();
-                            player.draw(discarded);
-                            break;
-                        case CODE_REVIEW:
-                            player.draw(1);
-                            player.incrementActions(2);
-                            break;
-                        case DAILY_SCRUM:
-                            player.drawHand(4);
-                            player.incrementBuys(1);
-                            for (ourPlayer opponent : getOpponents(player)) {
-                                opponent.drawHand(1);
-                            }
-                            break;
-                        case EVERGREEN_TEST:
-                            player.drawHand(2);
-                            for (ourPlayer opponent : getOpponents(player)) {
-                                opponent.gainCard(new Card(Card.Type.BUG, 0));
-                            }
-                            break;
-                        case HACK:
-                            player.incrementMoney(2);
-                            for (ourPlayer opponent : getOpponents(player)) {
-                                opponent.discardDownTo(3);
-                            }
-                            break;
-                        case IPO:
-                            player.drawHand(2);
-                            player.incrementActions(1);
-                            player.incrementMoney(2);
-                            break;
-                        case PARALLELIZATION:
-                            Card actionCard = player.chooseActionCardToPlay();
-                            if (actionCard != null) {
-                                player.playCard(actionCard);
-                                player.playCard(actionCard);
-                            }
-                            break;
-                        case REFACTOR:
-                            Card trashedCard = player.trashCardFromHand();
-                            if (trashedCard != null) {
-                                int costLimit = trashedCard.getCost() + 2;
-                                Card gainedCard = player.gainCardUpToCost(costLimit);
-                                player.gainCard(gainedCard);
-                            }
-                            break;
-                        case TECH_DEBT:
-                            player.draw(1);
-                            player.incrementActions(1);
-                            player.incrementMoney(1);
-                            int emptyPiles = supply.getEmptyPileCount();
-                            for (int i = 0; i < emptyPiles; i++) {
-                                player.discardCard();
-                            }
-                            break;
-                        default:
-                            break;
-                    }
+                    
                 }
             } else if (decision instanceof EndPhaseDecision) {
                 endPhaseSelected = true;
@@ -354,7 +297,7 @@ public class GameEngine implements Engine {
     }
 
     // Helper method to get opponents of a player
-    private List<ourPlayer> getOpponents(ourPlayer player) {
+    public List<ourPlayer> getOpponents(ourPlayer player) {
         List<ourPlayer> opponents = new ArrayList<>();
         if (!player.equals(player1)) {
             opponents.add(player1);
