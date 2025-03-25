@@ -84,4 +84,23 @@ public class RandomPlayerTest {
         
         assertTrue(decision == null); // Decision should be one of the available options
     }
+
+    @Test
+    public void testMoney() {
+        RandomBuyPlayer player = new RandomBuyPlayer("TestPlayer");
+        player.setMoney(5);
+        assertEquals(5, player.getMoney());
+
+        Card bitcoinCard = new Card(Card.Type.BITCOIN, 1);
+        Card eth = new Card(Card.Type.ETHEREUM, 5);
+
+
+        ImmutableList<Card> handCards = ImmutableList.of(bitcoinCard, eth);
+  
+        player.setHand(handCards);
+        System.out.println(player.getHand().toString());
+        int val = player.playHand();
+        assertEquals(9, player.getMoney() + val);
+
+    }
 }
