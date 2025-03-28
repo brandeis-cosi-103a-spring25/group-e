@@ -32,8 +32,8 @@ public abstract class ourPlayer implements Player{
     private ImmutableCollection<Card> playedCards;
     private ImmutableCollection<Card> unplayedCards;
     private int money;
-    private int actions; // Tracks the number of actions the player has
-    private int buys; // Tracks the number of buys the player has
+    public int actions = 1; // Tracks the number of actions the player has
+    public int buys = 1; // Tracks the number of buys the player has
 
     /*
      * Constructor for the player
@@ -276,6 +276,14 @@ public void setHand(List<Card> hand) {
     }
     public int getHandSize() {
         return hand.size();
+    }
+
+    public int getActions() {
+        return actions;
+    }
+
+    public int getBuys() {
+        return buys;
     }
    
 }
