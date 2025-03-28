@@ -30,10 +30,8 @@ import edu.brandeis.cosi.atg.api.event.GainCardEvent;
 import edu.brandeis.cosi.atg.api.event.GameEvent;
 import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
 import edu.brandeis.cosi103a.groupe.ConsoleGameObserver;
-import edu.brandeis.cosi103a.groupe.GameEngine;
 import edu.brandeis.cosi103a.groupe.Supply;
-import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
-import edu.brandeis.cosi103a.groupe.Cards.CryptocurrencyCard;
+import edu.brandeis.cosi103a.groupe.Engine.GameEngine;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 
 public class GameEngineTest {
@@ -63,12 +61,12 @@ public class GameEngineTest {
     @Test
     public void testMoneyPhase() throws PlayerViolationException {
        ImmutableList<Card> playedCards = ImmutableList.of();  // or some other list of played cards
-       ImmutableList<Card> unplayedCards = ImmutableList.of(new CryptocurrencyCard(Card.Type.BITCOIN, 1));
+       ImmutableList<Card> unplayedCards = ImmutableList.of(new Card(Card.Type.BITCOIN, 1));
        Hand mockHand = new Hand(playedCards, unplayedCards);
         
 
         when(player1.getHand()).thenReturn(mockHand);
-        when(player1.makeDecision(any(), any(), any())).thenReturn(new PlayCardDecision(new CryptocurrencyCard(Card.Type.BITCOIN, 1)))
+        when(player1.getPlayer().makeDecision(any(), any(), any())).thenReturn(new PlayCardDecision(new Card(Card.Type.BITCOIN, 1)))
                                                       .thenReturn(new EndPhaseDecision(GameState.TurnPhase.MONEY));
 
         engine.moneyPhase(player1);
@@ -91,15 +89,15 @@ public class GameEngineTest {
     @Test
     public void testPlay() throws PlayerViolationException {
         ImmutableList<Card> playedCards = ImmutableList.of();  // or some other list of played cards
-        ImmutableList<Card> unplayedCards = ImmutableList.of(new CryptocurrencyCard(Card.Type.BITCOIN, 1));
+        ImmutableList<Card> unplayedCards = ImmutableList.of(new Card(Card.Type.BITCOIN, 1));
         Hand mockHand = new Hand(playedCards, unplayedCards);
 
         when(player1.getHand()).thenReturn(mockHand);
         when(player2.getHand()).thenReturn(mockHand);
-        when(player1.makeDecision(any(), any(), any())).thenReturn(new PlayCardDecision(new CryptocurrencyCard(Card.Type.BITCOIN, 1)))
+        when(player1.getPlayer().makeDecision(any(), any(), any())).thenReturn(new PlayCardDecision(new Card(Card.Type.BITCOIN, 1)))
                                                       .thenReturn(new EndPhaseDecision(GameState.TurnPhase.MONEY))
                                                       .thenReturn(new EndPhaseDecision(GameState.TurnPhase.BUY));
-        when(player2.makeDecision(any(), any(), any())).thenReturn(new PlayCardDecision(new CryptocurrencyCard(Card.Type.BITCOIN, 1)))
+        when(player2.getPlayer().makeDecision(any(), any(), any())).thenReturn(new PlayCardDecision(new Card(Card.Type.BITCOIN, 1)))
                                                       .thenReturn(new EndPhaseDecision(GameState.TurnPhase.MONEY))
                                                       .thenReturn(new EndPhaseDecision(GameState.TurnPhase.BUY));
 

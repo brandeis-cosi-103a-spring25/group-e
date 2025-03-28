@@ -5,8 +5,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import edu.brandeis.cosi.atg.api.cards.Card;
-import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
-import edu.brandeis.cosi103a.groupe.Cards.CryptocurrencyCard;
 
 public class CardTest {
 
@@ -15,30 +13,27 @@ public class CardTest {
      */
     @Test
     public void testAutomationCard() {
-        AutomationCard card = new AutomationCard(Card.Type.METHOD, 1);
-        assertEquals(1, card.getAp());
+        Card card = new Card(Card.Type.METHOD, 1);
         assertEquals(2, card.getCost());
 
-        AutomationCard card2 = new AutomationCard(Card.Type.MODULE, 1);
-        assertEquals(3, card2.getAp());
+        Card card2 = new Card(Card.Type.MODULE, 1);
         assertEquals(5, card2.getCost());
 
-        AutomationCard card3 = new AutomationCard(Card.Type.FRAMEWORK, 1);
-        assertEquals(6, card3.getAp());
+        Card card3 = new Card(Card.Type.FRAMEWORK, 1);
         assertEquals(8, card3.getCost());
     }
 
     @Test
     public void testCryptocurrencyCard() {
-        CryptocurrencyCard card = new CryptocurrencyCard(Card.Type.BITCOIN, 31);
+        Card card = new Card(Card.Type.BITCOIN, 31);
         assertEquals(1, card.getValue());
         assertEquals(1, card.getCost());
 
-        CryptocurrencyCard card2 = new CryptocurrencyCard(Card.Type.ETHEREUM, 31);
+        Card card2 = new Card(Card.Type.ETHEREUM, 31);
         assertEquals(2, card2.getValue());
         assertEquals(3, card2.getCost());
 
-        CryptocurrencyCard card3 = new CryptocurrencyCard(Card.Type.DOGECOIN, 31);
+        Card card3 = new Card(Card.Type.DOGECOIN, 31);
         assertEquals(3, card3.getValue());
         assertEquals(6, card3.getCost());
     }

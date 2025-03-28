@@ -7,12 +7,13 @@ import com.google.common.collect.ImmutableList;
 
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.GameState;
+import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.decisions.BuyDecision;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.event.GameEvent;
 
-public class RandomBuyPlayer extends ourPlayer {
+public class RandomBuyPlayer implements Player{
     private final String name;
     private Optional<GameObserver> observer = Optional.empty();
     private String phase;
@@ -22,7 +23,7 @@ public class RandomBuyPlayer extends ourPlayer {
      * @param name The player's name.
      */
     public RandomBuyPlayer(String name) {
-        super(name);
+        super();
         this.name = name;
     }
 
@@ -35,9 +36,7 @@ public class RandomBuyPlayer extends ourPlayer {
         return observer;
     }
 
-    public void setPhase(String phase) {
-        this.phase = phase;
-    }
+
     /**
      * Implements `makeDecision()` for the AI player.
      * @param state The current game state.
@@ -48,6 +47,8 @@ public class RandomBuyPlayer extends ourPlayer {
     @Override
     public Decision makeDecision(GameState state, ImmutableList<Decision> options, Optional<Event> reason) {
      
+        this.phase = state.getTurnPhase().toString(); // Get the current phase of the game
+
         if (options.isEmpty()) {
             System.out.println(getName() + ": No decisions available.");
             return null;
