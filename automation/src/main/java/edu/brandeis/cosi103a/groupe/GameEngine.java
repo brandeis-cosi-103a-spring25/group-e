@@ -57,7 +57,7 @@ public class GameEngine implements Engine {
         boolean player1Starts = random.nextBoolean();
         // supply.getCardQuantity(Card.Type.FRAMEWORK) > 0
         int i = 2;
-        while (i > 0) {
+        while (supply.getCardQuantity(Card.Type.FRAMEWORK) > 0) {
 
             if (player1Starts) {
                 playFullTurn(player1);
@@ -66,7 +66,6 @@ public class GameEngine implements Engine {
                 playFullTurn(player2);
                 playFullTurn(player1);
             }
-            i = i - 1;
         }
 
         return determineWinner();
@@ -92,6 +91,7 @@ public class GameEngine implements Engine {
         moneyPhase(player);
         buyPhase(player);
         cleanupPhase(player);
+        System.out.println("points for " + player.getName() + ": " + player.getTotalAp());
         //actionPhase(player);
     }
 
