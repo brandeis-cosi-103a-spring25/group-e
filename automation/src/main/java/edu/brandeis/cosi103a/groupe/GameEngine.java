@@ -91,17 +91,18 @@ public class GameEngine implements Engine {
     }
 
     private void playFullTurn(ourPlayer player) throws PlayerViolationException {
-
+        actionPhase(player);
         moneyPhase(player);
         buyPhase(player);
         cleanupPhase(player);
-        actionPhase(player);
+        
     }
 
     public void actionPhase(ourPlayer player) throws PlayerViolationException {
+        
         boolean endPhaseSelected = false;
         System.out.println("Action phase for " + player.getName());
-        while (!endPhaseSelected) {
+        while (!endPhaseSelected && player.getActions() > 0) {
             player.setPhase("Action");
             List<Decision> possibleDecisions = generatePossibleActionDecisions(player, player.getHand());
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.ACTION,
@@ -121,14 +122,29 @@ public class GameEngine implements Engine {
                             supply.getGameDeck());
                     observer.notifyEvent(playState, playEvent);
                     actionCardHandler.playActionCard(playedCard, player);
+                    player.incrementActions(-1);
 
-                    
                 }
             } else if (decision instanceof EndPhaseDecision) {
                 endPhaseSelected = true;
             }
         }
 
+    }
+
+    public boolean reactionPhase(ourPlayer opponent, ourPlayer attacker, Card attackCard) {
+        boolean endPhaseSelected = false;
+        System.out.println(opponent.getName() + " has Monitoring! Reaction Phase begins.");
+
+        boolean reacted = generateReactionDecision(opponent, new Card(Card.Type.MONITORING, 0));
+    
+        if (reacted) {
+            System.out.println(opponent.getName() + " played Monitoring and negated " + attacker.getName() + "'s attack!");
+            return true; // Attack is negated for this opponent
+        }
+    
+        return false;
+       
     }
 
     // MONEY PHASE
@@ -179,7 +195,7 @@ public class GameEngine implements Engine {
 
         boolean endPhaseSelected = false;
 
-        while (!endPhaseSelected) {
+        while (!endPhaseSelected && player.getBuys() > 0) {
             List<Decision> possibleDecisions = generatePossibleBuyDecisions(player, supply);
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.BUY, 0,
                     player.getMoney(), possibleDecisions.size() - 1, supply.getGameDeck());
@@ -210,6 +226,7 @@ public class GameEngine implements Engine {
                     if (purchasedCard instanceof AutomationCard && purchasedCard.getDescription().equals("Framework")) {
                         System.out.println(player.getName() + " purchased a Framework card!");
                     }
+                    player.incrementBuys(-1);
                 } else {
                     throw new PlayerViolationException("Invalid purchase attempt.");
                 }
@@ -228,6 +245,8 @@ public class GameEngine implements Engine {
                         supply.getGameDeck()),
                 new EndTurnEvent());
         player.drawHand(5);
+        player.actions = 1;
+        player.buys = 1;
     }
 
     // Selects a random card from the available cards that are in the supply
@@ -306,6 +325,23 @@ public class GameEngine implements Engine {
             opponents.add(player2);
         }
         return opponents;
+    }
+
+    public boolean generateReactionDecision(ourPlayer player, Card reactionCard) {
+        List<Decision> possibleReactDecisions = new ArrayList<>();
+        
+    
+        possibleReactDecisions.add(new PlayCardDecision(reactionCard));
+        possibleReactDecisions.add(new EndPhaseDecision(GameState.TurnPhase.REACTION));
+    
+        String decision = player.getPlayerInput(); // Simulating user input
+    
+        if (decision.equalsIgnoreCase("yes")) {
+            player.playAction(reactionCard, this); // Play the reaction card
+            return true; // Reaction was played
+        }
+    
+        return false; // Player chose not to react
     }
 
     // WINNING LOGIC

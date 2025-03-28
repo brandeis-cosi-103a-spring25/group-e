@@ -20,6 +20,24 @@ public class ActionCard {
 
     // Play an action card
     public void playActionCard(Card card, ourPlayer player) {
+        boolean isAttackCard = isAttack(card);
+    
+        if (isAttackCard) {
+            // 🔹 Before executing the attack, allow opponents to react
+            for (ourPlayer opponent : gameEngine.getOpponents(player)) {
+                if (opponent.getCards().stream().anyMatch(opponentCard -> opponentCard.getType() == Card.Type.MONITORING)) {
+                    boolean reacted = gameEngine.reactionPhase(opponent, player, card);
+    
+                    if (reacted) {
+                        System.out.println(opponent.getName() + " negated " + player.getName() + "'s attack with Monitoring!");
+                        return; // Attack is negated for this opponent
+                    }
+                }
+            }
+        }
+    
+      
+        
         switch (card.getType()) {
             case BACKLOG:
                 handleBacklog((ourPlayer) player);
@@ -138,5 +156,10 @@ public class ActionCard {
     }
     private List<ourPlayer> getOpponents(ourPlayer player) {
         return gameEngine.getOpponents(player);
+    }
+   
+
+    private boolean isAttack(Card card) {
+        return card.getType() == Card.Type.HACK || card.getType() == Card.Type.EVERGREEN_TEST; // Add more attack cards as needed
     }
 }
