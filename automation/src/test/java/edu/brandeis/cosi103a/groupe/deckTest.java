@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import edu.brandeis.cosi.atg.api.cards.Card;
-import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
 
 public class deckTest {
 
@@ -16,7 +15,7 @@ public class deckTest {
 
         // Add cards to the deck
         for (int i = 0; i < 10; i++) {
-            deck.addCard(new AutomationCard(Card.Type.METHOD, i));
+            deck.addCard(new Card(Card.Type.METHOD, i));
         }
 
         // Shuffle the deck
@@ -36,7 +35,7 @@ public class deckTest {
         Deck deck = new Deck();
 
         // Add a card to the deck
-        AutomationCard card = new AutomationCard(Card.Type.METHOD, 1);
+        Card card = new Card(Card.Type.METHOD, 1);
         deck.addCard(card);
 
         // Check if the card was added

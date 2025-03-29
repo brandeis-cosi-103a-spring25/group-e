@@ -1,8 +1,10 @@
-package edu.brandeis.cosi103a.groupe;
+package edu.brandeis.cosi103a.groupe.Engine;
 
 import edu.brandeis.cosi.atg.api.Engine;
+import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.Player.ScorePair;
+import edu.brandeis.cosi103a.groupe.ConsoleGameObserver;
 import edu.brandeis.cosi103a.groupe.Players.*;
 import edu.brandeis.cosi.atg.api.PlayerViolationException;
 
@@ -17,19 +19,22 @@ public class EngineHarness{
 
         // Select Player 1 Type
         System.out.print("Select Player 1 (1: Human, 2: AI BigMoney, 3: AI RandomBuy): ");
-        ourPlayer player1 = createPlayer(scanner, "Player 1");
+        Player player1 = createPlayer(scanner, "Player 1");
+        ourPlayer ourPlayer1 = new ourPlayer(player1.getName());
+           ourPlayer1.setPlayer(player1);
 
         // Select Player 2 Type
         System.out.print("Select Player 2 (1: Human, 2: AI BigMoney, 3: AI RandomBuy): ");
-        ourPlayer player2 = createPlayer(scanner, "Player 2");
-
+        Player player2 = createPlayer(scanner, "Player 2");
+        ourPlayer ourPlayer2 = new ourPlayer(player2.getName());
+        ourPlayer1.setPlayer(player2);
 
 
         // Initialize Observer to print game events
         GameObserver observer = new ConsoleGameObserver();
 
         // Create and run the game engine
-        Engine engine = GameEngine.makeEngine(player1, player2, observer);
+        Engine engine = GameEngine.makeEngine(ourPlayer1, ourPlayer2, observer);
         try {
             ImmutableList<ScorePair> results = engine.play();
 
@@ -46,16 +51,16 @@ public class EngineHarness{
     /**
      * Helper method to create either a human or AI player.
      */
-    private static ourPlayer createPlayer(Scanner scanner, String playerName) {
+    private static Player createPlayer(Scanner scanner, String playerName) {
         while (true) {
             String choice = scanner.nextLine().trim();
             switch (choice) {
                 case "1":
-                    return new ConsolePlayer(playerName);
+                    return (Player) new ConsolePlayer(playerName);
                 case "2":
-                    return new BigMoneyPlayer(playerName);
+                    return (Player) new BigMoneyPlayer(playerName);
                 case "3": 
-                    return new RandomBuyPlayer(playerName);
+                    return (Player) new RandomBuyPlayer(playerName);
                 default:
                     System.out.print("Invalid choice. Enter 1 (Human), 2 (AI BigMoney), or 3 (AI RandomBuy): ");
             }

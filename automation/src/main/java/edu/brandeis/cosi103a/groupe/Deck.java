@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import edu.brandeis.cosi.atg.api.cards.Card;
-import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
 /*
  * This class creates a deck of cards
  * 
@@ -78,7 +77,7 @@ public class Deck {
      */
     public int getTotalAp() {
         return cards.stream()
-                    .filter(card -> card.getType() == Card.Type.MODULE || card.getType() == Card.Type.METHOD || card.getType() == Card.Type.FRAMEWORK)
+                    .filter(card -> card.getCategory().equals(Card.Type.Category.VICTORY))
                     .mapToInt(Card::getValue)
                     .sum();
     }

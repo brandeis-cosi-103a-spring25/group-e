@@ -7,7 +7,7 @@ import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.cards.Card;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 import edu.brandeis.cosi103a.groupe.Supply;
-import edu.brandeis.cosi103a.groupe.GameEngine;
+import edu.brandeis.cosi103a.groupe.Engine.GameEngine;
 
 public class ActionCard {
     private final Supply supply;

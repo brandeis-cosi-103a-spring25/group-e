@@ -17,7 +17,7 @@ import java.util.Optional;
 /**
  * AI player that follows the "Big Money" strategy.
  */
-public class BigMoneyPlayer extends ourPlayer {
+public class BigMoneyPlayer implements Player {
     private final String name;
     private Optional<GameObserver> observer = Optional.empty();
     private String phase;
@@ -27,7 +27,7 @@ public class BigMoneyPlayer extends ourPlayer {
      * @param name The player's name.
      */
     public BigMoneyPlayer(String name) {
-        super(name);
+        super();
         this.name = name;
     }
 
@@ -45,9 +45,7 @@ public class BigMoneyPlayer extends ourPlayer {
         return observer;
     }
 
-    public void setPhase(String phase) {
-        this.phase = phase;
-    }
+   
 
     /**
      * Implements `makeDecision()` for the AI player.
@@ -59,6 +57,7 @@ public class BigMoneyPlayer extends ourPlayer {
     @Override
     public Decision makeDecision(GameState state, ImmutableList<Decision> options, Optional<Event> reason) {
      
+        this.phase = state.getTurnPhase().toString(); // Get the current phase of the game
         if (options.isEmpty()) {
             System.out.println(getName() + ": No decisions available.");
             return null;

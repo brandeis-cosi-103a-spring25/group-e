@@ -1,4 +1,4 @@
-package edu.brandeis.cosi103a.groupe;
+package edu.brandeis.cosi103a.groupe.Engine;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,8 +8,10 @@ import java.util.Scanner;
 
 import com.google.common.collect.ImmutableList;
 
+import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.Player.ScorePair;
 import edu.brandeis.cosi.atg.api.PlayerViolationException;
+import edu.brandeis.cosi103a.groupe.ConsoleGameObserver;
 import edu.brandeis.cosi103a.groupe.Players.BigMoneyPlayer;
 import edu.brandeis.cosi103a.groupe.Players.RandomBuyPlayer;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
@@ -80,7 +82,7 @@ public class SimulationHarness {
      * @param player2 The second player.
      * @throws PlayerViolationException 
      */
-    protected void simulateMatchup(ourPlayer player1, ourPlayer player2) throws PlayerViolationException {
+    public void simulateMatchup(ourPlayer player1, ourPlayer player2) throws PlayerViolationException {
         int player1Wins = 0;
         int player2Wins = 0;
         int ties = 0; // Track the number of ties
@@ -105,6 +107,8 @@ public class SimulationHarness {
             } else {
                 ties++; // Increment ties if scores are equal
             }
+            player1.clear();
+            player2.clear();
         }
         
         // Update global stats
@@ -175,7 +179,7 @@ public class SimulationHarness {
         return totalLosses;
     }
 
-    protected GameEngine createGameEngine(ourPlayer player1, ourPlayer player2) {
+    public GameEngine createGameEngine(ourPlayer player1, ourPlayer player2) {
         return new GameEngine(player1, player2, new ConsoleGameObserver());
     }
 
@@ -195,7 +199,7 @@ public class SimulationHarness {
         SimulationHarness harness = new SimulationHarness(numGames);
 
         // Hardcoded list of available players
-        List<ourPlayer> availablePlayers = List.of(
+        List<Player> availablePlayers = List.of(
             new BigMoneyPlayer("Big Money 1"),
             new BigMoneyPlayer("Big Money 2"),
             new RandomBuyPlayer("Random Buy 1"),
@@ -217,7 +221,9 @@ public class SimulationHarness {
             try{
               int playerIndex = Integer.parseInt(index) - 1;
               if (playerIndex >= 0 && playerIndex < availablePlayers.size()) {
-                harness.addPlayer(availablePlayers.get(playerIndex));
+                ourPlayer newPlayer = new ourPlayer(availablePlayers.get(playerIndex).getName());
+                newPlayer.setPlayer(availablePlayers.get(playerIndex));
+                harness.addPlayer(newPlayer);
               } else {
                 System.out.println("Invalid player index: " + index);
               }

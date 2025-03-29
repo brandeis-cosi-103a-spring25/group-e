@@ -1,4 +1,4 @@
-package edu.brandeis.cosi103a.groupe;
+package edu.brandeis.cosi103a.groupe.Engine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,7 @@ import edu.brandeis.cosi.atg.api.EngineCreator;
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.Hand;
+import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.Player.ScorePair;
 import edu.brandeis.cosi.atg.api.PlayerViolationException;
 import edu.brandeis.cosi.atg.api.cards.Card;
@@ -20,8 +21,8 @@ import edu.brandeis.cosi.atg.api.decisions.PlayCardDecision;
 import edu.brandeis.cosi.atg.api.event.EndTurnEvent;
 import edu.brandeis.cosi.atg.api.event.GainCardEvent;
 import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
+import edu.brandeis.cosi103a.groupe.Supply;
 import edu.brandeis.cosi103a.groupe.Cards.ActionCard;
-import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 
 /*
@@ -43,8 +44,8 @@ public class GameEngine implements Engine {
     }
 
     @EngineCreator
-    public static Engine makeEngine(ourPlayer player1, ourPlayer player2, GameObserver observer) {
-        return new GameEngine(player1, player2, observer);
+    public static Engine makeEngine(ourPlayer player12, ourPlayer player22, GameObserver observer) {
+        return new GameEngine(player12, player22, observer);
     }
 
     @Override
@@ -107,7 +108,7 @@ public class GameEngine implements Engine {
             List<Decision> possibleDecisions = generatePossibleActionDecisions(player, player.getHand());
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.ACTION,
                     possibleDecisions.size() - 1, player.getMoney(), 0, supply.getGameDeck());
-            Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
+            Decision decision = player.getPlayer().makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
                     Optional.empty());
 
             if (decision instanceof PlayCardDecision) {
@@ -161,7 +162,7 @@ public class GameEngine implements Engine {
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.MONEY,
                     possibleDecisions.size() - 1, totalMoneyInHand, 0, supply.getGameDeck());
             player.setPhase("Play");
-            Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
+            Decision decision = player.getPlayer().makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
                     Optional.empty());
 
             if (decision == null) {
@@ -171,8 +172,7 @@ public class GameEngine implements Engine {
                 PlayCardDecision playDecision = (PlayCardDecision) decision;
                 Card playedCard = playDecision.getCard();
 
-                if (playedCard.getType() == Card.Type.BITCOIN || playedCard.getType() == Card.Type.ETHEREUM
-                        || playedCard.getType() == Card.Type.DOGECOIN) {
+                if (playedCard.getCategory().equals(Card.Type.Category.MONEY)) {
                     totalMoneyInHand += playedCard.getValue();
                     player.playCard(playedCard);
                     player.setMoney(totalMoneyInHand);
@@ -200,7 +200,7 @@ public class GameEngine implements Engine {
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.BUY, 0,
                     player.getMoney(), possibleDecisions.size() - 1, supply.getGameDeck());
             player.setPhase("Buy");
-            Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
+            Decision decision = player.getPlayer().makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
                     Optional.empty());
 
             if (decision == null) {
@@ -221,9 +221,8 @@ public class GameEngine implements Engine {
                             0, player.getMoney(), possibleDecisions.size() - 1,
                             supply.getGameDeck());
                     observer.notifyEvent(buyCardState, buyCardEvent);
-                    // purchasedCard instanceof AutomationCard &&
-                    // purchasedCard.getDescription().equals("Framework")
-                    if (purchasedCard instanceof AutomationCard && purchasedCard.getDescription().equals("Framework")) {
+              
+                    if (purchasedCard.getCategory().equals(Card.Type.Category.VICTORY) && purchasedCard.getDescription().equals("Framework")) {
                         System.out.println(player.getName() + " purchased a Framework card!");
                     }
                     player.incrementBuys(-1);
@@ -231,7 +230,6 @@ public class GameEngine implements Engine {
                     throw new PlayerViolationException("Invalid purchase attempt.");
                 }
             } else if (decision instanceof EndPhaseDecision) {
-                // System.out.println(player.getName() + " ended the BUY phase.");
                 endPhaseSelected = true;
             }
         }
@@ -301,14 +299,10 @@ public class GameEngine implements Engine {
 
         // Add PlayCardDecisions for each unplayed card
         for (Card card : cards) {
-            if (card.getType() == Card.Type.BITCOIN) {
+            if (card.getCategory().equals(Card.Type.Category.MONEY)) {
                 possiblePlayDecisions.add(new PlayCardDecision(card));
-            } else if (card.getType() == Card.Type.ETHEREUM) {
-                possiblePlayDecisions.add(new PlayCardDecision(card));
-            } else if (card.getType() == Card.Type.DOGECOIN) {
-                possiblePlayDecisions.add(new PlayCardDecision(card));
-            }
         }
+    }
 
         // Always allow ending the phase
         possiblePlayDecisions.add(new EndPhaseDecision(GameState.TurnPhase.MONEY));
@@ -350,8 +344,8 @@ public class GameEngine implements Engine {
         int player2Ap = player2.getTotalAp();
 
         List<ScorePair> scores = new ArrayList<>();
-        scores.add(new ScorePair(player1, player1Ap));
-        scores.add(new ScorePair(player2, player2Ap));
+        scores.add(new ScorePair(player1.getPlayer(), player1Ap));
+        scores.add(new ScorePair(player2.getPlayer(), player2Ap));
 
         return ImmutableList.copyOf(scores);
     }
