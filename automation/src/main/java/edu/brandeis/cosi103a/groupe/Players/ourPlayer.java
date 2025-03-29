@@ -88,6 +88,10 @@ public abstract class ourPlayer implements Player{
     }
     return playMoney;
 }
+
+public void setHand(List<Card> hand) {
+    this.hand = hand;
+}
     
     /**
      * Purchases a card from the hand, adding it to the discard pile.
@@ -196,6 +200,8 @@ public abstract class ourPlayer implements Player{
         return this.hand;
     }
 
+
+
     public Hand makeHand() {
        playedCards = ImmutableList.of();
        unplayedCards = ImmutableList.copyOf(hand);
@@ -268,6 +274,8 @@ public abstract class ourPlayer implements Player{
             discardPile.add(hand.remove(0));
         }
     }
-
+    public int getHandSize() {
+        return hand.size();
+    }
    
 }
