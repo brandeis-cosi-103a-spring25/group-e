@@ -35,9 +35,6 @@ public class ActionCard {
                 }
             }
         }
-    
-      
-        
         switch (card.getType()) {
             case BACKLOG:
                 handleBacklog((ourPlayer) player);
@@ -108,7 +105,7 @@ public class ActionCard {
 
     private void handleMonitoring(ourPlayer player) {
         player.draw(2);
-        //reaction phase.
+        
     }
 
     private void handleTech_Debt(ourPlayer player) {
@@ -123,7 +120,8 @@ public class ActionCard {
     }
 
     private void handleRefactor(ourPlayer player) {
-        Card trashedCard = player.trashCardFromHand();
+        
+        Card trashedCard = player.trashCardFromHand(card);
         if (trashedCard != null) {
             int costLimit = trashedCard.getCost() + 2;
             Card gainedCard = player.gainCardUpToCost(costLimit);
