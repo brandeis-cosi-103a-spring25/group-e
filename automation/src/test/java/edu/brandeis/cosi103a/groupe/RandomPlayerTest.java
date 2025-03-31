@@ -1,4 +1,5 @@
 package edu.brandeis.cosi103a.groupe;
+
 import static org.junit.Assert.*;
 
 import com.google.common.collect.ImmutableList;
@@ -14,27 +15,29 @@ import org.junit.Test;
 import java.util.Optional;
 
 public class RandomPlayerTest {
-    
+
     @Test
-   public void testConstructor() {
+    public void testConstructor() {
         RandomBuyPlayer player = new RandomBuyPlayer("TestPlayer");
         assertEquals("TestPlayer", player.getName());
     }
 
     @Test
-   public  void testMakeBuyDecision() {
+    public void testMakeBuyDecision() {
         RandomBuyPlayer player = new RandomBuyPlayer("TestPlayer");
-        player.setPhase("Buy");
+        ourPlayer ourPlayer1 = new ourPlayer(player.getName());
+        ourPlayer1.setPlayer(player);
+        ourPlayer1.setPhase("Buy");
 
         // Mock GameState
         GameState state = new GameState(
-            "TestPlayer",
-            null,
-            GameState.TurnPhase.BUY,
-            1,  // Available actions
-            10, // Enough money
-            1,  // Available buys
-            null // Deck not needed
+                "TestPlayer",
+                null,
+                GameState.TurnPhase.BUY,
+                1, // Available actions
+                10, // Enough money
+                1, // Available buys
+                null // Deck not needed
         );
 
         // Create mock decisions
@@ -43,14 +46,15 @@ public class RandomPlayerTest {
         ImmutableList<Decision> options = ImmutableList.of(decision1, decision2);
 
         Decision decision = player.makeDecision(state, options, Optional.empty());
-        
+
         assertTrue(options.contains(decision)); // Decision should be one of the available options
     }
-
 
     @Test
     public void testPlayDecision() {
         RandomBuyPlayer player = new RandomBuyPlayer("TestPlayer");
+        ourPlayer ourPlayer1 = new ourPlayer(player.getName());
+        ourPlayer1.setPlayer(player);
 
         Card bitcoinCard = new Card(Card.Type.BITCOIN, 1);
         Card frameworkCard = new Card(Card.Type.FRAMEWORK, 2);
@@ -58,49 +62,48 @@ public class RandomPlayerTest {
         ImmutableList<Card> handCards = ImmutableList.of(bitcoinCard, frameworkCard);
 
         Hand hand = new Hand(null, handCards);
-        player.setPhase("Play");
+
+        ourPlayer1.setPhase("Play");
 
         // Mock GameState
         GameState state = new GameState(
-            "TestPlayer",
-            hand,
-            GameState.TurnPhase.MONEY,
-            1,  // Available actions
-            10, // Enough money
-            1,  // Available buys
-            null // Deck not needed
+                "TestPlayer",
+                hand,
+                GameState.TurnPhase.MONEY,
+                1, // Available actions
+                10, // Enough money
+                1, // Available buys
+                null // Deck not needed
         );
-
 
         // Create mock decisions
         PlayCardDecision decision1 = new PlayCardDecision(bitcoinCard);
         PlayCardDecision decision2 = new PlayCardDecision(frameworkCard);
 
- 
         ImmutableList<Decision> options = ImmutableList.of(decision1, decision2);
-   
+
         Decision decision = player.makeDecision(state, options, Optional.empty());
-     
-        
+
         assertTrue(decision == null); // Decision should be one of the available options
     }
 
     @Test
     public void testMoney() {
         RandomBuyPlayer player = new RandomBuyPlayer("TestPlayer");
-        player.setMoney(5);
-        assertEquals(5, player.getMoney());
+        ourPlayer ourPlayer1 = new ourPlayer(player.getName());
+        ourPlayer1.setPlayer(player);
+        ourPlayer1.setMoney(5);
+        assertEquals(5, ourPlayer1.getMoney());
 
         Card bitcoinCard = new Card(Card.Type.BITCOIN, 1);
         Card eth = new Card(Card.Type.ETHEREUM, 5);
 
-
         ImmutableList<Card> handCards = ImmutableList.of(bitcoinCard, eth);
-  
-        player.setHand(handCards);
-        System.out.println(player.getHand().toString());
-        int val = player.playHand();
-        assertEquals(9, player.getMoney() + val);
+
+        ourPlayer1.setHand(handCards);
+        System.out.println(ourPlayer1.getHand().toString());
+        int val = ourPlayer1.playHand();
+        assertEquals(9, ourPlayer1.getMoney() + val);
 
     }
 }
