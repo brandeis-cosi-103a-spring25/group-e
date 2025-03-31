@@ -22,8 +22,6 @@ import edu.brandeis.cosi.atg.api.event.EndTurnEvent;
 import edu.brandeis.cosi.atg.api.event.GainCardEvent;
 import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
 
-import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
-
 import edu.brandeis.cosi103a.groupe.Supply;
 import edu.brandeis.cosi103a.groupe.Cards.ActionCard;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
