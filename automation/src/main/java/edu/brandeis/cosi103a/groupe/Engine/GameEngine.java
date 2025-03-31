@@ -96,11 +96,11 @@ public class GameEngine implements Engine {
         moneyPhase(player);
         buyPhase(player);
         cleanupPhase(player);
-        
+
     }
 
     public void actionPhase(ourPlayer player) throws PlayerViolationException {
-        
+
         boolean endPhaseSelected = false;
         System.out.println("Action phase for " + player.getName());
         while (!endPhaseSelected && player.getActions() > 0) {
@@ -134,18 +134,39 @@ public class GameEngine implements Engine {
     }
 
     public boolean reactionPhase(ourPlayer opponent, ourPlayer attacker, Card attackCard) {
-        boolean endPhaseSelected = false;
-        System.out.println(opponent.getName() + " has Monitoring! Reaction Phase begins.");
+        List<Decision> possibleDecisions = new ArrayList<>();
 
-        boolean reacted = generateReactionDecision(opponent, new Card(Card.Type.MONITORING, 0));
-    
-        if (reacted) {
-            System.out.println(opponent.getName() + " played Monitoring and negated " + attacker.getName() + "'s attack!");
-            return true; // Attack is negated for this opponent
+        possibleDecisions.add(new PlayCardDecision(new Card(Card.Type.MONITORING, 0)));
+        possibleDecisions.add(new EndPhaseDecision(GameState.TurnPhase.REACTION));
+
+        System.out.println(opponent.getName() + " has Monitoring! Reaction Phase begins.");
+        GameState currentState = new GameState(opponent.getName(), opponent.getHand(), GameState.TurnPhase.REACTION,
+                possibleDecisions.size(), opponent.getMoney(), 0, supply.getGameDeck());
+        Decision decision = opponent.getPlayer().makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
+                Optional.empty());
+
+        // If opponent decides to play a reaction, apply it
+        if (decision instanceof PlayCardDecision) {
+            PlayCardDecision playDecision = (PlayCardDecision) decision;
+            Card playedCard = playDecision.getCard();
+            if (playedCard.getType() == Card.Type.MONITORING) {
+                opponent.playCard(playedCard);
+                PlayCardEvent playEvent = new PlayCardEvent(playedCard, opponent.getName());
+                GameState playState = new GameState(opponent.getName(), opponent.getHand(),
+                        GameState.TurnPhase.REACTION, possibleDecisions.size(), opponent.getMoney(), 0,
+                        supply.getGameDeck());
+                observer.notifyEvent(playState, playEvent);
+                actionCardHandler.playActionCard(playedCard, opponent);
+
+                return true;
+
+            } else if (decision instanceof EndPhaseDecision) {
+                return false;
+            }
         }
-    
+
+        // Default return value if no decision is made
         return false;
-       
     }
 
     // MONEY PHASE
@@ -221,8 +242,9 @@ public class GameEngine implements Engine {
                             0, player.getMoney(), possibleDecisions.size() - 1,
                             supply.getGameDeck());
                     observer.notifyEvent(buyCardState, buyCardEvent);
-              
-                    if (purchasedCard.getCategory().equals(Card.Type.Category.VICTORY) && purchasedCard.getDescription().equals("Framework")) {
+
+                    if (purchasedCard.getCategory().equals(Card.Type.Category.VICTORY)
+                            && purchasedCard.getDescription().equals("Framework")) {
                         System.out.println(player.getName() + " purchased a Framework card!");
                     }
                     player.incrementBuys(-1);
@@ -301,8 +323,8 @@ public class GameEngine implements Engine {
         for (Card card : cards) {
             if (card.getCategory().equals(Card.Type.Category.MONEY)) {
                 possiblePlayDecisions.add(new PlayCardDecision(card));
+            }
         }
-    }
 
         // Always allow ending the phase
         possiblePlayDecisions.add(new EndPhaseDecision(GameState.TurnPhase.MONEY));
@@ -319,23 +341,6 @@ public class GameEngine implements Engine {
             opponents.add(player2);
         }
         return opponents;
-    }
-
-    public boolean generateReactionDecision(ourPlayer player, Card reactionCard) {
-        List<Decision> possibleReactDecisions = new ArrayList<>();
-        
-    
-        possibleReactDecisions.add(new PlayCardDecision(reactionCard));
-        possibleReactDecisions.add(new EndPhaseDecision(GameState.TurnPhase.REACTION));
-    
-        String decision = player.getPlayerInput(); // Simulating user input
-    
-        if (decision.equalsIgnoreCase("yes")) {
-            player.playAction(reactionCard, this); // Play the reaction card
-            return true; // Reaction was played
-        }
-    
-        return false; // Player chose not to react
     }
 
     // WINNING LOGIC

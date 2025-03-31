@@ -22,7 +22,7 @@ import edu.brandeis.cosi103a.groupe.Supply;
  * This class creates a player in the game
  * 
  */
-public class ourPlayer{
+public class ourPlayer {
     private Player thisPlayer;
     private String name, phase;
     private Deck deck;
@@ -37,6 +37,7 @@ public class ourPlayer{
 
     /*
      * Constructor for the player
+     * 
      * @param name The name of the player.
      */
     public ourPlayer(String name) {
@@ -48,6 +49,7 @@ public class ourPlayer{
 
     /**
      * Gets the name of the player.
+     * 
      * @return The name of the player.
      */
     public String getName() {
@@ -61,9 +63,10 @@ public class ourPlayer{
     public void setPlayer(Player player) {
         this.thisPlayer = player;
     }
-    
+
     /**
      * Draws a hand of cards from the deck.
+     * 
      * @param handSize The number of cards to draw.
      */
     public void drawHand(int handSize) {
@@ -76,33 +79,33 @@ public class ourPlayer{
         }
 
     }
-    
+
     /**
-     * Plays the hand of cards, adding the money from each card to the player's total.
+     * Plays the hand of cards, adding the money from each card to the player's
+     * total.
      */
     public int playHand() {
-       int playMoney = 0;
+        int playMoney = 0;
         for (Card card : hand) {
             if (card.getType() == Card.Type.BITCOIN) {
                 playMoney += 1;
-            }
-            else if (card.getType() == Card.Type.ETHEREUM) {
-                playMoney +=3;
-            }
-            else if (card.getType() == Card.Type.DOGECOIN) {
+            } else if (card.getType() == Card.Type.ETHEREUM) {
+                playMoney += 3;
+            } else if (card.getType() == Card.Type.DOGECOIN) {
                 playMoney += 5;
+            }
         }
+        return playMoney;
     }
-    return playMoney;
-}
 
-public void setHand(List<Card> hand) {
-    this.hand = hand;
-}
-    
+    public void setHand(List<Card> hand) {
+        this.hand = hand;
+    }
+
     /**
      * Purchases a card from the hand, adding it to the discard pile.
-     * @param card The card to purchase.
+     * 
+     * @param card   The card to purchase.
      * @param supply The supply to take the card from.
      */
     public void purchaseCard(Card card, Supply supply) {
@@ -110,13 +113,13 @@ public void setHand(List<Card> hand) {
         if (totalMoneyInHand >= card.getCost() && supply.takeCard(card.getType())) {
             discardPile.add(card);
             money -= card.getCost();
-        } 
+        }
     }
-
 
     public void setMoney(int val) {
         this.money = val;
     }
+
     /**
      * Cleans up the player's hand and discard pile.
      */
@@ -124,26 +127,30 @@ public void setHand(List<Card> hand) {
         discardPile.addAll(hand);
         hand.clear();
     }
-    
+
     /**
      * Gets the total AP of the player's deck and discard pile.
+     * 
      * @return The total AP.
      */
     public int getTotalAp() {
         int deckAp = deck.getTotalAp();
         int handAp = hand.stream()
-                         .filter(card -> card.getType() == Card.Type.MODULE || card.getType() == Card.Type.METHOD || card.getType() == Card.Type.FRAMEWORK)   
-                         .mapToInt(Card::getValue)
-                         .sum();
+                .filter(card -> card.getType() == Card.Type.MODULE || card.getType() == Card.Type.METHOD
+                        || card.getType() == Card.Type.FRAMEWORK)
+                .mapToInt(Card::getValue)
+                .sum();
         int discardPileAp = discardPile.stream()
-        .filter(card -> card.getType() == Card.Type.MODULE || card.getType() == Card.Type.METHOD || card.getType() == Card.Type.FRAMEWORK)   
-        .mapToInt(Card::getValue)
-                                       .sum();
+                .filter(card -> card.getType() == Card.Type.MODULE || card.getType() == Card.Type.METHOD
+                        || card.getType() == Card.Type.FRAMEWORK)
+                .mapToInt(Card::getValue)
+                .sum();
         return deckAp + handAp + discardPileAp;
     }
-    
+
     /**
      * Gets the current amount of money the player has.
+     * 
      * @return The current money.
      */
     public int getMoney() {
@@ -154,15 +161,16 @@ public void setHand(List<Card> hand) {
     public void setPhase(String phase) {
         this.phase = phase;
     }
-    
+
     /**
      * Adds a card to the deck.
+     * 
      * @param card The card to add.
      */
     public void addCardToDeck(Card card) {
         deck.addCard(card);
     }
-    
+
     /**
      * Shuffles the deck.
      */
@@ -177,9 +185,10 @@ public void setHand(List<Card> hand) {
     public ImmutableCollection<Card> getPlayedCards() {
         return this.playedCards;
     }
-    
+
     /**
-     * Reshuffles the deck by adding the discard pile back to the deck and shuffling.
+     * Reshuffles the deck by adding the discard pile back to the deck and
+     * shuffling.
      */
     private void reshuffleDeck() {
         deck.addCards(discardPile);
@@ -188,15 +197,16 @@ public void setHand(List<Card> hand) {
     }
 
     public void setObserver(GameObserver observer) {
-       this.observer = observer;
+        this.observer = observer;
     }
 
     public Optional<GameObserver> getObserver() {
         return Optional.ofNullable(observer);
     }
 
-     /**
+    /**
      * Gets the current hand of cards.
+     * 
      * @return The current hand of cards.
      */
     public Hand getHand() {
@@ -207,7 +217,6 @@ public void setHand(List<Card> hand) {
         return this.hand;
     }
 
-
     public void clear() {
         // Clear the player's hand and discard pile
         hand.clear();
@@ -215,25 +224,24 @@ public void setHand(List<Card> hand) {
         // Reset money, actions, and buys
         money = 0;
         actions = 0;
-        buys = 0; 
+        buys = 0;
     }
-
-
 
     public Hand makeHand() {
-       playedCards = ImmutableList.of();
-       unplayedCards = ImmutableList.copyOf(hand);
-       Hand thisHand = new Hand(playedCards, unplayedCards);
-       return thisHand;
+        playedCards = ImmutableList.of();
+        unplayedCards = ImmutableList.copyOf(hand);
+        Hand thisHand = new Hand(playedCards, unplayedCards);
+        return thisHand;
     }
-    
-    //not sure
+
+    // not sure
     public void playCard(Card card) {
         // Implement the logic to play a card
         // For example, remove the card from hand and add it to the played cards
         hand.remove(card);
         discardPile.add(card);
-    } 
+    }
+
     public void incrementActions(int amount) {
         actions += amount;
     }
@@ -263,7 +271,7 @@ public void setHand(List<Card> hand) {
         }
     }
 
-    public Card chooseActionCardToPlay() { 
+    public Card chooseActionCardToPlay() {
         for (Card card : hand) {
             if (card.getCategory() == Card.Type.Category.ACTION) {
                 return card;
@@ -272,18 +280,18 @@ public void setHand(List<Card> hand) {
         return null;
     }
 
-    public Card trashCardFromHand() { //need to fix
-        if (!hand.isEmpty()) {
-            return hand.remove(0);
-        }
-        return null;
+    public int trashCardFromHand(Card card) { // need to fix
+
+        hand.remove(card);
+        return card.getCost();
+
     }
 
-    public Card gainCardUpToCost(int cost) { //need to fix
+    public Card gainCardUpToCost(int cost) { // need to fix
         return new Card(Card.Type.BITCOIN, cost);
     }
 
-    public void gainCard(Card card) { //need to fix?
+    public void gainCard(Card card) { // need to fix?
         discardPile.add(card);
     }
 
@@ -292,6 +300,7 @@ public void setHand(List<Card> hand) {
             discardPile.add(hand.remove(0));
         }
     }
+
     public int getHandSize() {
         return hand.size();
     }
@@ -303,5 +312,5 @@ public void setHand(List<Card> hand) {
     public int getBuys() {
         return buys;
     }
-   
+
 }
