@@ -12,12 +12,12 @@ import edu.brandeis.cosi103a.groupe.*;
 import java.util.List;
 import java.util.Optional;
 
-public class networkPlayer implements Player {
+public class NetworkPlayer implements Player {
     private final String serverUrl;
     private final OkHttpClient client;
     private final Gson gson = new Gson();
 
-    public networkPlayer(String serverUrl) {
+    public NetworkPlayer(String serverUrl) {
         this.serverUrl = serverUrl;
         this.client = new OkHttpClient();
     }
