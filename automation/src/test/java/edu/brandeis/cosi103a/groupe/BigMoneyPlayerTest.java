@@ -8,6 +8,7 @@ import edu.brandeis.cosi.atg.api.cards.Card;
 import edu.brandeis.cosi.atg.api.decisions.BuyDecision;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi103a.groupe.Players.BigMoneyPlayer;
+import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +24,9 @@ public class BigMoneyPlayerTest {
     @Before
     public void setUp() {
         player = new BigMoneyPlayer("TestPlayer");
-        player.setPhase("Buy");  // Ensure phase is set for correct logic execution
+         ourPlayer ourPlayer1 = new ourPlayer(player.getName());
+        ourPlayer1.setPlayer(player);
+        ourPlayer1.setPhase("Buy");  // Ensure phase is set for correct logic execution
 
         // Create BuyDecision instances using proper parameters
         moneyDecision = new BuyDecision(Card.Type.BITCOIN);      // Adjusted to match the expected constructor
