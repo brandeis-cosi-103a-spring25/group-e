@@ -1,4 +1,4 @@
-package edu.brandeis.cosi103a.groupe;
+package edu.brandeis.cosi103a.groupe.Engine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,7 @@ import edu.brandeis.cosi.atg.api.EngineCreator;
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.Hand;
+import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.Player.ScorePair;
 import edu.brandeis.cosi.atg.api.PlayerViolationException;
 import edu.brandeis.cosi.atg.api.cards.Card;
@@ -20,7 +21,12 @@ import edu.brandeis.cosi.atg.api.decisions.PlayCardDecision;
 import edu.brandeis.cosi.atg.api.event.EndTurnEvent;
 import edu.brandeis.cosi.atg.api.event.GainCardEvent;
 import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
+<<<<<<< HEAD:automation/src/main/java/edu/brandeis/cosi103a/groupe/GameEngine.java
 import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
+=======
+import edu.brandeis.cosi103a.groupe.Supply;
+import edu.brandeis.cosi103a.groupe.Cards.ActionCard;
+>>>>>>> 063fe197fdc6b2202acc3d21a733e50925ed456a:automation/src/main/java/edu/brandeis/cosi103a/groupe/Engine/GameEngine.java
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 
 /*
@@ -40,8 +46,8 @@ public class GameEngine implements Engine {
     }
 
     @EngineCreator
-    public static Engine makeEngine(ourPlayer player1, ourPlayer player2, GameObserver observer) {
-        return new GameEngine(player1, player2, observer);
+    public static Engine makeEngine(ourPlayer player12, ourPlayer player22, GameObserver observer) {
+        return new GameEngine(player12, player22, observer);
     }
 
     @Override
@@ -87,23 +93,28 @@ public class GameEngine implements Engine {
     }
 
     private void playFullTurn(ourPlayer player) throws PlayerViolationException {
-
+        actionPhase(player);
         moneyPhase(player);
         buyPhase(player);
         cleanupPhase(player);
+<<<<<<< HEAD:automation/src/main/java/edu/brandeis/cosi103a/groupe/GameEngine.java
         System.out.println("points for " + player.getName() + ": " + player.getTotalAp());
         //actionPhase(player);
+=======
+        
+>>>>>>> 063fe197fdc6b2202acc3d21a733e50925ed456a:automation/src/main/java/edu/brandeis/cosi103a/groupe/Engine/GameEngine.java
     }
 
     public void actionPhase(ourPlayer player) throws PlayerViolationException {
+        
         boolean endPhaseSelected = false;
         System.out.println("Action phase for " + player.getName());
-        while (!endPhaseSelected) {
+        while (!endPhaseSelected && player.getActions() > 0) {
             player.setPhase("Action");
             List<Decision> possibleDecisions = generatePossibleActionDecisions(player, player.getHand());
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.ACTION,
                     possibleDecisions.size() - 1, player.getMoney(), 0, supply.getGameDeck());
-            Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
+            Decision decision = player.getPlayer().makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
                     Optional.empty());
 
             if (decision instanceof PlayCardDecision) {
@@ -118,6 +129,7 @@ public class GameEngine implements Engine {
                             GameState.TurnPhase.ACTION, possibleDecisions.size() - 1, player.getMoney(), 0,
                             supply.getGameDeck());
                     observer.notifyEvent(playState, playEvent);
+<<<<<<< HEAD:automation/src/main/java/edu/brandeis/cosi103a/groupe/GameEngine.java
 
                     switch (playedCard.getType()) {
                         case BACKLOG:
@@ -180,12 +192,32 @@ public class GameEngine implements Engine {
                         default:
                             break;
                     }
+=======
+                    actionCardHandler.playActionCard(playedCard, player);
+                    player.incrementActions(-1);
+
+>>>>>>> 063fe197fdc6b2202acc3d21a733e50925ed456a:automation/src/main/java/edu/brandeis/cosi103a/groupe/Engine/GameEngine.java
                 }
             } else if (decision instanceof EndPhaseDecision) {
                 endPhaseSelected = true;
             }
         }
 
+    }
+
+    public boolean reactionPhase(ourPlayer opponent, ourPlayer attacker, Card attackCard) {
+        boolean endPhaseSelected = false;
+        System.out.println(opponent.getName() + " has Monitoring! Reaction Phase begins.");
+
+        boolean reacted = generateReactionDecision(opponent, new Card(Card.Type.MONITORING, 0));
+    
+        if (reacted) {
+            System.out.println(opponent.getName() + " played Monitoring and negated " + attacker.getName() + "'s attack!");
+            return true; // Attack is negated for this opponent
+        }
+    
+        return false;
+       
     }
 
     // MONEY PHASE
@@ -202,7 +234,7 @@ public class GameEngine implements Engine {
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.MONEY,
                     possibleDecisions.size() - 1, totalMoneyInHand, 0, supply.getGameDeck());
             player.setPhase("Play");
-            Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
+            Decision decision = player.getPlayer().makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
                     Optional.empty());
 
             if (decision == null) {
@@ -212,8 +244,7 @@ public class GameEngine implements Engine {
                 PlayCardDecision playDecision = (PlayCardDecision) decision;
                 Card playedCard = playDecision.getCard();
 
-                if (playedCard.getType() == Card.Type.BITCOIN || playedCard.getType() == Card.Type.ETHEREUM
-                        || playedCard.getType() == Card.Type.DOGECOIN) {
+                if (playedCard.getCategory().equals(Card.Type.Category.MONEY)) {
                     totalMoneyInHand += playedCard.getValue();
                     player.playCard(playedCard);
                     player.setMoney(totalMoneyInHand);
@@ -236,12 +267,12 @@ public class GameEngine implements Engine {
 
         boolean endPhaseSelected = false;
 
-        while (!endPhaseSelected) {
+        while (!endPhaseSelected && player.getBuys() > 0) {
             List<Decision> possibleDecisions = generatePossibleBuyDecisions(player, supply);
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.BUY, 0,
                     player.getMoney(), possibleDecisions.size() - 1, supply.getGameDeck());
             player.setPhase("Buy");
-            Decision decision = player.makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
+            Decision decision = player.getPlayer().makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
                     Optional.empty());
 
             if (decision == null) {
@@ -262,16 +293,15 @@ public class GameEngine implements Engine {
                             0, player.getMoney(), possibleDecisions.size() - 1,
                             supply.getGameDeck());
                     observer.notifyEvent(buyCardState, buyCardEvent);
-                    // purchasedCard instanceof AutomationCard &&
-                    // purchasedCard.getDescription().equals("Framework")
-                    if (purchasedCard instanceof AutomationCard && purchasedCard.getDescription().equals("Framework")) {
+              
+                    if (purchasedCard.getCategory().equals(Card.Type.Category.VICTORY) && purchasedCard.getDescription().equals("Framework")) {
                         System.out.println(player.getName() + " purchased a Framework card!");
                     }
+                    player.incrementBuys(-1);
                 } else {
                     throw new PlayerViolationException("Invalid purchase attempt.");
                 }
             } else if (decision instanceof EndPhaseDecision) {
-                // System.out.println(player.getName() + " ended the BUY phase.");
                 endPhaseSelected = true;
             }
         }
@@ -285,6 +315,8 @@ public class GameEngine implements Engine {
                         supply.getGameDeck()),
                 new EndTurnEvent());
         player.drawHand(5);
+        player.actions = 1;
+        player.buys = 1;
     }
 
     // Selects a random card from the available cards that are in the supply
@@ -339,14 +371,10 @@ public class GameEngine implements Engine {
 
         // Add PlayCardDecisions for each unplayed card
         for (Card card : cards) {
-            if (card.getType() == Card.Type.BITCOIN) {
+            if (card.getCategory().equals(Card.Type.Category.MONEY)) {
                 possiblePlayDecisions.add(new PlayCardDecision(card));
-            } else if (card.getType() == Card.Type.ETHEREUM) {
-                possiblePlayDecisions.add(new PlayCardDecision(card));
-            } else if (card.getType() == Card.Type.DOGECOIN) {
-                possiblePlayDecisions.add(new PlayCardDecision(card));
-            }
         }
+    }
 
         // Always allow ending the phase
         possiblePlayDecisions.add(new EndPhaseDecision(GameState.TurnPhase.MONEY));
@@ -365,14 +393,31 @@ public class GameEngine implements Engine {
         return opponents;
     }
 
+    public boolean generateReactionDecision(ourPlayer player, Card reactionCard) {
+        List<Decision> possibleReactDecisions = new ArrayList<>();
+        
+    
+        possibleReactDecisions.add(new PlayCardDecision(reactionCard));
+        possibleReactDecisions.add(new EndPhaseDecision(GameState.TurnPhase.REACTION));
+    
+        String decision = player.getPlayerInput(); // Simulating user input
+    
+        if (decision.equalsIgnoreCase("yes")) {
+            player.playAction(reactionCard, this); // Play the reaction card
+            return true; // Reaction was played
+        }
+    
+        return false; // Player chose not to react
+    }
+
     // WINNING LOGIC
     public ImmutableList<ScorePair> determineWinner() {
         int player1Ap = player1.getTotalAp();
         int player2Ap = player2.getTotalAp();
 
         List<ScorePair> scores = new ArrayList<>();
-        scores.add(new ScorePair(player1, player1Ap));
-        scores.add(new ScorePair(player2, player2Ap));
+        scores.add(new ScorePair(player1.getPlayer(), player1Ap));
+        scores.add(new ScorePair(player2.getPlayer(), player2Ap));
 
         return ImmutableList.copyOf(scores);
     }

@@ -35,7 +35,7 @@ public class ConsolePlayerTest {
 
         // Create a subclass of ourPlayer that implements makeDecision()
         player = new ourPlayer("TestPlayer") {
-            @Override
+            
             public Decision makeDecision(GameState state, ImmutableList<Decision> options, Optional<Event> reason) {
                 return options.isEmpty() ? null : options.get(0); // Default decision logic
             }

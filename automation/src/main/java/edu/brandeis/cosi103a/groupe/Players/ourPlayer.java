@@ -17,13 +17,13 @@ import edu.brandeis.cosi.atg.api.cards.*;
 import edu.brandeis.cosi103a.groupe.ConsoleGameObserver;
 import edu.brandeis.cosi103a.groupe.Deck;
 import edu.brandeis.cosi103a.groupe.Supply;
-import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
-import edu.brandeis.cosi103a.groupe.Cards.CryptocurrencyCard;
+
 /* 
  * This class creates a player in the game
  * 
  */
-public abstract class ourPlayer implements Player{
+public class ourPlayer{
+    private Player thisPlayer;
     private String name, phase;
     private Deck deck;
     private List<Card> hand;
@@ -32,15 +32,14 @@ public abstract class ourPlayer implements Player{
     private ImmutableCollection<Card> playedCards;
     private ImmutableCollection<Card> unplayedCards;
     private int money;
-    private int actions; // Tracks the number of actions the player has
-    private int buys; // Tracks the number of buys the player has
+    public int actions = 1; // Tracks the number of actions the player has
+    public int buys = 1; // Tracks the number of buys the player has
 
     /*
      * Constructor for the player
      * @param name The name of the player.
      */
     public ourPlayer(String name) {
-        this.name = name;
         this.deck = new Deck();
         this.hand = new ArrayList<>();
         this.discardPile = new ArrayList<>();
@@ -53,6 +52,14 @@ public abstract class ourPlayer implements Player{
      */
     public String getName() {
         return name;
+    }
+
+    public Player getPlayer() {
+        return thisPlayer;
+    }
+
+    public void setPlayer(Player player) {
+        this.thisPlayer = player;
     }
     
     /**
@@ -201,6 +208,17 @@ public void setHand(List<Card> hand) {
     }
 
 
+    public void clear() {
+        // Clear the player's hand and discard pile
+        hand.clear();
+        discardPile.clear();
+        // Reset money, actions, and buys
+        money = 0;
+        actions = 0;
+        buys = 0; 
+    }
+
+
 
     public Hand makeHand() {
        playedCards = ImmutableList.of();
@@ -276,6 +294,14 @@ public void setHand(List<Card> hand) {
     }
     public int getHandSize() {
         return hand.size();
+    }
+
+    public int getActions() {
+        return actions;
+    }
+
+    public int getBuys() {
+        return buys;
     }
    
 }
