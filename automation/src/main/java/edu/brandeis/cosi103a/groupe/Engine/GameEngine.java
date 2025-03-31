@@ -21,6 +21,9 @@ import edu.brandeis.cosi.atg.api.decisions.PlayCardDecision;
 import edu.brandeis.cosi.atg.api.event.EndTurnEvent;
 import edu.brandeis.cosi.atg.api.event.GainCardEvent;
 import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
+
+import edu.brandeis.cosi103a.groupe.Cards.AutomationCard;
+
 import edu.brandeis.cosi103a.groupe.Supply;
 import edu.brandeis.cosi103a.groupe.Cards.ActionCard;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
@@ -33,13 +36,11 @@ public class GameEngine implements Engine {
     private final GameObserver observer;
     private final ourPlayer player1, player2;
     private final Supply supply;
-    private ActionCard actionCardHandler;
 
     public GameEngine(ourPlayer player1, ourPlayer player2, GameObserver observer) {
         this.player1 = player1;
         this.player2 = player2;
         this.supply = new Supply();
-        this.actionCardHandler = new ActionCard(supply, this);
         this.observer = observer;
     }
 
@@ -61,7 +62,7 @@ public class GameEngine implements Engine {
         boolean player1Starts = random.nextBoolean();
         // supply.getCardQuantity(Card.Type.FRAMEWORK) > 0
         int i = 2;
-        while (i > 0) {
+        while (supply.getCardQuantity(Card.Type.FRAMEWORK) > 0) {
 
             if (player1Starts) {
                 playFullTurn(player1);
@@ -70,7 +71,6 @@ public class GameEngine implements Engine {
                 playFullTurn(player2);
                 playFullTurn(player1);
             }
-            i = i - 1;
         }
 
         return determineWinner();
@@ -97,6 +97,14 @@ public class GameEngine implements Engine {
         buyPhase(player);
         cleanupPhase(player);
 
+
+
+
+        System.out.println("points for " + player.getName() + ": " + player.getTotalAp());
+        
+
+        
+
     }
 
     public void actionPhase(ourPlayer player) throws PlayerViolationException {
@@ -114,7 +122,8 @@ public class GameEngine implements Engine {
             if (decision instanceof PlayCardDecision) {
                 PlayCardDecision playDecision = (PlayCardDecision) decision;
                 Card playedCard = playDecision.getCard();
-                if (playedCard.getCategory() == Card.Type.Category.ACTION) {
+                if (playedCard.getCategory() == Card.Type.Category.ACTION
+                        && playedCard.getType() != Card.Type.MONITORING) {
 
                     player.playCard(playedCard);
                     PlayCardEvent playEvent = new PlayCardEvent(playedCard, player.getName());
@@ -122,8 +131,13 @@ public class GameEngine implements Engine {
                             GameState.TurnPhase.ACTION, possibleDecisions.size() - 1, player.getMoney(), 0,
                             supply.getGameDeck());
                     observer.notifyEvent(playState, playEvent);
+
+
+                
+
                     actionCardHandler.playActionCard(playedCard, player);
                     player.incrementActions(-1);
+
 
                 }
             } else if (decision instanceof EndPhaseDecision) {
@@ -332,7 +346,7 @@ public class GameEngine implements Engine {
     }
 
     // Helper method to get opponents of a player
-    public List<ourPlayer> getOpponents(ourPlayer player) {
+    private List<ourPlayer> getOpponents(ourPlayer player) {
         List<ourPlayer> opponents = new ArrayList<>();
         if (!player.equals(player1)) {
             opponents.add(player1);
