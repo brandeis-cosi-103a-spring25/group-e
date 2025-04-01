@@ -17,11 +17,13 @@ import edu.brandeis.cosi.atg.api.cards.Card;
 import edu.brandeis.cosi.atg.api.decisions.BuyDecision;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.decisions.EndPhaseDecision;
+import edu.brandeis.cosi.atg.api.decisions.GainCardDecision;
 import edu.brandeis.cosi.atg.api.decisions.PlayCardDecision;
+import edu.brandeis.cosi.atg.api.decisions.TrashCardDecision;
 import edu.brandeis.cosi.atg.api.event.EndTurnEvent;
 import edu.brandeis.cosi.atg.api.event.GainCardEvent;
 import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
-
+import edu.brandeis.cosi.atg.api.event.TrashCardEvent;
 import edu.brandeis.cosi103a.groupe.Supply;
 import edu.brandeis.cosi103a.groupe.Cards.ActionCard;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
@@ -33,13 +35,15 @@ import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 public class GameEngine implements Engine {
     private final GameObserver observer;
     private final ourPlayer player1, player2;
-    private final Supply supply;
+    private Supply supply = new Supply();
+    private final ActionCard actionCardHandler = new ActionCard(supply, this);
 
     public GameEngine(ourPlayer player1, ourPlayer player2, GameObserver observer) {
         this.player1 = player1;
         this.player2 = player2;
         this.supply = new Supply();
         this.observer = observer;
+
     }
 
     @EngineCreator
@@ -95,13 +99,7 @@ public class GameEngine implements Engine {
         buyPhase(player);
         cleanupPhase(player);
 
-
-
-
         System.out.println("points for " + player.getName() + ": " + player.getTotalAp());
-        
-
-        
 
     }
 
@@ -130,12 +128,8 @@ public class GameEngine implements Engine {
                             supply.getGameDeck());
                     observer.notifyEvent(playState, playEvent);
 
-
-                
-
                     actionCardHandler.playActionCard(playedCard, player);
                     player.incrementActions(-1);
-
 
                 }
             } else if (decision instanceof EndPhaseDecision) {
@@ -281,6 +275,85 @@ public class GameEngine implements Engine {
         player.buys = 1;
     }
 
+    public void trashCard(ourPlayer player) throws PlayerViolationException {
+        System.out.println("🔹 Trash Card Phase for " + player.getName());
+
+        // Generate available trash decisions
+        List<Decision> possibleDecisions = new ArrayList<>();
+
+        // Add a TrashCardDecision for each card in hand
+        for (Card card : player.getCards()) {
+            possibleDecisions.add(new TrashCardDecision(card));
+        }
+
+        GameState currentState = new GameState(
+                player.getName(), player.getHand(), GameState.TurnPhase.DISCARD, // DISCARD phase used for trashing
+                possibleDecisions.size() - 1, player.getMoney(), 0, supply.getGameDeck());
+
+        // Let the player make a decision
+        Decision decision = player.getPlayer().makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
+                Optional.empty());
+
+        if (decision instanceof TrashCardDecision) {
+            TrashCardDecision trashDecision = (TrashCardDecision) decision;
+            Card trashedCard = trashDecision.getCard();
+
+            if (trashedCard != null) {
+                // Remove the card from the player's hand (not sending it to discard)
+                player.trashCard(trashedCard);
+
+                // Trigger TrashCardEvent
+                TrashCardEvent trashEvent = new TrashCardEvent(trashedCard.getType(), player.getName());
+                observer.notifyEvent(currentState, trashEvent);
+
+            }
+        }
+    }
+
+    public void gainCard(ourPlayer player, Card card, Integer costLimit) throws PlayerViolationException {
+        if (card != null) {
+            // Directly give a specific card (not from supply)
+            player.gainCard(card.getType(), null);
+            System.out.println(player.getName() + " gained " + card);
+            return;
+        }
+
+        if (costLimit == null) {
+            System.out.println("⚠️ Error: Either card or costLimit must be provided.");
+            return;
+        }
+
+        // Normal gain process (pick from supply)
+        System.out.println(player.getName() + " is gaining a card up to cost " + costLimit);
+
+        List<Decision> possibleDecisions = new ArrayList<>();
+
+        // Iterate through all available cards in the supply
+        for (Card supplyCard : supply.getAvailableCardsInSupply()) {
+            if (supplyCard.getCost() <= costLimit) {
+                possibleDecisions.add(new GainCardDecision(supplyCard.getType()));
+            }
+        }
+        GameState gainState = new GameState(
+                player.getName(), player.getHand(), GameState.TurnPhase.GAIN,
+                possibleDecisions.size() - 1, player.getMoney(), 0, supply.getGameDeck());
+
+        Decision decision = player.getPlayer().makeDecision(gainState, ImmutableList.copyOf(possibleDecisions),
+                Optional.empty());
+
+        if (decision instanceof GainCardDecision) {
+            GainCardDecision gainDecision = (GainCardDecision) decision;
+            Card.Type gainedCard = gainDecision.getCardType();
+
+            if (gainedCard != null && gainedCard.getCost() <= costLimit) {
+                player.gainCard(gainedCard, supply);
+                System.out.println(player.getName() + " gained " + gainedCard.getDescription() + " from supply.");
+            } else {
+                System.out.println("⚠️ Invalid choice! Card cost exceeds " + costLimit);
+            }
+        }
+    }
+
     // Selects a random card from the available cards that are in the supply
 
     public List<Card> availableCardsToBuy(ourPlayer player, List<Card> cards) {
@@ -344,7 +417,7 @@ public class GameEngine implements Engine {
     }
 
     // Helper method to get opponents of a player
-    private List<ourPlayer> getOpponents(ourPlayer player) {
+    public List<ourPlayer> getOpponents(ourPlayer player) {
         List<ourPlayer> opponents = new ArrayList<>();
         if (!player.equals(player1)) {
             opponents.add(player1);

@@ -34,6 +34,7 @@ public class ourPlayer {
     private int money;
     public int actions = 1; // Tracks the number of actions the player has
     public int buys = 1; // Tracks the number of buys the player has
+    private Card lastTrashedCard;
 
     /*
      * Constructor for the player
@@ -280,19 +281,27 @@ public class ourPlayer {
         return null;
     }
 
-    public int trashCardFromHand(Card card) { // need to fix
+    public void trashCard(Card card) { // need to fix
 
-        hand.remove(card);
-        return card.getCost();
+        if (hand.contains(card)) {
+            hand.remove(card);
+            lastTrashedCard = card; // Store for future reference
+            System.out.println(name + " trashed " + card.getDescription());
+        } else {
+            System.out.println("⚠️ Error: Card not found in hand!");
+        }
 
     }
 
-    public Card gainCardUpToCost(int cost) { // need to fix
-        return new Card(Card.Type.BITCOIN, cost);
+    public Card getLastTrashedCard() {
+        return lastTrashedCard;
     }
 
-    public void gainCard(Card card) { // need to fix?
-        discardPile.add(card);
+    public void gainCard(Card.Type cardType, Supply supply) { // fixed
+         // Assuming a factory method exists to create a Card from Card.Type
+        Card card = new Card(cardType, 0);
+        supply.takeCard(card.getType());
+
     }
 
     public void discardCard() {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.brandeis.cosi.atg.api.Player;
+import edu.brandeis.cosi.atg.api.PlayerViolationException;
 import edu.brandeis.cosi.atg.api.cards.Card;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 import edu.brandeis.cosi103a.groupe.Supply;
@@ -120,14 +121,21 @@ public class ActionCard {
     }
 
     private void handleRefactor(ourPlayer player) {
+        try {
+            gameEngine.trashCard(player);
+            Card trashedCard = player.getLastTrashedCard();
         
-        Card trashedCard = player.trashCardFromHand(card);
-        if (trashedCard != null) {
-            int costLimit = trashedCard.getCost() + 2;
-            Card gainedCard = player.gainCardUpToCost(costLimit);
-            player.gainCard(gainedCard);
-        }
+            if (trashedCard != null) {
+                int costLimit = trashedCard.getCost() + 2; // New card must be within this cost range
 
+                System.out.println("You may gain a card up to cost " + costLimit);
+                
+                // Step 3: Gain a card up to the trashed card’s cost +2
+                gameEngine.gainCard(player, null, costLimit);
+            }
+        } catch (PlayerViolationException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
     }
 
     private void handleParallelization(ourPlayer player) {
@@ -148,7 +156,11 @@ public class ActionCard {
     private void handleEvergreen_Test(ourPlayer player) {
         player.draw(2);
         for (ourPlayer opponent : getOpponents(player)) {
-            opponent.gainCard(new Card(Card.Type.BUG, 0));
+            try {
+                gameEngine.gainCard(opponent, new Card(Card.Type.BUG, 0), null);
+            } catch (PlayerViolationException e) {
+                System.err.println("Error gaining card for opponent: " + e.getMessage());
+            }
         }
 
     }
