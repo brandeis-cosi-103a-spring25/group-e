@@ -127,8 +127,16 @@ public class GameEngine implements Engine {
                             GameState.TurnPhase.ACTION, possibleDecisions.size() - 1, player.getMoney(), 0,
                             supply.getGameDeck());
                     observer.notifyEvent(playState, playEvent);
+                    if (actionCardHandler.parallelizationHandle) {
 
-                    actionCardHandler.playActionCard(playedCard, player);
+                        actionCardHandler.parallelizationHandle = false;
+                        actionCardHandler.playActionCard(playedCard, player);
+                        actionCardHandler.playActionCard(playedCard, player);
+
+                    } else {
+                        actionCardHandler.playActionCard(playedCard, player);
+                    }
+
                     player.incrementActions(-1);
 
                 }

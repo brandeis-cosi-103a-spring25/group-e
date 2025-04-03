@@ -13,6 +13,7 @@ import edu.brandeis.cosi103a.groupe.Engine.GameEngine;
 public class ActionCard {
     private final Supply supply;
     private final GameEngine gameEngine;
+    public boolean parallelizationHandle = false;
 
     public ActionCard(Supply supply, GameEngine gameEngine) {
         this.supply = supply;
@@ -139,11 +140,8 @@ public class ActionCard {
     }
 
     private void handleParallelization(ourPlayer player) {
-        Card actionCard = player.chooseActionCardToPlay();
-        if (actionCard != null) {
-            player.playCard(actionCard);
-            player.playCard(actionCard);
-        }
+        player.incrementActions(1);
+        parallelizationHandle = true;
 
     }
 
