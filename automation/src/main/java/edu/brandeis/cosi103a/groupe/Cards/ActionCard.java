@@ -3,9 +3,15 @@ package edu.brandeis.cosi103a.groupe.Cards;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
+import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.PlayerViolationException;
 import edu.brandeis.cosi.atg.api.cards.Card;
+import edu.brandeis.cosi.atg.api.decisions.Decision;
+import edu.brandeis.cosi.atg.api.decisions.DiscardCardDecision;
+import edu.brandeis.cosi.atg.api.event.DiscardCardEvent;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 import edu.brandeis.cosi103a.groupe.Supply;
 import edu.brandeis.cosi103a.groupe.Engine.GameEngine;
@@ -21,7 +27,7 @@ public class ActionCard {
     }
 
     // Play an action card
-    public void playActionCard(Card card, ourPlayer player) {
+    public void playActionCard(Card card, ourPlayer player) throws PlayerViolationException {
         boolean isAttackCard = isAttack(card);
     
         if (isAttackCard) {
@@ -74,11 +80,9 @@ public class ActionCard {
     }
 
     // Effect: Player discards any number of cards, then draws the same amount
-    private void handleBacklog(ourPlayer player) {
+    public void handleBacklog(ourPlayer player) throws PlayerViolationException {
         player.incrementActions(1);
-        int discarded = player.discardAnyNumberOfCards();
-        player.draw(discarded);
-
+        gameEngine.discardPhase(player, false, 0, 0);
     }
 
     private void handleDailyScrum(ourPlayer player) {
@@ -96,13 +100,16 @@ public class ActionCard {
         player.incrementMoney(2);
 
     }
-
-    private void handleHack(ourPlayer player) {
+    
+    //check which players have monitoring cards
+    //if no monitoring card, prompt to discard till three cards in hand, no end phase decision 
+    //player gets two more money
+    public void handleHack(ourPlayer player) throws PlayerViolationException {
         player.incrementMoney(2);
+        
         for (ourPlayer opponent : getOpponents(player)) {
-            opponent.discardDownTo(3);
+            gameEngine.discardPhase(opponent, true, 3, 0);
         }
-
     }
 
     private void handleMonitoring(ourPlayer player) {
@@ -110,15 +117,20 @@ public class ActionCard {
         
     }
 
-    private void handleTech_Debt(ourPlayer player) {
+    public void handleTech_Debt(ourPlayer player) throws PlayerViolationException {
         player.draw(1);
         player.incrementActions(1);
         player.incrementMoney(1);
+
         int emptyPiles = supply.getEmptyPileCount();
-        for (int i = 0; i < emptyPiles; i++) {
-            player.discardDownTo(player.getHandSize()-1);;
+        System.out.println(player.getName() + " must discard " + emptyPiles + " cards due to empty supply piles.");
+
+        // If no discard is required, return early
+        if (emptyPiles <= 0) {
+         return;
         }
 
+        gameEngine.discardPhase(player, true, 0, emptyPiles);
     }
 
     private void handleRefactor(ourPlayer player) {
