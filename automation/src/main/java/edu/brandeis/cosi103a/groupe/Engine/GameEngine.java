@@ -10,7 +10,6 @@ import edu.brandeis.cosi.atg.api.EngineCreator;
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.Hand;
-import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.Player.ScorePair;
 import edu.brandeis.cosi.atg.api.PlayerViolationException;
 import edu.brandeis.cosi.atg.api.cards.Card;
@@ -65,7 +64,7 @@ public class GameEngine implements Engine {
         Random random = new Random();
         boolean player1Starts = random.nextBoolean();
         // supply.getCardQuantity(Card.Type.FRAMEWORK) > 0
-        int i = 2;
+        // int i = 2;
         while (supply.getCardQuantity(Card.Type.FRAMEWORK) > 0) {
 
             if (player1Starts) {
