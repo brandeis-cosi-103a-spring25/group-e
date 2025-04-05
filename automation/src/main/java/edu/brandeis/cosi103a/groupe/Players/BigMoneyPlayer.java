@@ -1,14 +1,13 @@
 package edu.brandeis.cosi103a.groupe.Players;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.GameState;
-import edu.brandeis.cosi.atg.api.GameState.TurnPhase;
 import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.cards.Card;
 import edu.brandeis.cosi.atg.api.decisions.BuyDecision;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
-import edu.brandeis.cosi.atg.api.decisions.EndPhaseDecision;
 import edu.brandeis.cosi.atg.api.decisions.PlayCardDecision;
 import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.event.GameEvent;
@@ -70,7 +69,12 @@ public class BigMoneyPlayer implements Player {
             return makeBuyDecision(state, options);
         } 
         else{
-            setMoney(playHand());
+            ImmutableCollection<Card> playableHand  = (state.getCurrentPlayerHand().getUnplayedCards());
+            for (Card card : playableHand) {
+                if (card.getCategory() == Card.Type.Category.MONEY) {
+                    return new PlayCardDecision(card);
+                }
+            }
             return null;
         }
     }
@@ -132,12 +136,4 @@ public class BigMoneyPlayer implements Player {
         this.observer = Optional.ofNullable(observer);
     }
 
-    // Utility methods to classify cards
-    private boolean isFramework(BuyDecision decision) {
-        return decision.getCardType() == Card.Type.FRAMEWORK;
-    }
-
-    private boolean isMoneyCard(BuyDecision decision) {
-        return decision.getCardType().getCategory() == Card.Type.Category.MONEY;
-    }
 }

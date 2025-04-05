@@ -3,13 +3,16 @@ package edu.brandeis.cosi103a.groupe.Players;
 import java.util.Optional;
 import java.util.Random;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.Player;
+import edu.brandeis.cosi.atg.api.cards.Card;
 import edu.brandeis.cosi.atg.api.decisions.BuyDecision;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
+import edu.brandeis.cosi.atg.api.decisions.PlayCardDecision;
 import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.event.GameEvent;
 
@@ -60,8 +63,13 @@ public class RandomBuyPlayer implements Player{
         if ("Buy".equalsIgnoreCase(phase)) {
             return makeBuyDecision(state, options);
         } 
-        else{
-            setMoney(playHand());
+          else{
+            ImmutableCollection<Card> playableHand  = (state.getCurrentPlayerHand().getUnplayedCards());
+            for (Card card : playableHand) {
+                if (card.getCategory() == Card.Type.Category.MONEY) {
+                    return new PlayCardDecision(card);
+                }
+            }
             return null;
         }
     }
