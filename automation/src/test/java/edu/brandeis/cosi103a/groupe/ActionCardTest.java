@@ -23,7 +23,6 @@ public class ActionCardTest {
     private ourPlayer mockPlayer;
     private ourPlayer mockOpponent;
     private ActionCard actionCard;
-    private Card hackCard;
 
     @Before
     public void setUp() {
@@ -32,29 +31,22 @@ public class ActionCardTest {
         mockPlayer = mock(ourPlayer.class);
         mockOpponent = mock(ourPlayer.class);
         actionCard = new ActionCard(mockSupply, mockGameEngine);
-
-        // Create a Hack card mock
-        hackCard = mock(Card.class);
-        when(hackCard.getType()).thenReturn(Card.Type.HACK);
     }
 
     @Test
-    public void testBacklogEffect() throws PlayerViolationException {
-        // Arrange: Setting up the mocked behaviors
-        when(mockPlayer.getName()).thenReturn("Player1");
-        doNothing().when(mockPlayer).incrementActions(1);
+    public void testPlayActionCard_Backlog() {
+        Card backlogCard = new Card(Card.Type.BACKLOG, 0);
+        when(mockPlayer.discardAnyNumberOfCards()).thenReturn(2);
 
-        // Act: Call the method that triggers the effect of Backlog
-        actionCard.handleBacklog(mockPlayer);
+        actionCard.playActionCard(backlogCard, mockPlayer);
 
-        // Assert: Verify interactions
-        verify(mockPlayer, times(1)).incrementActions(1);
-        verify(mockGameEngine, times(1)).discardPhase(mockPlayer, false, 0, 0);
+        verify(mockPlayer).incrementActions(1);
+        verify(mockPlayer).discardAnyNumberOfCards();
+        verify(mockPlayer).draw(2);
     }
 
-
     @Test
-    public void testPlayActionCard_DailyScrum() throws PlayerViolationException {
+    public void testPlayActionCard_DailyScrum() {
         Card dailyScrumCard = new Card(Card.Type.DAILY_SCRUM, 0);
         when(mockGameEngine.getOpponents(mockPlayer)).thenReturn(Collections.singletonList(mockOpponent));
 
@@ -66,7 +58,7 @@ public class ActionCardTest {
     }
 
     @Test
-    public void testPlayActionCard_Ipo() throws PlayerViolationException {
+    public void testPlayActionCard_Ipo() {
         Card ipoCard = new Card(Card.Type.IPO, 0);
 
         actionCard.playActionCard(ipoCard, mockPlayer);
@@ -77,29 +69,18 @@ public class ActionCardTest {
     }
 
     @Test
-    public void testHackEffect() throws PlayerViolationException {
-        // Arrange: Mock player and opponent interactions
-        when(mockPlayer.getName()).thenReturn("Player1");
-        when(mockOpponent.getName()).thenReturn("Player2");
+    public void testPlayActionCard_Hack() {
+        Card hackCard = new Card(Card.Type.HACK, 0);
+        when(mockGameEngine.getOpponents(mockPlayer)).thenReturn(Collections.singletonList(mockOpponent));
 
-        // Mock getOpponents() to return the opponent
-        when(mockGameEngine.getOpponents(mockPlayer)).thenReturn(Arrays.asList(mockOpponent));
-
-        // Mock opponent's card types, assuming the opponent does not have a Monitoring card
-        when(mockOpponent.getCards()).thenReturn(Arrays.asList(mock(Card.class))); // No Monitoring card here
-
-        // Act: Play the Hack card
         actionCard.playActionCard(hackCard, mockPlayer);
 
-        // Assert: Verify the opponent's discard phase was triggered
-        verify(mockGameEngine, times(1)).discardPhase(mockOpponent, true, 3, 0);
-
-        // Verify player money increment
-        verify(mockPlayer, times(1)).incrementMoney(2);
+        verify(mockPlayer).incrementMoney(2);
+        verify(mockOpponent).discardDownTo(3);
     }
 
     @Test
-    public void testPlayActionCard_Monitoring() throws PlayerViolationException {
+    public void testPlayActionCard_Monitoring() {
         Card monitoringCard = new Card(Card.Type.MONITORING, 0);
 
         actionCard.playActionCard(monitoringCard, mockPlayer);
@@ -108,38 +89,37 @@ public class ActionCardTest {
     }
 
     @Test
-    public void testTechDebtEffect() throws PlayerViolationException {
-        // Arrange: Setting up the mocked behaviors
+    public void testPlayActionCard_TechDebt() {
+        Card techDebtCard = new Card(Card.Type.TECH_DEBT, 0);
         when(mockSupply.getEmptyPileCount()).thenReturn(2);
-        when(mockPlayer.getName()).thenReturn("Player1");
-        doNothing().when(mockPlayer).draw(1);
-        doNothing().when(mockPlayer).incrementActions(1);
-        doNothing().when(mockPlayer).incrementMoney(1);
+        when(mockPlayer.getHandSize()).thenReturn(5);
 
-        // Act: Call the method that triggers the effect of Tech Debt
-        actionCard.handleTech_Debt(mockPlayer);
+        actionCard.playActionCard(techDebtCard, mockPlayer);
 
-        // Assert: Verify interactions
-        verify(mockPlayer, times(1)).draw(1);
-        verify(mockPlayer, times(1)).incrementActions(1);
-        verify(mockPlayer, times(1)).incrementMoney(1);
-        verify(mockGameEngine, times(1)).discardPhase(mockPlayer, true, 0, 2);
+        verify(mockPlayer).draw(1);
+        verify(mockPlayer).incrementActions(1);
+        verify(mockPlayer).incrementMoney(1);
+        verify(mockPlayer, times(2)).discardDownTo(4);
     }
 
     @Test
     public void testPlayActionCard_Refactor() throws PlayerViolationException {
+
         Card refactorCard = new Card(Card.Type.REFACTOR, 0);
         Card trashedCard = new Card(Card.Type.BACKLOG, 3);
+        assertEquals(2, trashedCard.getCost());
+
         when(mockPlayer.getLastTrashedCard()).thenReturn(trashedCard);
 
         actionCard.playActionCard(refactorCard, mockPlayer);
 
         verify(mockGameEngine).trashCard(mockPlayer);
-        verify(mockGameEngine).gainCard(mockPlayer, null, 5);
+        verify(mockGameEngine).gainCard(mockPlayer, null, 4);
+
     }
 
     @Test
-    public void testPlayActionCard_Parallelization() throws PlayerViolationException {
+    public void testPlayActionCard_Parallelization() {
         Card parallelizationCard = new Card(Card.Type.PARALLELIZATION, 0);
 
         actionCard.playActionCard(parallelizationCard, mockPlayer);
@@ -149,7 +129,7 @@ public class ActionCardTest {
     }
 
     @Test
-    public void testPlayActionCard_CodeReview() throws PlayerViolationException {
+    public void testPlayActionCard_CodeReview() {
         Card codeReviewCard = new Card(Card.Type.CODE_REVIEW, 0);
 
         actionCard.playActionCard(codeReviewCard, mockPlayer);
@@ -170,7 +150,7 @@ public class ActionCardTest {
     }
 
     @Test
-    public void testPlayActionCard_AttackNegatedByMonitoring() throws PlayerViolationException {
+    public void testPlayActionCard_AttackNegatedByMonitoring() {
         Card hackCard = new Card(Card.Type.HACK, 0);
         when(mockGameEngine.getOpponents(mockPlayer)).thenReturn(Collections.singletonList(mockOpponent));
         when(mockOpponent.getCards()).thenReturn(Arrays.asList(new Card(Card.Type.MONITORING, 0)));
