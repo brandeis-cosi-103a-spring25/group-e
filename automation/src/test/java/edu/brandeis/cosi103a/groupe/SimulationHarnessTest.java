@@ -41,13 +41,21 @@ public class SimulationHarnessTest {
     public void setUp() {
         harness = new SimulationHarness(5); // Simulate 5 games per matchup
         ourplayer1 = mock(ourPlayer.class);
-       
         ourplayer2 = mock(ourPlayer.class);
         ourplayer3 = mock(ourPlayer.class);
+
         ourplayer1.setPlayer(player1);
         ourplayer2.setPlayer(player2);
         ourplayer3.setPlayer(player3);
+        
+        player1 = mock(Player.class);
+        player2 = mock(Player.class);
+        player3 = mock(Player.class);
 
+        // Set up mock interactions
+        when(ourplayer1.getPlayer()).thenReturn(player1);
+        when(ourplayer2.getPlayer()).thenReturn(player2);
+        when(ourplayer3.getPlayer()).thenReturn(player3);
 
         when(ourplayer1.getPlayer().getName()).thenReturn("Player 1");
         when(ourplayer2.getPlayer().getName()).thenReturn("Player 2");
@@ -217,6 +225,7 @@ public class SimulationHarnessTest {
         harness.printOverallResults();
 
         String output = outputStream.toString();
+
         assertTrue(output.contains("Overall Results After All Matchups:"));
         assertTrue(output.contains("Player 1 - Wins: 3, Losses: 2, Win Rate: 60.00%, Avg AP: 10.00"));
         assertTrue(output.contains("Player 2 - Wins: 2, Losses: 3, Win Rate: 40.00%, Avg AP: 8.00"));
