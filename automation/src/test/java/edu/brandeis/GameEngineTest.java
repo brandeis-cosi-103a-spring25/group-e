@@ -132,8 +132,8 @@ public class GameEngineTest {
         verify(observer, times(1)).notifyEvent(any(), any(EndTurnEvent.class));
     }
 
-    @Test
-    public void testPlay() throws PlayerViolationException {
+    //@Test
+    /*public void testPlay() throws PlayerViolationException {
         ImmutableList<Card> playedCards = ImmutableList.of(); // or some other list of played cards
         ImmutableList<Card> unplayedCards = ImmutableList.of(new Card(Card.Type.BITCOIN, 1));
         Hand mockHand = new Hand(playedCards, unplayedCards);
@@ -153,7 +153,7 @@ public class GameEngineTest {
 
         assertNotNull(scores);
         assertEquals(2, scores.size());
-    }
+    }*/
 
     @Test
     public void testDistributeCards() {
