@@ -1,14 +1,13 @@
 package edu.brandeis.cosi103a.groupe.Players;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.GameState;
-import edu.brandeis.cosi.atg.api.GameState.TurnPhase;
 import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.cards.Card;
 import edu.brandeis.cosi.atg.api.decisions.BuyDecision;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
-import edu.brandeis.cosi.atg.api.decisions.EndPhaseDecision;
 import edu.brandeis.cosi.atg.api.decisions.PlayCardDecision;
 import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.event.GameEvent;
@@ -66,12 +65,27 @@ public class BigMoneyPlayer implements Player {
         System.out.println("\n----- " + phase + " Phase: Big Money Player Turn: " + name + " -----");
         reason.ifPresent(event -> System.out.println("Reason: " + event.getDescription()));
 
+        if ("Action".equalsIgnoreCase(phase)) {
+            for (Card card : state.getCurrentPlayerHand().getUnplayedCards()) {
+                if (card.getCategory() == Card.Type.Category.ACTION) {
+                    System.out.println(getName() + " plays Action card: " + card.getType().name());
+                    return new PlayCardDecision(card);
+                }
+            }
+            System.out.println(getName() + ": No Action cards to play.");
+            return options.get(0);
+        }
+
         if ("Buy".equalsIgnoreCase(phase)) {
             return makeBuyDecision(state, options);
-        } 
-        else{
-            setMoney(playHand());
-            return null;
+        } else {
+            for (Card card : state.getCurrentPlayerHand().getUnplayedCards()) {
+                if (card.getCategory() == Card.Type.Category.MONEY) {
+                    System.out.println(getName() + " plays Money card: " + card.getType().name());
+                    return new PlayCardDecision(card);
+                }
+            }
+            return options.get(0);
         }
     }
 
@@ -94,7 +108,7 @@ public class BigMoneyPlayer implements Player {
             int availableBuys = state.getAvailableBuys();
             if (availableBuys <= 0 || availableMoney <= 0) {
                 System.out.println(getName() + ": No available buys left. Returning options.get(0)");
-                return options.get(0); // Safe fallback
+                return options.get(0);
             }
             
             System.out.println("Valid buy phase, checking best card...");
@@ -105,7 +119,7 @@ public class BigMoneyPlayer implements Player {
                     int cost = buyDecision.getCardType().getCost();
                     System.out.println("Checking card: " + buyDecision.getCardType().name() + " Cost: " + cost);
                     
-                    if (cost <= availableMoney) { // Only consider affordable purchases
+                    if (cost <= availableMoney) {
                         if (bestPurchase[0] == null || cost > bestPurchase[0].getCardType().getCost()) {
                             System.out.println("Selecting: " + buyDecision.getCardType().name());
                             bestPurchase[0] = buyDecision;
@@ -123,7 +137,7 @@ public class BigMoneyPlayer implements Player {
         }
         
         System.out.println(getName() + ": No valid buy available. Returning options.get(0)");
-        return options.get(0); // Safe fallback
+        return options.get(0); 
     }
     
 
@@ -132,12 +146,4 @@ public class BigMoneyPlayer implements Player {
         this.observer = Optional.ofNullable(observer);
     }
 
-    // Utility methods to classify cards
-    private boolean isFramework(BuyDecision decision) {
-        return decision.getCardType() == Card.Type.FRAMEWORK;
-    }
-
-    private boolean isMoneyCard(BuyDecision decision) {
-        return decision.getCardType().getCategory() == Card.Type.Category.MONEY;
-    }
 }
