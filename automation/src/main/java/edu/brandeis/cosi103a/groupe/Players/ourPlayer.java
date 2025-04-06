@@ -35,6 +35,7 @@ public class ourPlayer {
     public int actions = 1; // Tracks the number of actions the player has
     public int buys = 1; // Tracks the number of buys the player has
     private Card lastTrashedCard;
+    private boolean hasReactedToAttack;
 
     /*
      * Constructor for the player
@@ -261,9 +262,19 @@ public class ourPlayer {
         hand.clear();
         return discarded;
     }
-
+    
+    /*
+     * Draws a specified number of cards from the deck, reshuffling if necessary.
+     */
     public void draw(int count) {
-        // Simulated draw logic
+        for (int i = 0; i < count; i++) {
+            if (deck.isEmpty()) {
+                reshuffleDeck(); // Reshuffle if the deck is empty
+            }
+            if (!deck.isEmpty()) {
+                hand.add(deck.drawCard());
+            }
+        }
     }
 
     public void discardDownTo(int count) {
@@ -304,9 +315,10 @@ public class ourPlayer {
 
     }
 
-    public void discardCard() {
+    public void discardCard(Card card) {
         if (!hand.isEmpty()) {
-            discardPile.add(hand.remove(0));
+            hand.remove(card);// Remove the card from hand and add to discard pile
+            discardPile.add(card);
         }
     }
 
@@ -321,5 +333,18 @@ public class ourPlayer {
     public int getBuys() {
         return buys;
     }
-
+    
+    /*
+     * Method to check if the player has reacted to an attack card
+     */
+    public boolean hasReactedToAttack() {
+        return hasReactedToAttack;
+    }
+    
+    /*
+     * Method to set whether the player has reacted to an attack card
+     */
+    public void setHasReactedToAttack(boolean hasReacted) {
+        this.hasReactedToAttack = hasReacted;
+    }
 }
