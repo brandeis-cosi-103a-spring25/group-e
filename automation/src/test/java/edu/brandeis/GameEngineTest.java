@@ -9,8 +9,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -59,15 +57,32 @@ public class GameEngineTest {
     }
 
     @Test
-    public void testMoneyPhase() throws PlayerViolationException {
-       ImmutableList<Card> playedCards = ImmutableList.of();  // or some other list of played cards
-       ImmutableList<Card> unplayedCards = ImmutableList.of(new Card(Card.Type.BITCOIN, 1));
-       Hand mockHand = new Hand(playedCards, unplayedCards);
-        
+    public void testActionPhase() throws PlayerViolationException {
+        ImmutableList<Card> playedCards = ImmutableList.of();
+        ImmutableList<Card> unplayedCards = ImmutableList.of(new Card(Card.Type.METHOD, 1));
+        Hand mockHand = new Hand(playedCards, unplayedCards);
 
         when(player1.getHand()).thenReturn(mockHand);
-        when(player1.getPlayer().makeDecision(any(), any(), any())).thenReturn(new PlayCardDecision(new Card(Card.Type.BITCOIN, 1)))
-                                                      .thenReturn(new EndPhaseDecision(GameState.TurnPhase.MONEY));
+        when(player1.getPlayer().makeDecision(any(), any(), any()))
+                .thenReturn(new PlayCardDecision(new Card(Card.Type.METHOD, 1)))
+                .thenReturn(new EndPhaseDecision(GameState.TurnPhase.ACTION));
+
+        engine.actionPhase(player1);
+
+        verify(player1, times(1)).playCard(any());
+        verify(observer, times(1)).notifyEvent(any(), any(PlayCardEvent.class));
+    }
+
+    @Test
+    public void testMoneyPhase() throws PlayerViolationException {
+        ImmutableList<Card> playedCards = ImmutableList.of(); // or some other list of played cards
+        ImmutableList<Card> unplayedCards = ImmutableList.of(new Card(Card.Type.BITCOIN, 1));
+        Hand mockHand = new Hand(playedCards, unplayedCards);
+
+        when(player1.getHand()).thenReturn(mockHand);
+        when(player1.getPlayer().makeDecision(any(), any(), any()))
+                .thenReturn(new PlayCardDecision(new Card(Card.Type.BITCOIN, 1)))
+                .thenReturn(new EndPhaseDecision(GameState.TurnPhase.MONEY));
 
         engine.moneyPhase(player1);
 
@@ -88,18 +103,20 @@ public class GameEngineTest {
 
     @Test
     public void testPlay() throws PlayerViolationException {
-        ImmutableList<Card> playedCards = ImmutableList.of();  // or some other list of played cards
+        ImmutableList<Card> playedCards = ImmutableList.of(); // or some other list of played cards
         ImmutableList<Card> unplayedCards = ImmutableList.of(new Card(Card.Type.BITCOIN, 1));
         Hand mockHand = new Hand(playedCards, unplayedCards);
 
         when(player1.getHand()).thenReturn(mockHand);
         when(player2.getHand()).thenReturn(mockHand);
-        when(player1.getPlayer().makeDecision(any(), any(), any())).thenReturn(new PlayCardDecision(new Card(Card.Type.BITCOIN, 1)))
-                                                      .thenReturn(new EndPhaseDecision(GameState.TurnPhase.MONEY))
-                                                      .thenReturn(new EndPhaseDecision(GameState.TurnPhase.BUY));
-        when(player2.getPlayer().makeDecision(any(), any(), any())).thenReturn(new PlayCardDecision(new Card(Card.Type.BITCOIN, 1)))
-                                                      .thenReturn(new EndPhaseDecision(GameState.TurnPhase.MONEY))
-                                                      .thenReturn(new EndPhaseDecision(GameState.TurnPhase.BUY));
+        when(player1.getPlayer().makeDecision(any(), any(), any()))
+                .thenReturn(new PlayCardDecision(new Card(Card.Type.BITCOIN, 1)))
+                .thenReturn(new EndPhaseDecision(GameState.TurnPhase.MONEY))
+                .thenReturn(new EndPhaseDecision(GameState.TurnPhase.BUY));
+        when(player2.getPlayer().makeDecision(any(), any(), any()))
+                .thenReturn(new PlayCardDecision(new Card(Card.Type.BITCOIN, 1)))
+                .thenReturn(new EndPhaseDecision(GameState.TurnPhase.MONEY))
+                .thenReturn(new EndPhaseDecision(GameState.TurnPhase.BUY));
 
         ImmutableList<ScorePair> scores = engine.play();
 
@@ -112,9 +129,9 @@ public class GameEngineTest {
         Supply mockSupply = mock(Supply.class);
         ourPlayer mockPlayer1 = mock(ourPlayer.class);
         ourPlayer mockPlayer2 = mock(ourPlayer.class);
-        
+
         GameEngine engine = new GameEngine(mockPlayer1, mockPlayer2, new ConsoleGameObserver());
-    
+
         // Test card distribution logic
         engine.distributeCards(mockPlayer1, mockPlayer2, mockSupply);
 
@@ -123,13 +140,13 @@ public class GameEngineTest {
         verify(mockPlayer2, times(7)).addCardToDeck(argThat(card -> card.getType() == Card.Type.BITCOIN));
 
         // Verify 14 Bitcoin cards were taken from the supply
-        verify(mockSupply, times(14)).takeCard(Card.Type.BITCOIN); 
+        verify(mockSupply, times(14)).takeCard(Card.Type.BITCOIN);
 
         // Verify 3 Method cards were added to each player's deck
         verify(mockPlayer1, times(3)).addCardToDeck(argThat(card -> card.getType() == Card.Type.METHOD));
         verify(mockPlayer2, times(3)).addCardToDeck(argThat(card -> card.getType() == Card.Type.METHOD));
 
         // Verify 6 Method cards were taken from the supply
-        verify(mockSupply, times(6)).takeCard(Card.Type.METHOD); 
+        verify(mockSupply, times(6)).takeCard(Card.Type.METHOD);
     }
 }

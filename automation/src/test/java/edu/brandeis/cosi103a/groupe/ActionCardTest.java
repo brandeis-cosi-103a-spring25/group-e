@@ -7,27 +7,16 @@ import edu.brandeis.cosi.atg.api.cards.Card;
 import edu.brandeis.cosi103a.groupe.Engine.GameEngine;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 
-
-
 import java.util.Arrays;
 import java.util.Collections;
 
 import edu.brandeis.cosi103a.groupe.Cards.ActionCard;
 import static org.junit.Assert.*;
 
-
-
-
-
-
 import org.junit.Before;
 import org.junit.Test;
 
-
-
-
-
-class ActionCardTest {
+public class ActionCardTest {
 
     private Supply mockSupply;
     private GameEngine mockGameEngine;
@@ -36,7 +25,7 @@ class ActionCardTest {
     private ActionCard actionCard;
 
     @Before
-    void setUp() {
+    public void setUp() {
         mockSupply = mock(Supply.class);
         mockGameEngine = mock(GameEngine.class);
         mockPlayer = mock(ourPlayer.class);
@@ -45,7 +34,7 @@ class ActionCardTest {
     }
 
     @Test
-    void testPlayActionCard_Backlog() {
+    public void testPlayActionCard_Backlog() {
         Card backlogCard = new Card(Card.Type.BACKLOG, 0);
         when(mockPlayer.discardAnyNumberOfCards()).thenReturn(2);
 
@@ -57,7 +46,7 @@ class ActionCardTest {
     }
 
     @Test
-    void testPlayActionCard_DailyScrum() {
+    public void testPlayActionCard_DailyScrum() {
         Card dailyScrumCard = new Card(Card.Type.DAILY_SCRUM, 0);
         when(mockGameEngine.getOpponents(mockPlayer)).thenReturn(Collections.singletonList(mockOpponent));
 
@@ -69,7 +58,7 @@ class ActionCardTest {
     }
 
     @Test
-    void testPlayActionCard_Ipo() {
+    public void testPlayActionCard_Ipo() {
         Card ipoCard = new Card(Card.Type.IPO, 0);
 
         actionCard.playActionCard(ipoCard, mockPlayer);
@@ -80,7 +69,7 @@ class ActionCardTest {
     }
 
     @Test
-    void testPlayActionCard_Hack() {
+    public void testPlayActionCard_Hack() {
         Card hackCard = new Card(Card.Type.HACK, 0);
         when(mockGameEngine.getOpponents(mockPlayer)).thenReturn(Collections.singletonList(mockOpponent));
 
@@ -91,7 +80,7 @@ class ActionCardTest {
     }
 
     @Test
-    void testPlayActionCard_Monitoring() {
+    public void testPlayActionCard_Monitoring() {
         Card monitoringCard = new Card(Card.Type.MONITORING, 0);
 
         actionCard.playActionCard(monitoringCard, mockPlayer);
@@ -100,7 +89,7 @@ class ActionCardTest {
     }
 
     @Test
-    void testPlayActionCard_TechDebt() {
+    public void testPlayActionCard_TechDebt() {
         Card techDebtCard = new Card(Card.Type.TECH_DEBT, 0);
         when(mockSupply.getEmptyPileCount()).thenReturn(2);
         when(mockPlayer.getHandSize()).thenReturn(5);
@@ -114,19 +103,23 @@ class ActionCardTest {
     }
 
     @Test
-    void testPlayActionCard_Refactor() throws PlayerViolationException {
+    public void testPlayActionCard_Refactor() throws PlayerViolationException {
+
         Card refactorCard = new Card(Card.Type.REFACTOR, 0);
         Card trashedCard = new Card(Card.Type.BACKLOG, 3);
+        assertEquals(2, trashedCard.getCost());
+
         when(mockPlayer.getLastTrashedCard()).thenReturn(trashedCard);
 
         actionCard.playActionCard(refactorCard, mockPlayer);
 
         verify(mockGameEngine).trashCard(mockPlayer);
-        verify(mockGameEngine).gainCard(mockPlayer, null, 5);
+        verify(mockGameEngine).gainCard(mockPlayer, null, 4);
+
     }
 
     @Test
-    void testPlayActionCard_Parallelization() {
+    public void testPlayActionCard_Parallelization() {
         Card parallelizationCard = new Card(Card.Type.PARALLELIZATION, 0);
 
         actionCard.playActionCard(parallelizationCard, mockPlayer);
@@ -136,7 +129,7 @@ class ActionCardTest {
     }
 
     @Test
-    void testPlayActionCard_CodeReview() {
+    public void testPlayActionCard_CodeReview() {
         Card codeReviewCard = new Card(Card.Type.CODE_REVIEW, 0);
 
         actionCard.playActionCard(codeReviewCard, mockPlayer);
@@ -146,7 +139,7 @@ class ActionCardTest {
     }
 
     @Test
-    void testPlayActionCard_EvergreenTest() throws PlayerViolationException {
+    public void testPlayActionCard_EvergreenTest() throws PlayerViolationException {
         Card evergreenTestCard = new Card(Card.Type.EVERGREEN_TEST, 0);
         when(mockGameEngine.getOpponents(mockPlayer)).thenReturn(Collections.singletonList(mockOpponent));
 
@@ -157,7 +150,7 @@ class ActionCardTest {
     }
 
     @Test
-    void testPlayActionCard_AttackNegatedByMonitoring() {
+    public void testPlayActionCard_AttackNegatedByMonitoring() {
         Card hackCard = new Card(Card.Type.HACK, 0);
         when(mockGameEngine.getOpponents(mockPlayer)).thenReturn(Collections.singletonList(mockOpponent));
         when(mockOpponent.getCards()).thenReturn(Arrays.asList(new Card(Card.Type.MONITORING, 0)));
