@@ -52,7 +52,6 @@ public class ConsolePlayer implements Player{
         return observer;
     }
 
-   
 
     /**
      * Implements `makeDecision()`, prompting the player to choose an action.
@@ -119,6 +118,6 @@ public class ConsolePlayer implements Player{
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Unimplemented method 'getName'");
+        return this.name;
     }
 }
