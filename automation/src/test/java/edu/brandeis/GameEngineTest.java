@@ -5,7 +5,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -132,8 +134,8 @@ public class GameEngineTest {
         verify(observer, times(1)).notifyEvent(any(), any(EndTurnEvent.class));
     }
 
-    //@Test
-    /*public void testPlay() throws PlayerViolationException {
+    @Test
+    public void testPlayFullTurn() throws PlayerViolationException {
         ImmutableList<Card> playedCards = ImmutableList.of(); // or some other list of played cards
         ImmutableList<Card> unplayedCards = ImmutableList.of(new Card(Card.Type.BITCOIN, 1));
         Hand mockHand = new Hand(playedCards, unplayedCards);
@@ -141,19 +143,22 @@ public class GameEngineTest {
         when(player1.getHand()).thenReturn(mockHand);
         when(player2.getHand()).thenReturn(mockHand);
         when(player1.getPlayer().makeDecision(any(), any(), any()))
+                .thenReturn(new EndPhaseDecision(GameState.TurnPhase.ACTION)) // end ACTION phase
                 .thenReturn(new PlayCardDecision(new Card(Card.Type.BITCOIN, 1)))
                 .thenReturn(new EndPhaseDecision(GameState.TurnPhase.MONEY))
                 .thenReturn(new EndPhaseDecision(GameState.TurnPhase.BUY));
         when(player2.getPlayer().makeDecision(any(), any(), any()))
+                .thenReturn(new EndPhaseDecision(GameState.TurnPhase.ACTION)) // end ACTION phase
                 .thenReturn(new PlayCardDecision(new Card(Card.Type.BITCOIN, 1)))
                 .thenReturn(new EndPhaseDecision(GameState.TurnPhase.MONEY))
                 .thenReturn(new EndPhaseDecision(GameState.TurnPhase.BUY));
 
-        ImmutableList<ScorePair> scores = engine.play();
+        engine.playFullTurn(player1);
+        engine.playFullTurn(player2);
 
-        assertNotNull(scores);
-        assertEquals(2, scores.size());
-    }*/
+        verify(player1.getPlayer(), times(1)).makeDecision(any(), any(), any());
+        verify(player2.getPlayer(), times(1)).makeDecision(any(), any(), any());
+    }
 
     @Test
     public void testDistributeCards() {

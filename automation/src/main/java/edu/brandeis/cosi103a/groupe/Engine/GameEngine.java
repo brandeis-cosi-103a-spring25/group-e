@@ -104,7 +104,7 @@ public class GameEngine implements Engine {
         }
     }
 
-    private void playFullTurn(ourPlayer player) throws PlayerViolationException {
+    public void playFullTurn(ourPlayer player) throws PlayerViolationException {
         actionPhase(player);
         moneyPhase(player);
         buyPhase(player);
