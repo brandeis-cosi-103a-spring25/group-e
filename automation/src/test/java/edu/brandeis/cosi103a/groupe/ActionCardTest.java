@@ -39,7 +39,7 @@ public class ActionCardTest {
     }
 
     @Test
-    public void testBacklogEffect() throws PlayerViolationException {
+    public void testPlayActionCard_Backlog() throws PlayerViolationException {
         // Arrange: Setting up the mocked behaviors
         when(mockPlayer.getName()).thenReturn("Player1");
         doNothing().when(mockPlayer).incrementActions(1);
@@ -51,7 +51,6 @@ public class ActionCardTest {
         verify(mockPlayer, times(1)).incrementActions(1);
         verify(mockGameEngine, times(1)).discardPhase(mockPlayer, false, 0, 0);
     }
-
 
     @Test
     public void testPlayActionCard_DailyScrum() throws PlayerViolationException {
@@ -77,23 +76,23 @@ public class ActionCardTest {
     }
 
     @Test
-    public void testHackEffect() throws PlayerViolationException {
+    public void testPlayActionCard_Hack() throws PlayerViolationException {
         // Arrange: Mock player and opponent interactions
         when(mockPlayer.getName()).thenReturn("Player1");
         when(mockOpponent.getName()).thenReturn("Player2");
-
+ 
         // Mock getOpponents() to return the opponent
         when(mockGameEngine.getOpponents(mockPlayer)).thenReturn(Arrays.asList(mockOpponent));
-
+ 
         // Mock opponent's card types, assuming the opponent does not have a Monitoring card
         when(mockOpponent.getCards()).thenReturn(Arrays.asList(mock(Card.class))); // No Monitoring card here
-
+ 
         // Act: Play the Hack card
         actionCard.playActionCard(hackCard, mockPlayer);
-
+ 
         // Assert: Verify the opponent's discard phase was triggered
         verify(mockGameEngine, times(1)).discardPhase(mockOpponent, true, 3, 0);
-
+ 
         // Verify player money increment
         verify(mockPlayer, times(1)).incrementMoney(2);
     }
@@ -108,7 +107,7 @@ public class ActionCardTest {
     }
 
     @Test
-    public void testTechDebtEffect() throws PlayerViolationException {
+    public void testPlayActionCard_TechDebt() throws PlayerViolationException {
         // Arrange: Setting up the mocked behaviors
         when(mockSupply.getEmptyPileCount()).thenReturn(2);
         when(mockPlayer.getName()).thenReturn("Player1");
@@ -128,14 +127,18 @@ public class ActionCardTest {
 
     @Test
     public void testPlayActionCard_Refactor() throws PlayerViolationException {
+
         Card refactorCard = new Card(Card.Type.REFACTOR, 0);
         Card trashedCard = new Card(Card.Type.BACKLOG, 3);
+        assertEquals(2, trashedCard.getCost());
+
         when(mockPlayer.getLastTrashedCard()).thenReturn(trashedCard);
 
         actionCard.playActionCard(refactorCard, mockPlayer);
 
         verify(mockGameEngine).trashCard(mockPlayer);
-        verify(mockGameEngine).gainCard(mockPlayer, null, 5);
+        verify(mockGameEngine).gainCard(mockPlayer, null, 4);
+
     }
 
     @Test

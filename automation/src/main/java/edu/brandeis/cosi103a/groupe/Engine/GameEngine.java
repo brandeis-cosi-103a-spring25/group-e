@@ -63,16 +63,26 @@ public class GameEngine implements Engine {
 
         Random random = new Random();
         boolean player1Starts = random.nextBoolean();
-        // supply.getCardQuantity(Card.Type.FRAMEWORK) > 0
-        // int i = 2;
-        while (supply.getCardQuantity(Card.Type.FRAMEWORK) > 0) {
-
+        
+        while (true) {
             if (player1Starts) {
                 playFullTurn(player1);
+                if (supply.getCardQuantity(Card.Type.FRAMEWORK) <= 0) {
+                    break; // Exit the loop if all FRAMEWORK cards have been bought
+                }
                 playFullTurn(player2);
+                if (supply.getCardQuantity(Card.Type.FRAMEWORK) <= 0) {
+                    break; // Exit the loop if all FRAMEWORK cards have been bought
+                }
             } else {
                 playFullTurn(player2);
+                if (supply.getCardQuantity(Card.Type.FRAMEWORK) <= 0) {
+                    break; // Exit the loop if all FRAMEWORK cards have been bought
+                }
                 playFullTurn(player1);
+                if (supply.getCardQuantity(Card.Type.FRAMEWORK) <= 0) {
+                    break; // Exit the loop if all FRAMEWORK cards have been bought
+                }
             }
         }
 

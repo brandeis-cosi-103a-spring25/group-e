@@ -27,7 +27,7 @@ public class EngineHarness{
         System.out.print("Select Player 2 (1: Human, 2: AI BigMoney, 3: AI RandomBuy): ");
         Player player2 = createPlayer(scanner, "Player 2");
         ourPlayer ourPlayer2 = new ourPlayer(player2.getName());
-        ourPlayer1.setPlayer(player2);
+           ourPlayer2.setPlayer(player2);
 
 
         // Initialize Observer to print game events
