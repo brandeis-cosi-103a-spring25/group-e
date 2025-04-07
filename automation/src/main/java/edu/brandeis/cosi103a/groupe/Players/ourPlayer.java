@@ -47,6 +47,7 @@ public class ourPlayer {
         this.hand = new ArrayList<>();
         this.discardPile = new ArrayList<>();
         this.money = 0;
+        this.name = name;
     }
 
     /**
@@ -55,7 +56,7 @@ public class ourPlayer {
      * @return The name of the player.
      */
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public Player getPlayer() {

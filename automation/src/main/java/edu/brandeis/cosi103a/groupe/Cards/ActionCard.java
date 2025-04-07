@@ -101,9 +101,6 @@ public class ActionCard {
 
     }
     
-    //check which players have monitoring cards
-    //if no monitoring card, prompt to discard till three cards in hand, no end phase decision 
-    //player gets two more money
     public void handleHack(ourPlayer player) throws PlayerViolationException {
         player.incrementMoney(2);
         
