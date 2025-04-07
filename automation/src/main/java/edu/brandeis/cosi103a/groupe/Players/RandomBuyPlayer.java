@@ -63,15 +63,37 @@ public class RandomBuyPlayer implements Player{
         if ("Buy".equalsIgnoreCase(phase)) {
             return makeBuyDecision(state, options);
         } 
-          else{
+          else if ("Money".equalsIgnoreCase(phase)) {
             ImmutableCollection<Card> playableHand  = (state.getCurrentPlayerHand().getUnplayedCards());
             for (Card card : playableHand) {
                 if (card.getCategory() == Card.Type.Category.MONEY) {
+                    observer.ifPresent(obs -> obs.notifyEvent(state, new GameEvent(getName() + " bought " + card.getDescription())));
                     return new PlayCardDecision(card);
                 }
             }
             return null;
         }
+        else { //Assumed Action phase
+            return makeActionDecision(state, options);
+        }
+    }
+
+    private Decision makeActionDecision(GameState state, ImmutableList<Decision> options) {
+        Decision actionChoice = null;
+
+        Random randVal = new Random();
+        if (options.size()-1 == 0) {
+           return null;
+        }
+        int decisionChoice =  randVal.nextInt(options.size()-1);
+        actionChoice =  options.get(decisionChoice);
+        if (actionChoice != null) {
+            System.out.println(getName() + " chose to play: " + ((PlayCardDecision) actionChoice).getCard().getDescription());
+            final PlayCardDecision finalActionChoice = (PlayCardDecision) actionChoice;
+            observer.ifPresent(obs -> obs.notifyEvent(state, new GameEvent(getName() + " played " + finalActionChoice.getCard().getDescription())));
+            return actionChoice;
+        }
+        return null;
     }
 
     /**
