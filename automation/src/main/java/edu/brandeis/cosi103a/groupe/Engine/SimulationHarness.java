@@ -142,7 +142,7 @@ public class SimulationHarness {
             double avgAp = totalGames == 0 ? 0.0 : (double) totalAp.get(player) / totalGames;
 
             System.out.printf("%s - Wins: %d, Losses: %d, Win Rate: %.2f%%, Avg AP: %.2f%n", 
-                              player.getName(), wins, losses, winRate, avgAp);
+                              player.getPlayer().getName(), wins, losses, winRate, avgAp);
         }
     }
     
