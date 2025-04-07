@@ -60,6 +60,9 @@ public class GameEngineTest {
         mockInnerPlayer1 = mock(Player.class);
         mockInnerPlayer2 = mock(Player.class);
 
+        player1.setPlayer(mockInnerPlayer1); // Set the inner player for player1
+        player2.setPlayer(mockInnerPlayer2); // Set the inner player for player2
+
         // When getPlayer() is called on player1 or player2, return the inner mocks
         when(player1.getPlayer()).thenReturn(mockInnerPlayer1);
         when(player2.getPlayer()).thenReturn(mockInnerPlayer2);
@@ -135,10 +138,12 @@ public class GameEngineTest {
     }
 
     @Test
+
     public void testPlayFullTurn() throws PlayerViolationException {
         ImmutableList<Card> playedCards = ImmutableList.of(); // or some other list of played cards
         ImmutableList<Card> unplayedCards = ImmutableList.of(new Card(Card.Type.BITCOIN, 1));
         Hand mockHand = new Hand(playedCards, unplayedCards);
+
 
         when(player1.getHand()).thenReturn(mockHand);
         when(player2.getHand()).thenReturn(mockHand);

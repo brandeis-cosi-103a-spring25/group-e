@@ -84,7 +84,7 @@ public class RandomPlayerTest {
 
         Decision decision = player.makeDecision(state, options, Optional.empty());
 
-        assertTrue(decision == null); // Decision should be one of the available options
+        assertTrue(decision != null); 
     }
 
     @Test
