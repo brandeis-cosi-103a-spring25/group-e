@@ -29,15 +29,17 @@ public class ActionCard {
     // Play an action card
     public void playActionCard(Card card, ourPlayer player) throws PlayerViolationException {
         boolean isAttackCard = isAttack(card);
-    
+
         if (isAttackCard) {
             // 🔹 Before executing the attack, allow opponents to react
             for (ourPlayer opponent : gameEngine.getOpponents(player)) {
-                if (opponent.getCards().stream().anyMatch(opponentCard -> opponentCard.getType() == Card.Type.MONITORING)) {
+                if (opponent.getCards().stream()
+                        .anyMatch(opponentCard -> opponentCard.getType() == Card.Type.MONITORING)) {
                     boolean reacted = gameEngine.reactionPhase(opponent, player, card);
-    
+
                     if (reacted) {
-                        System.out.println(opponent.getName() + " negated " + player.getName() + "'s attack with Monitoring!");
+                        System.out.println(
+                                opponent.getName() + " negated " + player.getName() + "'s attack with Monitoring!");
                         return; // Attack is negated for this opponent
                     }
                 }
@@ -100,10 +102,10 @@ public class ActionCard {
         player.incrementMoney(2);
 
     }
-    
+
     public void handleHack(ourPlayer player) throws PlayerViolationException {
         player.incrementMoney(2);
-        
+
         for (ourPlayer opponent : getOpponents(player)) {
             gameEngine.discardPhase(opponent, true, 3, 0);
         }
@@ -111,7 +113,7 @@ public class ActionCard {
 
     private void handleMonitoring(ourPlayer player) {
         player.draw(2);
-        
+
     }
 
     public void handleTech_Debt(ourPlayer player) throws PlayerViolationException {
@@ -124,7 +126,7 @@ public class ActionCard {
 
         // If no discard is required, return early
         if (emptyPiles <= 0) {
-         return;
+            return;
         }
 
         gameEngine.discardPhase(player, true, 0, emptyPiles);
@@ -134,12 +136,12 @@ public class ActionCard {
         try {
             gameEngine.trashCard(player);
             Card trashedCard = player.getLastTrashedCard();
-        
+
             if (trashedCard != null) {
                 int costLimit = trashedCard.getCost() + 2; // New card must be within this cost range
 
                 System.out.println("You may gain a card up to cost " + costLimit);
-                
+
                 // Step 3: Gain a card up to the trashed card’s cost +2
                 gameEngine.gainCard(player, null, costLimit);
             }
@@ -171,12 +173,13 @@ public class ActionCard {
         }
 
     }
+
     private List<ourPlayer> getOpponents(ourPlayer player) {
         return gameEngine.getOpponents(player);
     }
-   
 
     private boolean isAttack(Card card) {
-        return card.getType() == Card.Type.HACK || card.getType() == Card.Type.EVERGREEN_TEST; // Add more attack cards as needed
+        return card.getType() == Card.Type.HACK || card.getType() == Card.Type.EVERGREEN_TEST; // Add more attack cards
+                                                                                               // as needed
     }
 }
