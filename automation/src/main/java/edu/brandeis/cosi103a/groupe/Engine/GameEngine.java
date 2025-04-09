@@ -2,6 +2,7 @@ package edu.brandeis.cosi103a.groupe.Engine;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import com.google.common.collect.ImmutableList;
@@ -195,13 +196,15 @@ public class GameEngine implements Engine {
 
            } else if (decision instanceof EndPhaseDecision && !forceDiscard) {
             endPhaseSelected = true; // Player decides to stop discarding and end the phase
-          }
-
-        // End the Discard Phase
-        if(!forceDiscard){
-           endDiscardPhase(player, numDiscarded);
-        }   
+           }
+           currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.DISCARD,
+              possibleDecisions.size(), player.getMoney(), 0, supply.getGameDeck()); 
       }
+
+      // End the Discard Phase
+      if(!forceDiscard){
+        endDiscardPhase(player, numDiscarded);
+      }  
     }  
 
     public boolean reactionPhase(ourPlayer opponent, ourPlayer attacker, Card attackCard) throws PlayerViolationException {
@@ -420,34 +423,24 @@ public class GameEngine implements Engine {
         }
     }
 
-    // Selects a random card from the available cards that are in the supply
-
-    public List<Card> availableCardsToBuy(ourPlayer player, List<Card> cards) {
-        List<Card> availableToBuy = new ArrayList<>();
-
-        for (Card card : cards) {
-            if (supply.getCardQuantity(card.getType()) > 0 && card.getCost() <= player.getMoney()) {
-                availableToBuy.add(card);
-            }
-        }
-
-        return availableToBuy;
-    }
-
     public List<Decision> generatePossibleBuyDecisions(ourPlayer player, Supply supply) {
         List<Decision> possibleBuyDecisions = new ArrayList<>();
-        List<Card> cards = supply.getAvailableCardsInSupply();
+        Map<Card.Type, List<Card>> cardStacks = supply.getCardStacks();
 
-        // Add BuyDecisions if the player has enough crypto
-        for (Card card : availableCardsToBuy(player, cards)) {
-            if (player.getMoney() >= card.getCost()) {
-                possibleBuyDecisions.add(new BuyDecision(card.getType()));
-            }
+        // Iterate over all card types in the supply
+        for (Card.Type cardType : cardStacks.keySet()) {
+         int cardCost = cardType.getCost();
+         int cardQuantity = supply.getCardQuantity(cardType);
+
+         // Add a BuyDecision if the player can afford the card and it is available
+         if (player.getMoney() >= cardCost && cardQuantity > 0) {
+            possibleBuyDecisions.add(new BuyDecision(cardType));
+         }
         }
 
-        // Always allow ending the phase
-        possibleBuyDecisions.add(new EndPhaseDecision(GameState.TurnPhase.BUY));
-        return possibleBuyDecisions;
+       // Always allow ending the phase
+       possibleBuyDecisions.add(new EndPhaseDecision(GameState.TurnPhase.BUY));
+       return possibleBuyDecisions;
     }
 
     public List<Decision> generatePossibleActionDecisions(ourPlayer player, Hand hand) {

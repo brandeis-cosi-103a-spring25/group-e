@@ -213,7 +213,7 @@ public class ourPlayer {
      * @return The current hand of cards.
      */
     public Hand getHand() {
-        return makeHand();
+       return makeHand();
     }
 
     public List<Card> getCards() {

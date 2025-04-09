@@ -1,6 +1,7 @@
 package edu.brandeis.cosi103a.groupe;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -106,6 +107,15 @@ public class Supply {
             deckMap.put(type, getCardQuantity(type));
         }
         return new GameDeck(ImmutableMap.copyOf(deckMap));
+    }
+
+    /**
+     * Gets an unmodifiable view of the card stacks in the supply.
+     * 
+     * @return An unmodifiable map of card types to their corresponding stacks.
+    */
+    public Map<Card.Type, List<Card>> getCardStacks() {
+       return Collections.unmodifiableMap(cardStacks);
     }
 
     /**
