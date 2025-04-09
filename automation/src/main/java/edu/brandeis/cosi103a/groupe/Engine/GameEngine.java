@@ -128,6 +128,7 @@ public class GameEngine implements Engine {
                     Optional.empty());
 
             if (decision instanceof PlayCardDecision) {
+                System.out.println("Recieved decision: " + decision);
                 PlayCardDecision playDecision = (PlayCardDecision) decision;
                 Card playedCard = playDecision.getCard();
                 if (playedCard.getCategory() == Card.Type.Category.ACTION
