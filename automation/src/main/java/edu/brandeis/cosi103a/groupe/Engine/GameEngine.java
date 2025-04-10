@@ -64,7 +64,7 @@ public class GameEngine implements Engine {
 
         Random random = new Random();
         boolean player1Starts = random.nextBoolean();
-        
+
         while (true) {
             if (player1Starts) {
                 playFullTurn(player1);
@@ -160,7 +160,8 @@ public class GameEngine implements Engine {
 
     }
 
-    public void discardPhase(ourPlayer player, boolean forceDiscard, int targetCardCount, int targetDiscardCount) throws PlayerViolationException {
+    public void discardPhase(ourPlayer player, boolean forceDiscard, int targetCardCount, int targetDiscardCount)
+            throws PlayerViolationException {
         System.out.println(player.getName() + " is in the Discard Phase.");
         // Set the turn phase to Discard
         player.setPhase("Discard");
@@ -169,46 +170,49 @@ public class GameEngine implements Engine {
         int numDiscarded = 0;
 
         List<Decision> possibleDecisions = generatePossibleDiscardDecisions(player, forceDiscard);
-        
+
         // Create the GameState for the Discard Phase
         GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.DISCARD,
-        possibleDecisions.size(), player.getMoney(), 0, supply.getGameDeck());
+                possibleDecisions.size(), player.getMoney(), 0, supply.getGameDeck());
 
-        while (!endPhaseSelected && !possibleDecisions.isEmpty() && (player.getHandSize() > targetCardCount || numDiscarded < targetDiscardCount)) {
-          // Pass the possible discard decisions to the player
-          Decision decision = player.getPlayer().makeDecision(currentState, ImmutableList.copyOf(possibleDecisions), Optional.empty());
+        while (!endPhaseSelected && !possibleDecisions.isEmpty()
+                && (player.getHandSize() > targetCardCount || numDiscarded < targetDiscardCount)) {
+            // Pass the possible discard decisions to the player
+            Decision decision = player.getPlayer().makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
+                    Optional.empty());
 
-          // Process the discard decision
-          if (decision instanceof DiscardCardDecision) {
-            DiscardCardDecision discardDecision = (DiscardCardDecision) decision;
-            Card discardedCard = discardDecision.getCard();
-            numDiscarded++;
+            // Process the discard decision
+            if (decision instanceof DiscardCardDecision) {
+                DiscardCardDecision discardDecision = (DiscardCardDecision) decision;
+                Card discardedCard = discardDecision.getCard();
+                numDiscarded++;
 
-            // Discard the card
-            player.discardCard(discardedCard);
-            System.out.println(player.getName() + " discards: " + discardedCard.getType());
+                // Discard the card
+                player.discardCard(discardedCard);
+                System.out.println(player.getName() + " discards: " + discardedCard.getType());
 
-            // Notify the observer of the discard event
-            DiscardCardEvent discardEvent = new DiscardCardEvent(discardedCard.getType(), player.getName());
-            observer.notifyEvent(currentState, discardEvent);
+                // Notify the observer of the discard event
+                DiscardCardEvent discardEvent = new DiscardCardEvent(discardedCard.getType(), player.getName());
+                observer.notifyEvent(currentState, discardEvent);
 
-            // Update the possible decisions list based on the remaining cards
-            possibleDecisions = generatePossibleDiscardDecisions(player, forceDiscard);
+                // Update the possible decisions list based on the remaining cards
+                possibleDecisions = generatePossibleDiscardDecisions(player, forceDiscard);
 
-           } else if (decision instanceof EndPhaseDecision && !forceDiscard) {
-            endPhaseSelected = true; // Player decides to stop discarding and end the phase
-           }
-           currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.DISCARD,
-              possibleDecisions.size(), player.getMoney(), 0, supply.getGameDeck()); 
-      }
+            } else if (decision instanceof EndPhaseDecision && !forceDiscard) {
+                endPhaseSelected = true; // Player decides to stop discarding and end the phase
+            }
+            currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.DISCARD,
+                    possibleDecisions.size(), player.getMoney(), 0, supply.getGameDeck());
+        }
 
-      // End the Discard Phase
-      if(!forceDiscard){
-        endDiscardPhase(player, numDiscarded);
-      }  
-    }  
+        // End the Discard Phase
+        if (!forceDiscard) {
+            endDiscardPhase(player, numDiscarded);
+        }
+    }
 
-    public boolean reactionPhase(ourPlayer opponent, ourPlayer attacker, Card attackCard) throws PlayerViolationException {
+    public boolean reactionPhase(ourPlayer opponent, ourPlayer attacker, Card attackCard)
+            throws PlayerViolationException {
         List<Decision> possibleDecisions = new ArrayList<>();
 
         possibleDecisions.add(new PlayCardDecision(new Card(Card.Type.MONITORING, 0)));
@@ -430,18 +434,18 @@ public class GameEngine implements Engine {
 
         // Iterate over all card types in the supply
         for (Card.Type cardType : cardStacks.keySet()) {
-         int cardCost = cardType.getCost();
-         int cardQuantity = supply.getCardQuantity(cardType);
+            int cardCost = cardType.getCost();
+            int cardQuantity = supply.getCardQuantity(cardType);
 
-         // Add a BuyDecision if the player can afford the card and it is available
-         if (player.getMoney() >= cardCost && cardQuantity > 0) {
-            possibleBuyDecisions.add(new BuyDecision(cardType));
-         }
+            // Add a BuyDecision if the player can afford the card and it is available
+            if (player.getMoney() >= cardCost && cardQuantity > 0) {
+                possibleBuyDecisions.add(new BuyDecision(cardType));
+            }
         }
 
-       // Always allow ending the phase
-       possibleBuyDecisions.add(new EndPhaseDecision(GameState.TurnPhase.BUY));
-       return possibleBuyDecisions;
+        // Always allow ending the phase
+        possibleBuyDecisions.add(new EndPhaseDecision(GameState.TurnPhase.BUY));
+        return possibleBuyDecisions;
     }
 
     public List<Decision> generatePossibleActionDecisions(ourPlayer player, Hand hand) {
@@ -501,27 +505,28 @@ public class GameEngine implements Engine {
     }
 
     private List<Decision> generatePossibleDiscardDecisions(ourPlayer player, boolean isHackAttack) {
-       List<Decision> discardDecisions = new ArrayList<>();
-       List<Card> cards = player.getCards();
+        List<Decision> discardDecisions = new ArrayList<>();
+        List<Card> cards = player.getCards();
 
-       // Generate discard decisions based on the player's hand
-       for (Card card : cards) {
-         discardDecisions.add(new DiscardCardDecision(card));
-       }
+        // Generate discard decisions based on the player's hand
+        for (Card card : cards) {
+            discardDecisions.add(new DiscardCardDecision(card));
+        }
 
-       if (!isHackAttack) {
-         discardDecisions.add(new EndPhaseDecision(GameState.TurnPhase.DISCARD));
-       }
+        if (!isHackAttack) {
+            discardDecisions.add(new EndPhaseDecision(GameState.TurnPhase.DISCARD));
+        }
 
-       return discardDecisions;
+        return discardDecisions;
     }
-    
+
     /*
-     * This method ends the discard phase for a player, refilling their hand if necessary.
+     * This method ends the discard phase for a player, refilling their hand if
+     * necessary.
      */
-    private void endDiscardPhase(ourPlayer player, int numCardstoDraw) throws PlayerViolationException{
+    private void endDiscardPhase(ourPlayer player, int numCardstoDraw) throws PlayerViolationException {
         System.out.println(player.getName() + "'s discard phase ends.");
-        
+
         int discardedCount = numCardstoDraw;
         if (discardedCount > 0) {
             // Draw cards to refill the hand
@@ -529,4 +534,3 @@ public class GameEngine implements Engine {
         }
     }
 }
-
