@@ -29,6 +29,7 @@ public class ActionCard {
     // Play an action card
     public void playActionCard(Card card, ourPlayer player) throws PlayerViolationException {
         boolean isAttackCard = isAttack(card);
+        
 
         if (isAttackCard) {
             // 🔹 Before executing the attack, allow opponents to react
