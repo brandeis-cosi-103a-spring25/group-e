@@ -1,17 +1,13 @@
-package edu.brandeis.cosi103a.groupe;
+package edu.brandeis.cosi103a.groupe.engineTests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
 
-import org.checkerframework.checker.units.qual.A;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,11 +15,8 @@ import com.google.common.collect.ImmutableList;
 
 import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.Player.ScorePair;
-import edu.brandeis.cosi.atg.api.PlayerViolationException;
-import edu.brandeis.cosi103a.groupe.Engine.EngineHarness;
 import edu.brandeis.cosi103a.groupe.Engine.GameEngine;
 import edu.brandeis.cosi103a.groupe.Engine.SimulationHarness;
-import edu.brandeis.cosi103a.groupe.Players.BigMoneyPlayer;
 import edu.brandeis.cosi103a.groupe.Players.ConsolePlayer;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 

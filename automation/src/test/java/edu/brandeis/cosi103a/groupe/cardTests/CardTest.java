@@ -1,4 +1,4 @@
-package edu.brandeis.cosi103a.groupe;
+package edu.brandeis.cosi103a.groupe.cardTests;
 
 import static org.junit.Assert.assertEquals;
 

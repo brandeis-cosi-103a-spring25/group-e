@@ -4,7 +4,7 @@ import edu.brandeis.cosi.atg.api.Engine;
 import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.Player.ScorePair;
-import edu.brandeis.cosi103a.groupe.ConsoleGameObserver;
+import edu.brandeis.cosi103a.groupe.Other.ConsoleGameObserver;
 import edu.brandeis.cosi103a.groupe.Players.*;
 import edu.brandeis.cosi.atg.api.PlayerViolationException;
 

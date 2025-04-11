@@ -2,8 +2,6 @@ package edu.brandeis.cosi103a.groupe.Players;
 // package edu.brandeis.cosi103a.groupe;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,9 +12,8 @@ import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.Hand;
 import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.cards.*;
-import edu.brandeis.cosi103a.groupe.ConsoleGameObserver;
-import edu.brandeis.cosi103a.groupe.Deck;
-import edu.brandeis.cosi103a.groupe.Supply;
+import edu.brandeis.cosi103a.groupe.Other.Deck;
+import edu.brandeis.cosi103a.groupe.Other.Supply;
 
 /* 
  * This class creates a player in the game
@@ -24,7 +21,7 @@ import edu.brandeis.cosi103a.groupe.Supply;
  */
 public class ourPlayer {
     private Player thisPlayer;
-    private String name, phase;
+    private String name;
     private Deck deck;
     private List<Card> hand;
     private GameObserver observer;
@@ -157,13 +154,9 @@ public class ourPlayer {
      * @return The current money.
      */
     public int getMoney() {
-        // playHand();
         return money;
     }
 
-    public void setPhase(String phase) {
-        this.phase = phase;
-    }
 
     /**
      * Adds a card to the deck.

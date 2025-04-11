@@ -1,4 +1,4 @@
-package edu.brandeis.cosi103a.groupe;
+package edu.brandeis.cosi103a.groupe.playerTests;
 
 import static org.junit.Assert.*;
 
@@ -26,7 +26,6 @@ public class BigMoneyPlayerTest {
         player = new BigMoneyPlayer("TestPlayer");
          ourPlayer ourPlayer1 = new ourPlayer(player.getName());
         ourPlayer1.setPlayer(player);
-        ourPlayer1.setPhase("Buy");  // Ensure phase is set for correct logic execution
 
         // Create BuyDecision instances using proper parameters
         moneyDecision = new BuyDecision(Card.Type.BITCOIN);      // Adjusted to match the expected constructor

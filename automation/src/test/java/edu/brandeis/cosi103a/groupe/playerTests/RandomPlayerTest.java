@@ -1,4 +1,4 @@
-package edu.brandeis.cosi103a.groupe;
+package edu.brandeis.cosi103a.groupe.playerTests;
 
 import static org.junit.Assert.*;
 
@@ -9,7 +9,6 @@ import edu.brandeis.cosi.atg.api.decisions.BuyDecision;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.decisions.PlayCardDecision;
 import edu.brandeis.cosi103a.groupe.Players.*;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -27,7 +26,6 @@ public class RandomPlayerTest {
         RandomBuyPlayer player = new RandomBuyPlayer("TestPlayer");
         ourPlayer ourPlayer1 = new ourPlayer(player.getName());
         ourPlayer1.setPlayer(player);
-        ourPlayer1.setPhase("Buy");
 
         // Mock GameState
         GameState state = new GameState(
@@ -63,7 +61,6 @@ public class RandomPlayerTest {
 
         Hand hand = new Hand(null, handCards);
 
-        ourPlayer1.setPhase("Play");
 
         // Mock GameState
         GameState state = new GameState(
