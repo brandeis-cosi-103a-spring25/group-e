@@ -301,6 +301,7 @@ public class GameEngine implements Engine {
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.BUY, 0,
                     player.getMoney(), possibleDecisions.size() - 1, supply.getGameDeck());
             player.setPhase("Buy");
+            System.out.println(possibleDecisions);
             Decision decision = player.getPlayer().makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
                     Optional.empty());
 
@@ -313,7 +314,7 @@ public class GameEngine implements Engine {
                 Card.Type cardType = purchasedCard.getType();
                 supply.takeCard(cardType);
 
-                if (supply.getCardQuantity(purchasedCard.getType()) > 0
+                if (supply.getCardQuantity(purchasedCard.getType()) >= 0
                         && player.getMoney() >= purchasedCard.getCost()) {
                     player.purchaseCard(purchasedCard, supply);
                     GainCardEvent buyCardEvent = new GainCardEvent(purchasedCard.getType(), player.getName());
