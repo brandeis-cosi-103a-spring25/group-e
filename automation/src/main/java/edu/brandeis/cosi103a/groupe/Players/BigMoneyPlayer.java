@@ -1,6 +1,4 @@
 package edu.brandeis.cosi103a.groupe.Players;
-
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.GameState;
@@ -8,10 +6,15 @@ import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.cards.Card;
 import edu.brandeis.cosi.atg.api.decisions.BuyDecision;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
+import edu.brandeis.cosi.atg.api.decisions.DiscardCardDecision;
+import edu.brandeis.cosi.atg.api.decisions.EndPhaseDecision;
+import edu.brandeis.cosi.atg.api.decisions.GainCardDecision;
 import edu.brandeis.cosi.atg.api.decisions.PlayCardDecision;
+import edu.brandeis.cosi.atg.api.decisions.TrashCardDecision;
 import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.event.GameEvent;
 import java.util.Optional;
+import java.util.Random;
 
 /**
  * AI player that follows the "Big Money" strategy.
@@ -65,20 +68,9 @@ public class BigMoneyPlayer implements Player {
         System.out.println("\n----- " + phase + " Phase: Big Money Player Turn: " + name + " -----");
         reason.ifPresent(event -> System.out.println("Reason: " + event.getDescription()));
 
-        if ("Action".equalsIgnoreCase(phase)) {
-            for (Card card : state.getCurrentPlayerHand().getUnplayedCards()) {
-                if (card.getCategory() == Card.Type.Category.ACTION) {
-                    System.out.println(getName() + " plays Action card: " + card.getType().name());
-                    return new PlayCardDecision(card);
-                }
-            }
-            System.out.println(getName() + ": No Action cards to play.");
-            return options.get(0);
-        }
-
         if ("Buy".equalsIgnoreCase(phase)) {
             return makeBuyDecision(state, options);
-        } else {
+        } else if ("Money".equalsIgnoreCase(phase)) {
             for (Card card : state.getCurrentPlayerHand().getUnplayedCards()) {
                 if (card.getCategory() == Card.Type.Category.MONEY) {
                     System.out.println(getName() + " plays Money card: " + card.getType().name());
@@ -87,6 +79,10 @@ public class BigMoneyPlayer implements Player {
             }
             return options.get(0);
         }
+            else { // Assumed Action phase
+                return makeActionDecision(state, options);
+            }
+        
     }
 
     /**
@@ -140,7 +136,51 @@ public class BigMoneyPlayer implements Player {
         return options.get(0); 
     }
     
+    private Decision makeActionDecision(GameState state, ImmutableList<Decision> options) {
+        Decision actionChoice = null;
 
+        Random randVal = new Random();
+        if (options.isEmpty()) {
+            System.out.println(getName() + ": No actions to play, ending phase.");
+            EndPhaseDecision end = new EndPhaseDecision(state.getTurnPhase());
+            return end;
+        }
+        int decisionChoice = randVal.nextInt(options.size());
+        actionChoice = options.get(decisionChoice);
+        if (actionChoice != null) {
+            if (actionChoice instanceof PlayCardDecision) {
+
+                System.out.println(
+                        getName() + " chose to play: " + ((PlayCardDecision) actionChoice).getCard().getDescription());
+                final PlayCardDecision finalActionChoice = (PlayCardDecision) actionChoice;
+                observer.ifPresent(obs -> obs.notifyEvent(state,
+                        new GameEvent(getName() + " played " + finalActionChoice.getCard().getDescription())));
+            } else if (actionChoice instanceof DiscardCardDecision) {
+                System.out.println(getName() + " chose to discard: "
+                        + ((DiscardCardDecision) actionChoice).getCard().getDescription());
+                final DiscardCardDecision finalActionChoice = (DiscardCardDecision) actionChoice;
+                observer.ifPresent(obs -> obs.notifyEvent(state,
+                        new GameEvent(getName() + " played " + finalActionChoice.getCard().getDescription())));
+
+            } else if (actionChoice instanceof TrashCardDecision) {
+                System.out.println(getName() + " chose to trash: "
+                        + ((TrashCardDecision) actionChoice).getCard().getDescription());
+                final TrashCardDecision finalActionChoice = (TrashCardDecision) actionChoice;
+                observer.ifPresent(obs -> obs.notifyEvent(state,
+                        new GameEvent(getName() + " played " + finalActionChoice.getCard().getDescription())));
+
+            } else if (actionChoice instanceof GainCardDecision) {
+                System.out.println(getName() + " chose to gain: " + ((GainCardDecision) actionChoice).getCardType());
+                final GainCardDecision finalActionChoice = (GainCardDecision) actionChoice;
+                observer.ifPresent(obs -> obs.notifyEvent(state,
+                        new GameEvent(getName() + " played " + finalActionChoice.getCardType())));
+
+            }
+
+            return actionChoice;
+        }
+        return null;
+    }
 
     public void setObserver(GameObserver observer) {
         this.observer = Optional.ofNullable(observer);

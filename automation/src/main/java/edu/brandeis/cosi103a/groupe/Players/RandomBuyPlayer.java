@@ -62,7 +62,8 @@ public class RandomBuyPlayer implements Player {
 
         if (options.isEmpty()) {
             System.out.println(getName() + ": No decisions available.");
-            return null;
+            EndPhaseDecision end = new EndPhaseDecision(state.getTurnPhase());
+            return end;        
         }
 
         System.out.println("\n----- " + phase + " Phase: Random Buy Player Turn: " + name + " -----");
@@ -81,8 +82,6 @@ public class RandomBuyPlayer implements Player {
             }
             return null;
         } else { // Assumed Action phase
-            System.out.println("Action phase");
-            System.out.println(options.toString());
             return makeActionDecision(state, options);
         }
     }
