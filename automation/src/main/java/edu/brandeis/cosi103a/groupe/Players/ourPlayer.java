@@ -213,7 +213,7 @@ public class ourPlayer {
      * @return The current hand of cards.
      */
     public Hand getHand() {
-        return makeHand();
+       return makeHand();
     }
 
     public List<Card> getCards() {
@@ -312,7 +312,11 @@ public class ourPlayer {
     public void gainCard(Card.Type cardType, Supply supply) { // fixed
          // Assuming a factory method exists to create a Card from Card.Type
         Card card = new Card(cardType, 0);
-        supply.takeCard(card.getType());
+        if (supply != null) {
+            supply.takeCard(card.getType());
+
+        }
+       
 
     }
 

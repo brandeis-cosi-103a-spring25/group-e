@@ -1,7 +1,8 @@
 package edu.brandeis.cosi103a.groupe;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,106 +11,122 @@ import com.google.common.collect.ImmutableMap;
 import edu.brandeis.cosi.atg.api.GameDeck;
 import edu.brandeis.cosi.atg.api.cards.Card;
 
-//for_review
-
 public class Supply {
-    private Map<Card.Type, Integer> cardQuantities;
-    private final Map<Card.Type, Integer> cardTypeIds;
-    
-    
-    /*
+    private final Map<Card.Type, List<Card>> cardStacks;
+    private int cardIdCounter;
+
+    /**
      * Constructor for the supply
      */
     public Supply() {
-        cardQuantities = new HashMap<>();
-        cardTypeIds = new HashMap<>();
-        cardQuantities.put(Card.Type.METHOD, 14);
-        cardQuantities.put(Card.Type.MODULE, 8);
-        cardQuantities.put(Card.Type.FRAMEWORK, 8);
-        cardQuantities.put(Card.Type.BITCOIN, 60);
-        cardQuantities.put(Card.Type.ETHEREUM, 40);
-        cardQuantities.put(Card.Type.DOGECOIN, 30);
-        cardQuantities.put(Card.Type.BACKLOG, 10);
-        cardQuantities.put(Card.Type.CODE_REVIEW, 10);
-        cardQuantities.put(Card.Type.DAILY_SCRUM, 10);
-        cardQuantities.put(Card.Type.EVERGREEN_TEST, 10);
-        cardQuantities.put(Card.Type.HACK, 10);
-        cardQuantities.put(Card.Type.IPO, 10);
-        cardQuantities.put(Card.Type.PARALLELIZATION, 10);
-        cardQuantities.put(Card.Type.REFACTOR, 10);
-        cardQuantities.put(Card.Type.TECH_DEBT, 10);
-        cardQuantities.put(Card.Type.MONITORING, 10);
+        cardStacks = new EnumMap<>(Card.Type.class);
+        cardIdCounter = 1;
 
-        cardTypeIds.put(Card.Type.MODULE, 1);
-        cardTypeIds.put(Card.Type.METHOD, 2);
-        cardTypeIds.put(Card.Type.FRAMEWORK, 3);
-        cardTypeIds.put(Card.Type.BITCOIN, 4);
-        cardTypeIds.put(Card.Type.ETHEREUM, 5);
-        cardTypeIds.put(Card.Type.DOGECOIN, 6);
-        cardTypeIds.put(Card.Type.BACKLOG, 7);
-        cardTypeIds.put(Card.Type.CODE_REVIEW, 8);
-        cardTypeIds.put(Card.Type.DAILY_SCRUM, 9);
-        cardTypeIds.put(Card.Type.EVERGREEN_TEST, 10);
-        cardTypeIds.put(Card.Type.HACK, 11);
-        cardTypeIds.put(Card.Type.IPO, 12);
-        cardTypeIds.put(Card.Type.PARALLELIZATION, 13);
-        cardTypeIds.put(Card.Type.REFACTOR, 14);
-        cardTypeIds.put(Card.Type.TECH_DEBT, 15);
-        cardTypeIds.put(Card.Type.MONITORING, 16);
+        addCards(Card.Type.METHOD, 14);
+        addCards(Card.Type.MODULE, 8);
+        addCards(Card.Type.FRAMEWORK, 8);
+        addCards(Card.Type.BITCOIN, 60);
+        addCards(Card.Type.ETHEREUM, 40);
+        addCards(Card.Type.DOGECOIN, 30);
+        addCards(Card.Type.BACKLOG, 10);
+        addCards(Card.Type.CODE_REVIEW, 10);
+        addCards(Card.Type.DAILY_SCRUM, 10);
+        addCards(Card.Type.EVERGREEN_TEST, 10);
+        addCards(Card.Type.HACK, 10);
+        addCards(Card.Type.IPO, 10);
+        addCards(Card.Type.PARALLELIZATION, 10);
+        addCards(Card.Type.REFACTOR, 10);
+        addCards(Card.Type.TECH_DEBT, 10);
+        addCards(Card.Type.MONITORING, 10);
+    }
+
+    private void addCards(Card.Type type, int quantity) {
+        List<Card> cards = new ArrayList<>();
+        for (int i = 0; i < quantity; i++) {
+            cards.add(new Card(type, cardIdCounter++));
+        }
+        cardStacks.put(type, cards);
     }
 
     /**
-     * Gets the quantity of a specific card in the supply.
-     * @param cardName The name of the card.
-     * @return The quantity of the card in the supply.
+     * Gets the quantity of a specific card type in the supply.
+     * 
+     * @param type The type of the card.
+     * @return The quantity of the card type in the supply.
      */
-    public int getCardQuantity(Card.Type cardName) {
-        return cardQuantities.getOrDefault(cardName, 0);
+    public int getCardQuantity(Card.Type type) {
+        return cardStacks.getOrDefault(type, List.of()).size();
     }
 
-
+    /**
+     * Gets a list of all available cards remaining in the supply.
+     * 
+     * @return List of available cards.
+     */
     public List<Card> getAvailableCardsInSupply() {
         List<Card> availableCards = new ArrayList<>();
-        for (Card.Type type : cardQuantities.keySet()) {
-            if (getCardQuantity(type) > 0) {
-                availableCards.add(new Card(type, cardTypeIds.get(type)));
-            }
+        for (List<Card> stack : cardStacks.values()) {
+            availableCards.addAll(stack);
         }
         return availableCards;
     }
 
     /**
-     * Decreases the quantity of a specific card in the supply by one.
-     * @param cardName The name of the card.
-     * @return True if the card was successfully taken from the supply, false if the card is out of stock.
+     * Takes a card of the specified type from the supply.
+     * 
+     * @param type The type of card to take.
+     * @return The card if available, otherwise null.
      */
     public boolean takeCard(Card.Type type) {
-        GameDeck deck = getGameDeck();
-        int available = deck.getNumAvailable(type);
-        //int quantity = cardQuantities.getOrDefault(type, 0);
-        
-        if (available > 0) {
-            cardQuantities.put(type, available - 1);
+        List<Card> cards = cardStacks.getOrDefault(type, new ArrayList<>());
+        if (!cards.isEmpty()) {
+            cards.remove(0);
             return true;
         }
         return false;
     }
 
+    /**
+     * Prints the supply to the console.
+     */
     public void printSupply() {
-        System.out.println("Supply: ");
-        for (Card.Type cardName : cardQuantities.keySet()) {
-            System.out.println(cardName + ": " + cardQuantities.get(cardName));
+        System.out.println("Supply:");
+        for (Card.Type type : cardStacks.keySet()) {
+            System.out.println(type + ": " + getCardQuantity(type));
         }
     }
 
+    /**
+     * Gets a GameDeck representation of the current supply.
+     * 
+     * @return GameDeck based on the current supply.
+     */
     public GameDeck getGameDeck() {
-        return new GameDeck(ImmutableMap.copyOf(cardQuantities));
+        Map<Card.Type, Integer> deckMap = new EnumMap<>(Card.Type.class);
+        for (Card.Type type : cardStacks.keySet()) {
+            deckMap.put(type, getCardQuantity(type));
+        }
+        return new GameDeck(ImmutableMap.copyOf(deckMap));
     }
-    
+
+    /**
+     * Gets an unmodifiable view of the card stacks in the supply.
+     * 
+     * @return An unmodifiable map of card types to their corresponding stacks.
+    */
+    public Map<Card.Type, List<Card>> getCardStacks() {
+       return Collections.unmodifiableMap(cardStacks);
+    }
+
+    /**
+     * Counts how many card types are completely depleted.
+     * 
+     * @return The number of card types with no cards left.
+     */
     public int getEmptyPileCount() {
         int emptyCount = 0;
-        for (int quantity : cardQuantities.values()) {
-            if (quantity == 0) {
+        for (List<Card> stack : cardStacks.values()) {
+            if (stack.isEmpty()) {
                 emptyCount++;
             }
         }
