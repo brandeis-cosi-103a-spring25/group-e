@@ -1,4 +1,4 @@
-package edu.brandeis.cosi103a.groupe;
+package edu.brandeis.cosi103a.groupe.Other;
 
 import java.util.ArrayList;
 import java.util.Collections;

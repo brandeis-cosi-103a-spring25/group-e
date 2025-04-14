@@ -1,10 +1,11 @@
-package edu.brandeis.cosi103a.groupe;
+package edu.brandeis.cosi103a.groupe.cardTests;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 import edu.brandeis.cosi.atg.api.cards.Card;
+import edu.brandeis.cosi103a.groupe.Other.Deck;
 
 public class deckTest {
 

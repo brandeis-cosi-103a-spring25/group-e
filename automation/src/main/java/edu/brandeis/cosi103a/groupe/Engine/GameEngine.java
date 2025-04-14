@@ -26,8 +26,8 @@ import edu.brandeis.cosi.atg.api.event.EndTurnEvent;
 import edu.brandeis.cosi.atg.api.event.GainCardEvent;
 import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
 import edu.brandeis.cosi.atg.api.event.TrashCardEvent;
-import edu.brandeis.cosi103a.groupe.Supply;
 import edu.brandeis.cosi103a.groupe.Cards.ActionCard;
+import edu.brandeis.cosi103a.groupe.Other.Supply;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 
 /*
@@ -120,7 +120,6 @@ public class GameEngine implements Engine {
         boolean endPhaseSelected = false;
         System.out.println("Action phase for " + player.getName());
         while (!endPhaseSelected && player.getActions() > 0) {
-            player.setPhase("Action");
             List<Decision> possibleDecisions = generatePossibleActionDecisions(player, player.getHand());
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.ACTION,
                     possibleDecisions.size() - 1, player.getMoney(), 0, supply.getGameDeck());
@@ -128,7 +127,6 @@ public class GameEngine implements Engine {
                     Optional.empty());
 
             if (decision instanceof PlayCardDecision) {
-                System.out.println("Recieved decision: " + decision);
                 PlayCardDecision playDecision = (PlayCardDecision) decision;
                 Card playedCard = playDecision.getCard();
                 if (playedCard.getCategory() == Card.Type.Category.ACTION
@@ -164,7 +162,6 @@ public class GameEngine implements Engine {
             throws PlayerViolationException {
         System.out.println(player.getName() + " is in the Discard Phase.");
         // Set the turn phase to Discard
-        player.setPhase("Discard");
 
         boolean endPhaseSelected = false;
         int numDiscarded = 0;
@@ -254,7 +251,6 @@ public class GameEngine implements Engine {
 
         boolean endPhaseSelected = false;
         int totalMoneyInHand = 0;
-        // player.playHand();
         System.out.println("Current money: " + player.getMoney());
         while (!endPhaseSelected) {
 
@@ -262,7 +258,6 @@ public class GameEngine implements Engine {
 
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.MONEY,
                     possibleDecisions.size() - 1, totalMoneyInHand, 0, supply.getGameDeck());
-            player.setPhase("Play");
             Decision decision = player.getPlayer().makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
                     Optional.empty());
 
@@ -300,8 +295,6 @@ public class GameEngine implements Engine {
             List<Decision> possibleDecisions = generatePossibleBuyDecisions(player, supply);
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.BUY, 0,
                     player.getMoney(), possibleDecisions.size() - 1, supply.getGameDeck());
-            player.setPhase("Buy");
-            System.out.println(possibleDecisions);
             Decision decision = player.getPlayer().makeDecision(currentState, ImmutableList.copyOf(possibleDecisions),
                     Optional.empty());
 
