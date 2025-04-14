@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableList;
 import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.Player.ScorePair;
 import edu.brandeis.cosi.atg.api.PlayerViolationException;
-import edu.brandeis.cosi103a.groupe.ConsoleGameObserver;
+import edu.brandeis.cosi103a.groupe.Other.ConsoleGameObserver;
 import edu.brandeis.cosi103a.groupe.Players.BigMoneyPlayer;
 import edu.brandeis.cosi103a.groupe.Players.RandomBuyPlayer;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;

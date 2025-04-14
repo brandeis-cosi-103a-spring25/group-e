@@ -1,20 +1,14 @@
 package edu.brandeis.cosi103a.groupe.Cards;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
 
-import edu.brandeis.cosi.atg.api.GameState;
-import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.PlayerViolationException;
 import edu.brandeis.cosi.atg.api.cards.Card;
-import edu.brandeis.cosi.atg.api.decisions.Decision;
-import edu.brandeis.cosi.atg.api.decisions.DiscardCardDecision;
-import edu.brandeis.cosi.atg.api.event.DiscardCardEvent;
+
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
-import edu.brandeis.cosi103a.groupe.Supply;
 import edu.brandeis.cosi103a.groupe.Engine.GameEngine;
+import edu.brandeis.cosi103a.groupe.Other.Supply;
 
 public class ActionCard {
     private final Supply supply;

@@ -1,4 +1,4 @@
-package edu.brandeis;
+package edu.brandeis.cosi103a.groupe.engineTests;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,10 +10,10 @@ import java.io.PrintStream;
 
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.cards.Card;
-import edu.brandeis.cosi103a.groupe.ConsoleGameObserver;
 import edu.brandeis.cosi.atg.api.event.EndTurnEvent;
 import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.event.GainCardEvent;
+import edu.brandeis.cosi103a.groupe.Other.ConsoleGameObserver;
 
 public class gameObserverTest {
     private ConsoleGameObserver observer;
