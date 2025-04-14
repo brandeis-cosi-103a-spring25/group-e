@@ -206,7 +206,7 @@ public class ourPlayer {
      * @return The current hand of cards.
      */
     public Hand getHand() {
-       return makeHand();
+        return makeHand();
     }
 
     public List<Card> getCards() {
@@ -256,7 +256,7 @@ public class ourPlayer {
         hand.clear();
         return discarded;
     }
-    
+
     /*
      * Draws a specified number of cards from the deck, reshuffling if necessary.
      */
@@ -303,13 +303,12 @@ public class ourPlayer {
     }
 
     public void gainCard(Card.Type cardType, Supply supply) { // fixed
-         // Assuming a factory method exists to create a Card from Card.Type
+        // Assuming a factory method exists to create a Card from Card.Type
         Card card = new Card(cardType, 0);
         if (supply != null) {
             supply.takeCard(card.getType());
 
         }
-       
 
     }
 
@@ -331,14 +330,14 @@ public class ourPlayer {
     public int getBuys() {
         return buys;
     }
-    
+
     /*
      * Method to check if the player has reacted to an attack card
      */
     public boolean hasReactedToAttack() {
         return hasReactedToAttack;
     }
-    
+
     /*
      * Method to set whether the player has reacted to an attack card
      */

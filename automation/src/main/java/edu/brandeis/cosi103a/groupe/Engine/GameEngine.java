@@ -129,8 +129,7 @@ public class GameEngine implements Engine {
             if (decision instanceof PlayCardDecision) {
                 PlayCardDecision playDecision = (PlayCardDecision) decision;
                 Card playedCard = playDecision.getCard();
-                if (playedCard.getCategory() == Card.Type.Category.ACTION
-                        && playedCard.getType() != Card.Type.MONITORING) {
+                if (playedCard.getCategory() == Card.Type.Category.ACTION) {
 
                     player.playCard(playedCard);
                     PlayCardEvent playEvent = new PlayCardEvent(playedCard, player.getName());
