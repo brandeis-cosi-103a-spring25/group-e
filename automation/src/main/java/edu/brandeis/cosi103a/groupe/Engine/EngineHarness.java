@@ -18,13 +18,13 @@ public class EngineHarness{
         System.out.println("Welcome to Automation: The Game!");
 
         // Select Player 1 Type
-        System.out.print("Select Player 1 (1: Human, 2: AI BigMoney, 3: AI RandomBuy): ");
+        System.out.print("Select Player 1 (1: Human, 2: AI BigMoney, 3: AI RandomBuy, 4: AI SmartAction): ");
         Player player1 = createPlayer(scanner, "Player 1");
         ourPlayer ourPlayer1 = new ourPlayer(player1.getName());
            ourPlayer1.setPlayer(player1);
 
         // Select Player 2 Type
-        System.out.print("Select Player 2 (1: Human, 2: AI BigMoney, 3: AI RandomBuy): ");
+        System.out.print("Select Player 2 (1: Human, 2: AI BigMoney, 3: AI RandomBuy, 4: AI SmartAction): ");
         Player player2 = createPlayer(scanner, "Player 2");
         ourPlayer ourPlayer2 = new ourPlayer(player2.getName());
            ourPlayer2.setPlayer(player2);
@@ -61,8 +61,10 @@ public class EngineHarness{
                     return (Player) new BigMoneyPlayer(playerName);
                 case "3": 
                     return (Player) new RandomBuyPlayer(playerName);
+                case "4":
+                    return (Player) new SmartActionPlayer(playerName);
                 default:
-                    System.out.print("Invalid choice. Enter 1 (Human), 2 (AI BigMoney), or 3 (AI RandomBuy): ");
+                    System.out.print("Invalid choice. Enter 1 (Human), 2 (AI BigMoney), 3 (AI RandomBuy) or 4 (AI SmartAction): ");
             }
         }
     }

@@ -13,6 +13,7 @@ import edu.brandeis.cosi.atg.api.PlayerViolationException;
 import edu.brandeis.cosi103a.groupe.Other.ConsoleGameObserver;
 import edu.brandeis.cosi103a.groupe.Players.BigMoneyPlayer;
 import edu.brandeis.cosi103a.groupe.Players.RandomBuyPlayer;
+import edu.brandeis.cosi103a.groupe.Players.SmartActionPlayer;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 /*
  * This class simulates a game between automated players
@@ -202,7 +203,9 @@ public class SimulationHarness {
             new BigMoneyPlayer("Big Money 1"),
             new BigMoneyPlayer("Big Money 2"),
             new RandomBuyPlayer("Random Buy 1"),
-            new RandomBuyPlayer("Random Buy 2")
+            new RandomBuyPlayer("Random Buy 2"),
+            new SmartActionPlayer("Smart Action 1"),
+            new SmartActionPlayer("Smart Action 2")
         );
 
         System.out.println("Available players:");
