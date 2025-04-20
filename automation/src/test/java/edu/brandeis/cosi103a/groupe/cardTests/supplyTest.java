@@ -1,4 +1,4 @@
-package edu.brandeis.cosi103a.groupe;
+package edu.brandeis.cosi103a.groupe.cardTests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -6,11 +6,11 @@ import static org.junit.Assert.assertTrue;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import edu.brandeis.cosi103a.groupe.Supply; // Import the Supply class
 
 import org.junit.Test;
 
 import edu.brandeis.cosi.atg.api.cards.Card;
+import edu.brandeis.cosi103a.groupe.Other.Supply;
 
 public class supplyTest {
 

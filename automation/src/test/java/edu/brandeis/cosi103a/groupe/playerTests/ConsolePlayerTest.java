@@ -1,17 +1,14 @@
-package edu.brandeis.cosi103a.groupe;
+package edu.brandeis.cosi103a.groupe.playerTests;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableCollection;
+
+import edu.brandeis.cosi103a.groupe.Other.Supply;
 import edu.brandeis.cosi103a.groupe.Players.ConsolePlayer;
-import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
-import edu.brandeis.cosi103a.groupe.Deck;
-import edu.brandeis.cosi103a.groupe.Supply;
 import edu.brandeis.cosi.atg.api.*;
 import edu.brandeis.cosi.atg.api.cards.Card;
 import edu.brandeis.cosi.atg.api.decisions.BuyDecision;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
-import edu.brandeis.cosi.atg.api.event.GameEvent;
-import edu.brandeis.cosi.atg.api.event.Event;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,28 +20,12 @@ import static org.junit.Assert.*;
 
 public class ConsolePlayerTest {
     private ConsolePlayer consolePlayer;
-    private ourPlayer player;
     private GameState gameState;
     private ImmutableList<Decision> decisions;
-    private Deck deck; // Real deck instance
 
     @Before
     public void setUp() {
-        // Create a real Deck with some test cards
-        deck = new Deck();
-
-        // Create a subclass of ourPlayer that implements makeDecision()
-        player = new ourPlayer("TestPlayer") {
-            
-            public Decision makeDecision(GameState state, ImmutableList<Decision> options, Optional<Event> reason) {
-                return options.isEmpty() ? null : options.get(0); // Default decision logic
-            }
-
-            // Expose deck through a getter
-            public Deck getDeck() {
-                return deck;
-            }
-        };
+   
 
         consolePlayer = new ConsolePlayer("TestPlayer");
 

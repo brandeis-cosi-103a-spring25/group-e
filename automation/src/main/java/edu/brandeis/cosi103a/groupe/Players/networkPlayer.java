@@ -8,7 +8,6 @@ import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.event.Event;
-import edu.brandeis.cosi103a.groupe.*;
 import java.util.List;
 import java.util.Optional;
 

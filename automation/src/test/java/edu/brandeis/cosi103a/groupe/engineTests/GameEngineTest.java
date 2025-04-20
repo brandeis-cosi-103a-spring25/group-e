@@ -1,13 +1,8 @@
-package edu.brandeis;
+package edu.brandeis.cosi103a.groupe.engineTests;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -23,19 +18,15 @@ import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.Hand;
 import edu.brandeis.cosi.atg.api.Player;
-import edu.brandeis.cosi.atg.api.Player.ScorePair;
 import edu.brandeis.cosi.atg.api.PlayerViolationException;
 import edu.brandeis.cosi.atg.api.cards.Card;
-import edu.brandeis.cosi.atg.api.decisions.BuyDecision;
 import edu.brandeis.cosi.atg.api.decisions.EndPhaseDecision;
 import edu.brandeis.cosi.atg.api.decisions.PlayCardDecision;
 import edu.brandeis.cosi.atg.api.event.EndTurnEvent;
-import edu.brandeis.cosi.atg.api.event.GainCardEvent;
-import edu.brandeis.cosi.atg.api.event.GameEvent;
 import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
-import edu.brandeis.cosi103a.groupe.ConsoleGameObserver;
-import edu.brandeis.cosi103a.groupe.Supply;
 import edu.brandeis.cosi103a.groupe.Engine.GameEngine;
+import edu.brandeis.cosi103a.groupe.Other.ConsoleGameObserver;
+import edu.brandeis.cosi103a.groupe.Other.Supply;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 
 
@@ -44,7 +35,6 @@ public class GameEngineTest {
     private ourPlayer player2;
     private GameObserver observer;
     private GameEngine engine;
-    private Supply supply;
     private Player mockInnerPlayer1;
     private Player mockInnerPlayer2;
 
@@ -53,7 +43,6 @@ public class GameEngineTest {
         player1 = mock(ourPlayer.class);
         player2 = mock(ourPlayer.class);
         observer = mock(GameObserver.class);
-        supply = mock(Supply.class);
         engine = new GameEngine(player1, player2, observer);
         
         // Mock the inner Player objects

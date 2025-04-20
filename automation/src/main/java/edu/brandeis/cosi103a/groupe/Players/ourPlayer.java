@@ -2,8 +2,6 @@ package edu.brandeis.cosi103a.groupe.Players;
 // package edu.brandeis.cosi103a.groupe;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,9 +12,8 @@ import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.Hand;
 import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.cards.*;
-import edu.brandeis.cosi103a.groupe.ConsoleGameObserver;
-import edu.brandeis.cosi103a.groupe.Deck;
-import edu.brandeis.cosi103a.groupe.Supply;
+import edu.brandeis.cosi103a.groupe.Other.Deck;
+import edu.brandeis.cosi103a.groupe.Other.Supply;
 
 /* 
  * This class creates a player in the game
@@ -24,7 +21,7 @@ import edu.brandeis.cosi103a.groupe.Supply;
  */
 public class ourPlayer {
     private Player thisPlayer;
-    private String name, phase;
+    private String name;
     private Deck deck;
     private List<Card> hand;
     private GameObserver observer;
@@ -157,13 +154,9 @@ public class ourPlayer {
      * @return The current money.
      */
     public int getMoney() {
-        // playHand();
         return money;
     }
 
-    public void setPhase(String phase) {
-        this.phase = phase;
-    }
 
     /**
      * Adds a card to the deck.
@@ -213,7 +206,7 @@ public class ourPlayer {
      * @return The current hand of cards.
      */
     public Hand getHand() {
-       return makeHand();
+        return makeHand();
     }
 
     public List<Card> getCards() {
@@ -263,7 +256,7 @@ public class ourPlayer {
         hand.clear();
         return discarded;
     }
-    
+
     /*
      * Draws a specified number of cards from the deck, reshuffling if necessary.
      */
@@ -310,13 +303,12 @@ public class ourPlayer {
     }
 
     public void gainCard(Card.Type cardType, Supply supply) { // fixed
-         // Assuming a factory method exists to create a Card from Card.Type
+        // Assuming a factory method exists to create a Card from Card.Type
         Card card = new Card(cardType, 0);
         if (supply != null) {
             supply.takeCard(card.getType());
 
         }
-       
 
     }
 
@@ -338,14 +330,14 @@ public class ourPlayer {
     public int getBuys() {
         return buys;
     }
-    
+
     /*
      * Method to check if the player has reacted to an attack card
      */
     public boolean hasReactedToAttack() {
         return hasReactedToAttack;
     }
-    
+
     /*
      * Method to set whether the player has reacted to an attack card
      */
