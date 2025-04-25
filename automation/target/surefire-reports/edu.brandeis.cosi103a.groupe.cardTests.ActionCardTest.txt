@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: edu.brandeis.cosi103a.groupe.cardTests.ActionCardTest
+-------------------------------------------------------------------------------
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.355 s - in edu.brandeis.cosi103a.groupe.cardTests.ActionCardTest

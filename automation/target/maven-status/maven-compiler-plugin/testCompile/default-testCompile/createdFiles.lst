@@ -1,0 +1,11 @@
+edu/brandeis/cosi103a/groupe/cardTests/deckTest.class
+edu/brandeis/cosi103a/groupe/playerTests/BigMoneyPlayerTest.class
+edu/brandeis/cosi103a/groupe/playerTests/RandomPlayerTest.class
+edu/brandeis/cosi103a/groupe/cardTests/supplyTest.class
+edu/brandeis/cosi103a/groupe/cardTests/ActionCardTest.class
+edu/brandeis/cosi103a/groupe/playerTests/SmartActionPlayerTest.class
+edu/brandeis/cosi103a/groupe/engineTests/SimulationHarnessTest.class
+edu/brandeis/cosi103a/groupe/engineTests/gameObserverTest.class
+edu/brandeis/cosi103a/groupe/playerTests/ConsolePlayerTest.class
+edu/brandeis/cosi103a/groupe/cardTests/CardTest.class
+edu/brandeis/cosi103a/groupe/engineTests/GameEngineTest.class
