@@ -6,6 +6,11 @@ import edu.brandeis.cosi.atg.api.event.Event;
 
 public class ConsoleGameObserver implements GameObserver {
 
+      
+      /** 
+       * @param state
+       * @param event
+       */
       /*
        * This method is called whenever an event occurs in the game and is 
        * responsible for printing the event details to the console.

@@ -39,6 +39,10 @@ public class ActionCardTest {
         when(hackCard.getType()).thenReturn(Card.Type.HACK);
     }
 
+    
+    /** 
+     * @throws PlayerViolationException
+     */
     @Test
     public void testPlayActionCard_Backlog() throws PlayerViolationException {
         // Arrange: Setting up the mocked behaviors
@@ -53,6 +57,10 @@ public class ActionCardTest {
         verify(mockGameEngine, times(1)).discardPhase(mockPlayer, false, 0, 0);
     }
 
+    
+    /** 
+     * @throws PlayerViolationException
+     */
     @Test
     public void testPlayActionCard_DailyScrum() throws PlayerViolationException {
         Card dailyScrumCard = new Card(Card.Type.DAILY_SCRUM, 0);

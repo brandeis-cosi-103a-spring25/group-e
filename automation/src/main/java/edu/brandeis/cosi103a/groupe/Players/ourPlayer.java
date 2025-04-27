@@ -56,10 +56,18 @@ public class ourPlayer {
         return this.name;
     }
 
+    
+    /** 
+     * @return Player
+     */
     public Player getPlayer() {
         return thisPlayer;
     }
 
+    
+    /** 
+     * @param player
+     */
     public void setPlayer(Player player) {
         this.thisPlayer = player;
     }

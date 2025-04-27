@@ -147,6 +147,10 @@ public class SimulationHarness {
         }
     }
     
+    
+    /** 
+     * @return List<ourPlayer>
+     */
     /*
      * Gets the list of players in the simulation.
      * @return The list of players.
@@ -179,6 +183,12 @@ public class SimulationHarness {
         return totalLosses;
     }
 
+    
+    /** 
+     * @param player1
+     * @param player2
+     * @return GameEngine
+     */
     public GameEngine createGameEngine(ourPlayer player1, ourPlayer player2) {
         return new GameEngine(player1, player2, new ConsoleGameObserver());
     }

@@ -96,6 +96,10 @@ public class SimulationHarnessTest {
         assertEquals(3, harness.getPlayers().size());
     }
     
+    
+    /** 
+     * @throws Exception
+     */
     // Test that the simulation can run with at least two players
     @Test
     public void testRunWithLessThanTwoPlayers() throws Exception {
@@ -114,6 +118,10 @@ public class SimulationHarnessTest {
         assertTrue(output.contains("At least two players are required to run the simulation."));
     }
 
+    
+    /** 
+     * @throws Exception
+     */
     // Test that the simulateMatchup method works correctly
     @SuppressWarnings("unchecked")
     @Test

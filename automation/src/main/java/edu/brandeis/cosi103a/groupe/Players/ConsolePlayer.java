@@ -116,6 +116,10 @@ public class ConsolePlayer implements Player{
         scanner.close();
     }
 
+    
+    /** 
+     * @return String
+     */
     @Override
     public String getName() {
         return this.name;

@@ -50,11 +50,23 @@ public class GameEngine implements Engine {
 
     }
 
+    
+    /** 
+     * @param player12
+     * @param player22
+     * @param observer
+     * @return Engine
+     */
     @EngineCreator
     public static Engine makeEngine(ourPlayer player12, ourPlayer player22, GameObserver observer) {
         return new GameEngine(player12, player22, observer);
     }
 
+    
+    /** 
+     * @return ImmutableList<ScorePair>
+     * @throws PlayerViolationException
+     */
     @Override
     public ImmutableList<ScorePair> play() throws PlayerViolationException {
         distributeCards(player1, player2, supply);

@@ -65,6 +65,10 @@ public class GameEngineTest {
         assertNotNull(observer);
     }
 
+    
+    /** 
+     * @throws PlayerViolationException
+     */
     @Test
     public void testActionPhase() throws PlayerViolationException {
        // Create the real ourPlayer object
@@ -98,6 +102,10 @@ public class GameEngineTest {
     }
     
 
+    
+    /** 
+     * @throws PlayerViolationException
+     */
     @Test
     public void testMoneyPhase() throws PlayerViolationException {
         ImmutableList<Card> playedCards = ImmutableList.of(); // or some other list of played cards

@@ -20,6 +20,12 @@ public class ActionCard {
         this.gameEngine = gameEngine;
     }
 
+    
+    /** 
+     * @param card
+     * @param player
+     * @throws PlayerViolationException
+     */
     // Play an action card
     public void playActionCard(Card card, ourPlayer player) throws PlayerViolationException {
         boolean isAttackCard = isAttack(card);
@@ -76,6 +82,11 @@ public class ActionCard {
         }
     }
 
+    
+    /** 
+     * @param player
+     * @throws PlayerViolationException
+     */
     // Effect: Player discards any number of cards, then draws the same amount
     public void handleBacklog(ourPlayer player) throws PlayerViolationException {
         player.incrementActions(1);

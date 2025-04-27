@@ -37,11 +37,19 @@ public class RandomBuyPlayer implements Player {
         this.name = name;
     }
 
+    
+    /** 
+     * @return String
+     */
     @Override
     public String getName() {
         return name;
     }
 
+    
+    /** 
+     * @return Optional<GameObserver>
+     */
     @Override
     public Optional<GameObserver> getObserver() {
         return observer;

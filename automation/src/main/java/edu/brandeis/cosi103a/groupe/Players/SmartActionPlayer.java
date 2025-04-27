@@ -21,6 +21,10 @@ public class SmartActionPlayer implements Player {
         this.name = name;
     }
     
+    
+    /** 
+     * @return String
+     */
     /*
      * Returns the name of the player.
      */
@@ -29,6 +33,13 @@ public class SmartActionPlayer implements Player {
         return name;
     }
     
+    
+    /** 
+     * @param state
+     * @param options
+     * @param reason
+     * @return Decision
+     */
     /*
      * This method takes the current game state and list of available options,
      * and returns the player's decision based on the game phase.

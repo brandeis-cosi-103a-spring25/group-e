@@ -21,6 +21,13 @@ public class networkPlayer implements Player {
         this.client = new OkHttpClient();
     }
 
+    
+    /** 
+     * @param state
+     * @param options
+     * @param reason
+     * @return Decision
+     */
     @Override
     public Decision makeDecision(GameState state, ImmutableList<Decision> options, Optional<Event> reason) {
         DecisionRequest req = new DecisionRequest(state, options.asList(), reason.orElse(null), "network-player-uuid");
@@ -42,6 +49,10 @@ public class networkPlayer implements Player {
         }
     }
 
+    
+    /** 
+     * @param event
+     */
     public void logEvent(Event event) {
         LogEventRequest req = new LogEventRequest(event, "network-player-uuid");
         RequestBody body = RequestBody.create(gson.toJson(req), MediaType.parse("application/json"));
