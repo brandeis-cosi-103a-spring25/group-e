@@ -7,6 +7,7 @@ import edu.brandeis.cosi.atg.api.Player.ScorePair;
 import edu.brandeis.cosi103a.groupe.Other.ConsoleGameObserver;
 import edu.brandeis.cosi103a.groupe.Players.*;
 import edu.brandeis.cosi.atg.api.PlayerViolationException;
+import java.util.UUID;
 
 import com.google.common.collect.ImmutableList;
 
@@ -25,13 +26,13 @@ public class EngineHarness{
         System.out.println("Welcome to Automation: The Game!");
 
         // Select Player 1 Type
-        System.out.print("Select Player 1 (1: Human, 2: AI BigMoney, 3: AI RandomBuy, 4: AI SmartAction): ");
+        System.out.print("Select Player 1 (1: Human, 2: AI BigMoney, 3: AI RandomBuy, 4: AI SmartAction, 5: Network Player): ");
         Player player1 = createPlayer(scanner, "Player 1");
         ourPlayer ourPlayer1 = new ourPlayer(player1.getName());
            ourPlayer1.setPlayer(player1);
 
         // Select Player 2 Type
-        System.out.print("Select Player 2 (1: Human, 2: AI BigMoney, 3: AI RandomBuy, 4: AI SmartAction): ");
+        System.out.print("Select Player 2 (1: Human, 2: AI BigMoney, 3: AI RandomBuy, 4: AI SmartAction, 5: Network Player): ");
         Player player2 = createPlayer(scanner, "Player 2");
         ourPlayer ourPlayer2 = new ourPlayer(player2.getName());
            ourPlayer2.setPlayer(player2);
@@ -74,8 +75,11 @@ public class EngineHarness{
                     return (Player) new RandomBuyPlayer(playerName);
                 case "4":
                     return (Player) new SmartActionPlayer(playerName);
+                case "5":
+                    // FIX: use HTTP and real UUID
+                    return (Player) new networkPlayer("http://localhost:8080", UUID.randomUUID().toString());
                 default:
-                    System.out.print("Invalid choice. Enter 1 (Human), 2 (AI BigMoney), 3 (AI RandomBuy) or 4 (AI SmartAction): ");
+                    System.out.print("Invalid choice. Enter 1 (Human), 2 (AI BigMoney), 3 (AI RandomBuy), 4 (AI SmartAction), or 5 (Network Player): ");
             }
         }
     }
