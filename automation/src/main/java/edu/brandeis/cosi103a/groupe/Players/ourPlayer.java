@@ -16,8 +16,9 @@ import edu.brandeis.cosi103a.groupe.Other.Deck;
 import edu.brandeis.cosi103a.groupe.Other.Supply;
 
 /* 
+ * COSI 103a - Group E
+ * April 28th, 2025
  * This class creates a player in the game
- * 
  */
 public class ourPlayer {
     private Player thisPlayer;
@@ -34,9 +35,8 @@ public class ourPlayer {
     private Card lastTrashedCard;
     private boolean hasReactedToAttack;
 
-    /*
+    /**
      * Constructor for the player
-     * 
      * @param name The name of the player.
      */
     public ourPlayer(String name) {
@@ -49,7 +49,6 @@ public class ourPlayer {
 
     /**
      * Gets the name of the player.
-     * 
      * @return The name of the player.
      */
     public String getName() {
@@ -58,6 +57,7 @@ public class ourPlayer {
 
     
     /** 
+     * Gets the player object associated with this player.
      * @return Player
      */
     public Player getPlayer() {
@@ -66,6 +66,7 @@ public class ourPlayer {
 
     
     /** 
+     * Sets the player object associated with this player.
      * @param player
      */
     public void setPlayer(Player player) {
@@ -74,7 +75,6 @@ public class ourPlayer {
 
     /**
      * Draws a hand of cards from the deck.
-     * 
      * @param handSize The number of cards to draw.
      */
     public void drawHand(int handSize) {
@@ -91,6 +91,7 @@ public class ourPlayer {
     /**
      * Plays the hand of cards, adding the money from each card to the player's
      * total.
+     * @return The total money played from the hand.
      */
     public int playHand() {
         int playMoney = 0;
@@ -112,7 +113,6 @@ public class ourPlayer {
 
     /**
      * Purchases a card from the hand, adding it to the discard pile.
-     * 
      * @param card   The card to purchase.
      * @param supply The supply to take the card from.
      */
@@ -122,8 +122,11 @@ public class ourPlayer {
             discardPile.add(card);
             money -= card.getCost();
         }
-    }
-
+    } 
+    
+    /**
+     * Sets the amount of money the player has.
+     */
     public void setMoney(int val) {
         this.money = val;
     }
@@ -138,7 +141,6 @@ public class ourPlayer {
 
     /**
      * Gets the total AP of the player's deck and discard pile.
-     * 
      * @return The total AP.
      */
     public int getTotalAp() {
@@ -158,7 +160,6 @@ public class ourPlayer {
 
     /**
      * Gets the current amount of money the player has.
-     * 
      * @return The current money.
      */
     public int getMoney() {
@@ -168,7 +169,6 @@ public class ourPlayer {
 
     /**
      * Adds a card to the deck.
-     * 
      * @param card The card to add.
      */
     public void addCardToDeck(Card card) {
@@ -181,11 +181,19 @@ public class ourPlayer {
     public void shuffleDeck() {
         deck.shuffle();
     }
-
+    
+    /**
+     * Sets the played cards for the player.
+     * @param newUsedCards The new list of played cards.
+     */
     public void setPlayedCards(ImmutableList<Card> newUsedCards) {
         playedCards = newUsedCards;
     }
-
+     
+    /**
+     * Gets the played cards for the player.
+     * @return The list of played cards.
+     */
     public ImmutableCollection<Card> getPlayedCards() {
         return this.playedCards;
     }
@@ -199,28 +207,42 @@ public class ourPlayer {
         discardPile.clear();
         deck.shuffle();
     }
-
+    
+    /**
+     * Sets the observer for the player.
+     * @param observer The GameObserver to set.
+     */
     public void setObserver(GameObserver observer) {
         this.observer = observer;
     }
-
+    
+    /**
+     * Gets the observer for the player.
+     * @return An Optional containing the GameObserver if it exists, otherwise an empty Optional.
+     */
     public Optional<GameObserver> getObserver() {
         return Optional.ofNullable(observer);
     }
 
     /**
      * Gets the current hand of cards.
-     * 
      * @return The current hand of cards.
      */
     public Hand getHand() {
         return makeHand();
     }
-
+    
+    /**
+     * Gets the list of cards in the player's hand.
+     * @return A list of cards in the player's hand.
+     */
     public List<Card> getCards() {
         return this.hand;
     }
-
+    
+    /*
+     * Clears the player's hand and discard pile, resets money, actions, and buys.
+     */
     public void clear() {
         // Clear the player's hand and discard pile
         hand.clear();
@@ -230,7 +252,11 @@ public class ourPlayer {
         actions = 0;
         buys = 0;
     }
-
+    
+    /**
+     * Creates a Hand object from the player's current hand and played cards.
+     * @return A Hand object containing the played and unplayed cards.
+     */
     public Hand makeHand() {
         playedCards = ImmutableList.of();
         unplayedCards = ImmutableList.copyOf(hand);
@@ -238,26 +264,46 @@ public class ourPlayer {
         return thisHand;
     }
 
-    // not sure
+    /**
+     * Plays a card from the player's hand and adds it to the discard pile.
+     * @param card The card to play.
+     */
     public void playCard(Card card) {
         // Implement the logic to play a card
         // For example, remove the card from hand and add it to the played cards
         hand.remove(card);
         discardPile.add(card);
     }
-
+    
+    /**
+     * Incremenets the number of actions the player has.
+     * @param amount The amount to increment the actions by.
+     */
     public void incrementActions(int amount) {
         actions += amount;
     }
-
+    
+    /**
+     * Increments the number of buys the player has.
+     * @param amount The amount to increment the buys by.
+     */
     public void incrementBuys(int amount) {
         buys += amount;
     }
-
+    
+    /**
+     * Increments the amount of money the player has.
+     * @param amount The amount to increment the money by.
+     */
     public void incrementMoney(int amount) {
         money += amount;
     }
-
+    
+    /**
+     * Discards all cards in the player's hand and returns the number of cards discarded.
+     * This method is used when the player needs to discard any number of cards.
+     * @return The number of cards discarded.
+     */
     public int discardAnyNumberOfCards() {
         int discarded = hand.size();
         discardPile.addAll(hand);
@@ -265,7 +311,7 @@ public class ourPlayer {
         return discarded;
     }
 
-    /*
+    /**
      * Draws a specified number of cards from the deck, reshuffling if necessary.
      */
     public void draw(int count) {
@@ -278,13 +324,21 @@ public class ourPlayer {
             }
         }
     }
-
+    
+    /**
+     * Discards cards down to a specified count, moving excess cards to the discard pile.
+     * @param count The number of cards to retain in hand.
+     */
     public void discardDownTo(int count) {
         while (hand.size() > count) {
             discardPile.add(hand.remove(0));
         }
     }
-
+    
+    /**
+     * Chooses an action card to play from the player's hand.
+     * @return The first action card found in the hand, or null if none are found.
+     */
     public Card chooseActionCardToPlay() {
         for (Card card : hand) {
             if (card.getCategory() == Card.Type.Category.ACTION) {
@@ -293,8 +347,12 @@ public class ourPlayer {
         }
         return null;
     }
-
-    public void trashCard(Card card) { // need to fix
+    
+    /**
+     * Trashes a card from the player's hand.
+     * @param card The card to trash.
+     */
+    public void trashCard(Card card) { 
 
         if (hand.contains(card)) {
             hand.remove(card);
@@ -305,11 +363,20 @@ public class ourPlayer {
         }
 
     }
-
+     
+    /**
+     * Gets the last card that was trashed by the player.
+     * @return The last trashed card, or null if no card has been trashed yet.
+     */
     public Card getLastTrashedCard() {
         return lastTrashedCard;
     }
-
+    
+    /**
+     * Gains a card of a specified type from the supply.
+     * @param cardType The type of card to gain.
+     * @param supply   The supply to take the card from.
+     */
     public void gainCard(Card.Type cardType, Supply supply) { // fixed
         // Assuming a factory method exists to create a Card from Card.Type
         Card card = new Card(cardType, 0);
@@ -319,35 +386,53 @@ public class ourPlayer {
         }
 
     }
-
+    
+    /**
+     * Discards a specific card from the player's hand to the discard pile.
+     * @param card The card to discard.
+     */
     public void discardCard(Card card) {
         if (!hand.isEmpty()) {
             hand.remove(card);// Remove the card from hand and add to discard pile
             discardPile.add(card);
         }
     }
-
+    
+    /**
+     * Gets the size of the player's hand.
+     * @return The number of cards in the player's hand.
+     */
     public int getHandSize() {
         return hand.size();
     }
-
+    
+    /**
+     * Gets the number of actions the player has.
+     * @return The number of actions available to the player.
+     */
     public int getActions() {
         return actions;
     }
-
+    
+    /**
+     * Method to get the number of buys the player has
+     * @return The number of buys available to the player.
+     */
     public int getBuys() {
         return buys;
     }
 
-    /*
+    /**
      * Method to check if the player has reacted to an attack card
+     * @return True if the player has reacted to an attack card, false otherwise.
      */
     public boolean hasReactedToAttack() {
         return hasReactedToAttack;
     }
 
-    /*
+    /**
      * Method to set whether the player has reacted to an attack card
+     * @param hasReacted True if the player has reacted to an attack card, false otherwise.
      */
     public void setHasReactedToAttack(boolean hasReacted) {
         this.hasReactedToAttack = hasReacted;

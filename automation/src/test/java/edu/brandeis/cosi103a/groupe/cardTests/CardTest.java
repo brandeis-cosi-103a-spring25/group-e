@@ -5,7 +5,11 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import edu.brandeis.cosi.atg.api.cards.Card;
-
+/*
+ * COSI 103a - Group E
+ * April 28th, 2025
+ * This class tests the functionality of Card in the game.
+ */
 public class CardTest {
 
     /*
@@ -22,7 +26,8 @@ public class CardTest {
         Card card3 = new Card(Card.Type.FRAMEWORK, 1);
         assertEquals(8, card3.getCost());
     }
-
+    
+    //Tests that cards are created correctly.
     @Test
     public void testCryptocurrencyCard() {
         Card card = new Card(Card.Type.BITCOIN, 31);

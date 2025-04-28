@@ -6,9 +6,14 @@ import org.junit.Test;
 
 import edu.brandeis.cosi.atg.api.cards.Card;
 import edu.brandeis.cosi103a.groupe.Other.Deck;
-
+/*
+ * COSI 103a - Group E
+ * April 28th, 2025
+ * This class tests the functionality of Deck in the game.
+ */
 public class deckTest {
-
+    
+    //Tests that the deck functionality works correctly.
     @Test
     public void testDeck() {
         // Create a new deck
@@ -30,6 +35,8 @@ public class deckTest {
         boolean isEmpty = deck.isEmpty();
         assertEquals(false, isEmpty);
     }
+
+    //Tests that adding a card to the deck works correctly.
     @Test
     public void testAddCard() {
         // Create a new deck

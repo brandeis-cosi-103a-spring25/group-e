@@ -57,7 +57,7 @@ public class networkPlayer implements Player {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Content-Type", "application/json");
             HttpEntity<DecisionRequest> entity = new HttpEntity<>(request, headers);
-
+          
             ResponseEntity<DecisionResponse> response = restTemplate.postForEntity(
                 serverUrl + "/decision", entity, DecisionResponse.class);
 

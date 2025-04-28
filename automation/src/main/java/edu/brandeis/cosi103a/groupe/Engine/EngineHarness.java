@@ -11,12 +11,15 @@ import edu.brandeis.cosi.atg.api.PlayerViolationException;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Scanner;
-
+/*
+ * COSI 103a-Group E
+ * April 28th, 2025
+ * This class serves as the main entry point for the Automation game.
+ * It initializes the game, allows players to select their types, and starts the game engine.
+ * It also handles the game observer to print game events and final scores.
+ */
 public class EngineHarness{
     
-    /** 
-     * @param args
-     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to Automation: The Game!");
@@ -53,7 +56,11 @@ public class EngineHarness{
     }
 
     /**
-     * Helper method to create either a human or AI player.
+     * This method prompts the user to select a player type and returns the corresponding Player object.
+     * @param scanner The Scanner object to read user input.
+     * @param playerName The name of the player to be created.
+     * @return A Player object based on the user's choice.
+     *         1 for Human, 2 for AI BigMoney, 3 for AI RandomBuy, 4 for AI SmartAction.
      */
     private static Player createPlayer(Scanner scanner, String playerName) {
         while (true) {

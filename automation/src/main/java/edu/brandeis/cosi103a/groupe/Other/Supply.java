@@ -10,13 +10,18 @@ import com.google.common.collect.ImmutableMap;
 
 import edu.brandeis.cosi.atg.api.GameDeck;
 import edu.brandeis.cosi.atg.api.cards.Card;
-
+/*
+ * COSI 103a - Group E
+ * April 28th, 2025
+ * This class represents the supply of cards available in the game.
+ */
 public class Supply {
     private final Map<Card.Type, List<Card>> cardStacks;
     private int cardIdCounter;
 
-    /**
-     * Constructor for the supply
+    /*
+     * Constructor for the Supply class.
+     * Initializes the card stacks with predefined quantities of each card type.
      */
     public Supply() {
         cardStacks = new EnumMap<>(Card.Type.class);
@@ -42,6 +47,7 @@ public class Supply {
 
     
     /** 
+     * This method adds a specified quantity of cards of a given type to the supply.
      * @param type
      * @param quantity
      */
@@ -55,7 +61,6 @@ public class Supply {
 
     /**
      * Gets the quantity of a specific card type in the supply.
-     * 
      * @param type The type of the card.
      * @return The quantity of the card type in the supply.
      */
@@ -65,7 +70,6 @@ public class Supply {
 
     /**
      * Gets a list of all available cards remaining in the supply.
-     * 
      * @return List of available cards.
      */
     public List<Card> getAvailableCardsInSupply() {
@@ -78,7 +82,6 @@ public class Supply {
 
     /**
      * Takes a card of the specified type from the supply.
-     * 
      * @param type The type of card to take.
      * @return The card if available, otherwise null.
      */
@@ -103,7 +106,6 @@ public class Supply {
 
     /**
      * Gets a GameDeck representation of the current supply.
-     * 
      * @return GameDeck based on the current supply.
      */
     public GameDeck getGameDeck() {
@@ -116,7 +118,6 @@ public class Supply {
 
     /**
      * Gets an unmodifiable view of the card stacks in the supply.
-     * 
      * @return An unmodifiable map of card types to their corresponding stacks.
     */
     public Map<Card.Type, List<Card>> getCardStacks() {
@@ -125,7 +126,6 @@ public class Supply {
 
     /**
      * Counts how many card types are completely depleted.
-     * 
      * @return The number of card types with no cards left.
      */
     public int getEmptyPileCount() {

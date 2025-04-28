@@ -10,7 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
+/*
+ * COSI 103a - Group E
+ * April 28th, 2025
+ * This class handles player requests for decisions and event logging.
+ * It provides endpoints for making decisions and logging events.
+ */
 @RestController
 public class PlayerController {
 
@@ -19,8 +24,9 @@ public class PlayerController {
 
     
     /** 
-     * @param request
-     * @return ResponseEntity<DecisionResponse>
+     * This endpoint handles decision requests from players.
+     * @param request the decision request containing options
+     * @return ResponseEntity<DecisionResponse> 
      */
     @PostMapping("/decide")
     public ResponseEntity<DecisionResponse> handleDecision(@RequestBody DecisionRequest request) {
@@ -31,7 +37,8 @@ public class PlayerController {
 
     
     /** 
-     * @param request
+     * This endpoint handles event logging requests from players.
+     * @param request the log event request containing player UUID and decision
      * @return ResponseEntity<Void>
      */
     @PostMapping("/log-event")

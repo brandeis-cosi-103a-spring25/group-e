@@ -2,16 +2,15 @@ package edu.brandeis.cosi103a.groupe.Other;
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.event.Event;
-
-
+/*
+ * COSI 103A - Group E
+ * April 28th, 2025
+ * This class is part of the ConsoleGameObserver class, which implements the GameObserver interface.
+ * It is responsible for observing game events and printing them to the console in a user-friendly format.
+ */
 public class ConsoleGameObserver implements GameObserver {
 
-      
-      /** 
-       * @param state
-       * @param event
-       */
-      /*
+      /**
        * This method is called whenever an event occurs in the game and is 
        * responsible for printing the event details to the console.
        * @param state The current game state.
@@ -43,6 +42,5 @@ public class ConsoleGameObserver implements GameObserver {
             ", Actions: " + availableActions + 
             ", Buys: " + availableBuys + 
             ", Spendable Money: " + spendableMoney + ")");
-        //System.out.println("Event occurred: " + event + " at game state " + state + "\n");
     }
 }

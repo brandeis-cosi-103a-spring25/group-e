@@ -16,7 +16,11 @@ import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
-
+/*
+ * COSI 103a - Group E
+ * April 28th, 2025
+ * This class tests the functionality of ActionCard in the game.
+ */
 public class ActionCardTest {
 
     private Supply mockSupply;
@@ -25,7 +29,8 @@ public class ActionCardTest {
     private ourPlayer mockOpponent;
     private ActionCard actionCard;
     private Card hackCard;
-
+    
+    //This is a test class for ActionCard functionality in the game.
     @Before
     public void setUp() {
         mockSupply = mock(Supply.class);
@@ -41,6 +46,7 @@ public class ActionCardTest {
 
     
     /** 
+     * Tests the backlog action card functionality.
      * @throws PlayerViolationException
      */
     @Test
@@ -59,6 +65,7 @@ public class ActionCardTest {
 
     
     /** 
+     * Tests the daily scrum action card functionality.
      * @throws PlayerViolationException
      */
     @Test
@@ -72,7 +79,8 @@ public class ActionCardTest {
         verify(mockPlayer).incrementBuys(1);
         verify(mockOpponent).draw(1);
     }
-
+    
+    // Tests the functionality of the IPO action card.
     @Test
     public void testPlayActionCard_Ipo() throws PlayerViolationException {
         Card ipoCard = new Card(Card.Type.IPO, 0);
@@ -83,7 +91,8 @@ public class ActionCardTest {
         verify(mockPlayer).incrementActions(1);
         verify(mockPlayer).incrementMoney(2);
     }
-
+    
+    // Tests the functionality of the Hack action card.
     @Test
     public void testPlayActionCard_Hack() throws PlayerViolationException {
         // Arrange: Mock player and opponent interactions
@@ -105,7 +114,8 @@ public class ActionCardTest {
         // Verify player money increment
         verify(mockPlayer, times(1)).incrementMoney(2);
     }
-
+    
+    // Tests the functionality of the Monitoring action card.
     @Test
     public void testPlayActionCard_Monitoring() throws PlayerViolationException {
         Card monitoringCard = new Card(Card.Type.MONITORING, 0);
@@ -114,7 +124,8 @@ public class ActionCardTest {
 
         verify(mockPlayer).draw(2);
     }
-
+    
+    // Tests the functionality of the Tech Debt action card.
     @Test
     public void testPlayActionCard_TechDebt() throws PlayerViolationException {
         // Arrange: Setting up the mocked behaviors
@@ -133,7 +144,8 @@ public class ActionCardTest {
         verify(mockPlayer, times(1)).incrementMoney(1);
         verify(mockGameEngine, times(1)).discardPhase(mockPlayer, true, 0, 2);
     }
-
+    
+    // Tests the functionality of the Refactor action card.
     @Test
     public void testPlayActionCard_Refactor() throws PlayerViolationException {
 
@@ -149,7 +161,8 @@ public class ActionCardTest {
         verify(mockGameEngine).gainCard(mockPlayer, null, 4);
 
     }
-
+    
+    // Tests the functionality of the Parallelization action card.
     @Test
     public void testPlayActionCard_Parallelization() throws PlayerViolationException {
         Card parallelizationCard = new Card(Card.Type.PARALLELIZATION, 0);
@@ -159,7 +172,8 @@ public class ActionCardTest {
         verify(mockPlayer).incrementActions(1);
         assertTrue(actionCard.parallelizationHandle);
     }
-
+    
+    // Tests the functionality of the Code Review action card.
     @Test
     public void testPlayActionCard_CodeReview() throws PlayerViolationException {
         Card codeReviewCard = new Card(Card.Type.CODE_REVIEW, 0);
@@ -169,7 +183,8 @@ public class ActionCardTest {
         verify(mockPlayer).draw(1);
         verify(mockPlayer).incrementActions(2);
     }
-
+    
+    // Tests the functionality of the Evergreen Test action card.
     @Test
     public void testPlayActionCard_EvergreenTest() throws PlayerViolationException {
         Card evergreenTestCard = new Card(Card.Type.EVERGREEN_TEST, 0);
@@ -180,7 +195,8 @@ public class ActionCardTest {
         verify(mockPlayer).draw(2);
         verify(mockGameEngine).gainCard(mockOpponent, new Card(Card.Type.BUG, 0), null);
     }
-
+    
+    // Tests the functionality of the Hack action card when it is negated by Monitoring.
     @Test
     public void testPlayActionCard_AttackNegatedByMonitoring() throws PlayerViolationException {
         Card hackCard = new Card(Card.Type.HACK, 0);

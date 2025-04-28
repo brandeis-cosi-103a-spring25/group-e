@@ -16,7 +16,10 @@ import edu.brandeis.cosi103a.groupe.Players.RandomBuyPlayer;
 import edu.brandeis.cosi103a.groupe.Players.SmartActionPlayer;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 /*
- * This class simulates a game between automated players
+ * COSI 103A-Group E
+ * April 28th, 2025
+ * This class simulates a series of games between players to evaluate their performance.
+ * It allows users to select players, specify the number of games per matchup, and displays the results.
  */
 public class SimulationHarness {
     private int numGames;
@@ -148,10 +151,8 @@ public class SimulationHarness {
     }
     
     
-    /** 
-     * @return List<ourPlayer>
-     */
-    /*
+   
+    /**
      * Gets the list of players in the simulation.
      * @return The list of players.
      */
@@ -185,6 +186,7 @@ public class SimulationHarness {
 
     
     /** 
+     * Creates a GameEngine instance for the specified players.
      * @param player1
      * @param player2
      * @return GameEngine
@@ -196,8 +198,8 @@ public class SimulationHarness {
     /**
      * Main method to run the simulation harness.
      * Allows the user to select players and set the number of games per matchup.
-          * @throws PlayerViolationException 
-          */
+     * @throws PlayerViolationException 
+     */
     public static void main(String[] args) throws PlayerViolationException {
         Scanner scanner = new Scanner(System.in);
 

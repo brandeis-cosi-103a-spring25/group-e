@@ -19,7 +19,11 @@ import edu.brandeis.cosi103a.groupe.Engine.GameEngine;
 import edu.brandeis.cosi103a.groupe.Engine.SimulationHarness;
 import edu.brandeis.cosi103a.groupe.Players.ConsolePlayer;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
-
+/*
+ * COSI 103a - Group E
+ * April 28th, 2025
+ * This file contains unit tests for the SimulationHarness class.
+ */
 public class SimulationHarnessTest {
     private SimulationHarness harness;
     private ourPlayer ourplayer1;
@@ -96,10 +100,6 @@ public class SimulationHarnessTest {
         assertEquals(3, harness.getPlayers().size());
     }
     
-    
-    /** 
-     * @throws Exception
-     */
     // Test that the simulation can run with at least two players
     @Test
     public void testRunWithLessThanTwoPlayers() throws Exception {
@@ -118,52 +118,45 @@ public class SimulationHarnessTest {
         assertTrue(output.contains("At least two players are required to run the simulation."));
     }
 
-    
-    /** 
-     * @throws Exception
-     */
     // Test that the simulateMatchup method works correctly
     @SuppressWarnings("unchecked")
     @Test
     public void testSimulateMatchup() throws Exception {
-    // Create a partial mock of SimulationHarness
-    SimulationHarness spyHarness = org.mockito.Mockito.spy(harness);
+      // Create a partial mock of SimulationHarness
+      SimulationHarness spyHarness = org.mockito.Mockito.spy(harness);
 
-    // Mock the GameEngine
-    GameEngine mockEngine = mock(GameEngine.class);
+      // Mock the GameEngine
+      GameEngine mockEngine = mock(GameEngine.class);
+      ourplayer1.setPlayer(player1);
+      ourplayer2.setPlayer(player2);
 
-    ourplayer1.setPlayer(player1);
-    ourplayer2.setPlayer(player2);
+      // Define the behavior of determineWinner
+      ImmutableList<ScorePair> result1 = ImmutableList.of(new ScorePair(ourplayer1.getPlayer(), 10), new ScorePair(ourplayer2.getPlayer(), 5));
+      ImmutableList<ScorePair> result2 = ImmutableList.of(new ScorePair(ourplayer1.getPlayer(), 5), new ScorePair(ourplayer2.getPlayer(), 10));
+      ImmutableList<ScorePair> result3 = ImmutableList.of(new ScorePair(ourplayer1.getPlayer(), 10), new ScorePair(ourplayer2.getPlayer(), 5));
+      ImmutableList<ScorePair> result4 = ImmutableList.of(new ScorePair(ourplayer1.getPlayer(), 10), new ScorePair(ourplayer2.getPlayer(), 5));
+      ImmutableList<ScorePair> result5 = ImmutableList.of(new ScorePair(ourplayer1.getPlayer(), 10), new ScorePair(ourplayer2.getPlayer(), 5));
 
-    // Define the behavior of determineWinner
-    ImmutableList<ScorePair> result1 = ImmutableList.of(new ScorePair(ourplayer1.getPlayer(), 10), new ScorePair(ourplayer2.getPlayer(), 5));
-    ImmutableList<ScorePair> result2 = ImmutableList.of(new ScorePair(ourplayer1.getPlayer(), 5), new ScorePair(ourplayer2.getPlayer(), 10));
-    ImmutableList<ScorePair> result3 = ImmutableList.of(new ScorePair(ourplayer1.getPlayer(), 10), new ScorePair(ourplayer2.getPlayer(), 5));
-    ImmutableList<ScorePair> result4 = ImmutableList.of(new ScorePair(ourplayer1.getPlayer(), 10), new ScorePair(ourplayer2.getPlayer(), 5));
-    ImmutableList<ScorePair> result5 = ImmutableList.of(new ScorePair(ourplayer1.getPlayer(), 10), new ScorePair(ourplayer2.getPlayer(), 5));
+      when(mockEngine.determineWinner()).thenReturn(result1, result2, result3, result4, result5);
 
-    when(mockEngine.determineWinner()).thenReturn(result1, result2, result3, result4, result5);
+      // Override the creation of GameEngine in the simulateMatchup method
 
-    // Override the creation of GameEngine in the simulateMatchup method
+      doReturn(mockEngine).when(spyHarness).createGameEngine(ourplayer1, ourplayer2);
 
-    doReturn(mockEngine).when(spyHarness).createGameEngine(ourplayer1, ourplayer2);
+      // Add players to the harness
+      spyHarness.addPlayer(ourplayer1);
+      spyHarness.addPlayer(ourplayer2);
 
-    // Add players to the harness
+       // Simulate the matchup
+       spyHarness.simulateMatchup(ourplayer1, ourplayer2);
 
-
-    spyHarness.addPlayer(ourplayer1);
-    spyHarness.addPlayer(ourplayer2);
-
-    // Simulate the matchup
-    spyHarness.simulateMatchup(ourplayer1, ourplayer2);
-
-    // Verify stats
-    assertEquals(4, spyHarness.getTotalWins().get(ourplayer1).intValue());
-    assertEquals(1, spyHarness.getTotalWins().get(ourplayer2).intValue());
-    assertEquals(1, spyHarness.getTotalLosses().get(ourplayer1).intValue());
-    assertEquals(4, spyHarness.getTotalLosses().get(ourplayer2).intValue());
-    assertEquals(45, spyHarness.getTotalAp().get(ourplayer1).intValue()); // Total AP for player1
-    assertEquals(30, spyHarness.getTotalAp().get(ourplayer2).intValue()); // Total AP for player2
+       // Verify stats
+       assertEquals(4, spyHarness.getTotalWins().get(ourplayer1).intValue());
+       assertEquals(1, spyHarness.getTotalWins().get(ourplayer2).intValue());
+       assertEquals(1, spyHarness.getTotalLosses().get(ourplayer1).intValue());
+       assertEquals(4, spyHarness.getTotalLosses().get(ourplayer2).intValue());
+       assertEquals(45, spyHarness.getTotalAp().get(ourplayer1).intValue()); // Total AP for player1
+       assertEquals(30, spyHarness.getTotalAp().get(ourplayer2).intValue()); // Total AP for player2
     }  
     
     // Test that the overall results are calculated correctly

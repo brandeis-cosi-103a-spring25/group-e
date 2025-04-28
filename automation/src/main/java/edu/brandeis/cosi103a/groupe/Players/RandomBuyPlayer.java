@@ -21,6 +21,13 @@ import edu.brandeis.cosi.atg.api.decisions.PlayCardDecision;
 import edu.brandeis.cosi.atg.api.decisions.TrashCardDecision;
 import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.event.GameEvent;
+/*
+ * COSI 103a - Group E
+ * April 28th, 2025
+ * This class implements a simple AI player that randomly selects decisions
+ * during the Buy phase of a game. It chooses a random card to buy from the
+ * available options, and plays money cards during the Money phase.
+ */
 
 public class RandomBuyPlayer implements Player {
     private final String name;
@@ -29,7 +36,6 @@ public class RandomBuyPlayer implements Player {
 
     /**
      * Constructor for RandomBuyPlayer.
-     * 
      * @param name The player's name.
      */
     public RandomBuyPlayer(String name) {
@@ -39,6 +45,7 @@ public class RandomBuyPlayer implements Player {
 
     
     /** 
+     * Returns the name of the player.
      * @return String
      */
     @Override
@@ -48,6 +55,7 @@ public class RandomBuyPlayer implements Player {
 
     
     /** 
+     * Returns the player's observer, if any.
      * @return Optional<GameObserver>
      */
     @Override
@@ -57,7 +65,6 @@ public class RandomBuyPlayer implements Player {
 
     /**
      * Implements `makeDecision()` for the AI player.
-     * 
      * @param state   The current game state.
      * @param options The available decision options.
      * @param reason  The reason for this decision prompt.
@@ -93,7 +100,13 @@ public class RandomBuyPlayer implements Player {
             return makeActionDecision(state, options);
         }
     }
-
+    
+    /**
+     * Implements an AI-driven Action decision for the "Random Buy" strategy.
+     * @param state   The current game state.
+     * @param options The list of available decisions.
+     * @return The chosen Action decision, or null if no valid action is available.
+     */
     private Decision makeActionDecision(GameState state, ImmutableList<Decision> options) {
         Decision actionChoice = null;
 
@@ -142,7 +155,6 @@ public class RandomBuyPlayer implements Player {
 
     /**
      * Implements an AI-driven Buy decision for the "Random Buy" strategy.
-     * 
      * @param state   The current game state.
      * @param options The list of available decisions.
      * @return The chosen Buy decision, or null if no valid purchase is possible.
@@ -183,7 +195,11 @@ public class RandomBuyPlayer implements Player {
 
         return buyChoice;
     }
-
+    
+    /**
+     * Sets the observer for this player. 
+     * @param observer The GameObserver to set.
+     */
     public void setObserver(GameObserver observer) {
         this.observer = Optional.ofNullable(observer);
     }

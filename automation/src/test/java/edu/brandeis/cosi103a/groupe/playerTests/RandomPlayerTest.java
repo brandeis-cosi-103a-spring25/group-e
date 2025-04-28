@@ -12,15 +12,21 @@ import edu.brandeis.cosi103a.groupe.Players.*;
 import org.junit.Test;
 
 import java.util.Optional;
-
+/*
+ * COSI 103a - Group E
+ * April 28th, 2025
+ * This file contains unit tests for the RandomBuyPlayer class.
+ */
 public class RandomPlayerTest {
-
+    
+    //Test for the RandomBuyPlayer constructor
     @Test
     public void testConstructor() {
         RandomBuyPlayer player = new RandomBuyPlayer("TestPlayer");
         assertEquals("TestPlayer", player.getName());
     }
-
+    
+    //Test for the RandomBuyPlayer's buy method
     @Test
     public void testMakeBuyDecision() {
         RandomBuyPlayer player = new RandomBuyPlayer("TestPlayer");
@@ -47,7 +53,8 @@ public class RandomPlayerTest {
 
         assertTrue(options.contains(decision)); // Decision should be one of the available options
     }
-
+    
+    //Test for the RandomBuyPlayer's makeDecision method for play decisions
     @Test
     public void testPlayDecision() {
         RandomBuyPlayer player = new RandomBuyPlayer("TestPlayer");
@@ -83,7 +90,8 @@ public class RandomPlayerTest {
 
         assertTrue(decision != null); 
     }
-
+    
+    //Test for the RandomBuyPlayer's test play money 
     @Test
     public void testMoney() {
         RandomBuyPlayer player = new RandomBuyPlayer("TestPlayer");
