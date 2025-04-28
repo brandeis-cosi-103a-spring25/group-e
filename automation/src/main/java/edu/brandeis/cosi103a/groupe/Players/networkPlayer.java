@@ -1,147 +1,72 @@
 package edu.brandeis.cosi103a.groupe.Players;
 
-import okhttp3.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.ResourceAccessException;
 import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-import edu.brandeis.cosi.atg.api.GameObserver;
-import edu.brandeis.cosi.atg.api.GameState;
-import edu.brandeis.cosi.atg.api.Player;
-import edu.brandeis.cosi.atg.api.decisions.Decision;
-import edu.brandeis.cosi.atg.api.event.Event;
-import java.util.List;
 import java.util.Optional;
-/*
- * COSI 103a - Group E
- * April 28th, 2025
- * This class implements a network player that communicates with a server to make decisions.
- */
-public class networkPlayer implements Player {
-    private final String serverUrl;
-    private final OkHttpClient client;
-    private final Gson gson = new Gson();
-    
-    /*
-     * Constructor for networkPlayer
-     * @param serverUrl The URL of the server to communicate with.
-     */
-    public networkPlayer(String serverUrl) {
+import edu.brandeis.cosi103a.groupe.playerServer.dto.DecisionRequest;
+import edu.brandeis.cosi103a.groupe.playerServer.dto.DecisionResponse;
+import edu.brandeis.cosi.atg.api.decisions.Decision;
+import edu.brandeis.cosi103a.groupe.Engine.GameEngine;
+
+public class networkPlayer {
+    private RestTemplate restTemplate;
+    private String serverUrl;
+    private boolean active;
+    private BigMoneyPlayer backupPlayer;
+
+    public networkPlayer(String serverUrl, GameEngine gameEngine) {
+        this.restTemplate = new RestTemplate();
         this.serverUrl = serverUrl;
-        this.client = new OkHttpClient();
+        this.active = true;
+        this.backupPlayer = new BigMoneyPlayer("ex-NetworkPlayer");
     }
 
-    /** 
-     * This method makes a decision based on the current game state, available options, and an optional reason.
-     * It sends a request to the server and returns the decision made by the server.
-     * @param state The current game state.
-     * @param options The available decisions that can be made.
-     * @param reason An optional event that provides context for the decision.
-     * @return Decision The decision made by the server based on the game state and options provided.
-     */
-    @Override
-    public Decision makeDecision(GameState state, ImmutableList<Decision> options, Optional<Event> reason) {
-        DecisionRequest req = new DecisionRequest(state, options.asList(), reason.orElse(null), "network-player-uuid");
-        RequestBody body = RequestBody.create(gson.toJson(req), MediaType.parse("application/json"));
+    public DecisionResponse getDecision(DecisionRequest request) {
+        if (!active) {
+            return fallbackDecision(request);
+       }
+      
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "application/json");
 
-        Request request = new Request.Builder()
-                .url(serverUrl + "/decide")
-                .post(body)
-                .build();
+            HttpEntity<DecisionRequest> entity = new HttpEntity<>(request, headers);
+          
+            ResponseEntity<DecisionResponse> response = restTemplate.postForEntity(
+                serverUrl + "/decision", entity, DecisionResponse.class);
 
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful())
-                throw new RuntimeException("Failed response: " + response);
-
-            DecisionResponse res = gson.fromJson(response.body().string(), DecisionResponse.class);
-            return res.getDecision();
+            return response.getBody();
+        } catch (ResourceAccessException e) {
+            System.err.println("Server is unreachable or timed out. Switching to BigMoneyPlayer: " + e.getMessage());
+            switchToBackupPlayer();
+            return fallbackDecision(request);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.err.println("An error occurred. Switching to BigMoneyPlayer: " + e.getMessage());
+            switchToBackupPlayer();
+            return fallbackDecision(request);
         }
     }
 
-    
-    /** 
-     * This method logs an event to the server.
-     * It sends a request containing the event data to the server for logging.
-     * @param event The event to be logged.
-     */
-    public void logEvent(Event event) {
-        LogEventRequest req = new LogEventRequest(event, "network-player-uuid");
-        RequestBody body = RequestBody.create(gson.toJson(req), MediaType.parse("application/json"));
 
-        Request request = new Request.Builder()
-                .url(serverUrl + "/log-event")
-                .post(body)
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful())
-                System.err.println("Failed logging event: " + response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
-    /*
-     * This method returns the name of the player.
-     * @return String The name of the player.
-     */
-    @Override
-    public String getName() {
-        return "Network Player";
-    }
-    
-    /*
-     * This method returns game observer for the player.
-     * @return Optional<GameObserver> An empty optional since this player does not have an observer.
-     */
-    @Override
-    public Optional<GameObserver> getObserver() {
-        return Optional.empty();
-    }
-    
-
-    // The following method can delegate to makeDecision to maintain compatibility
-    /*
-     * This method makes a decision based on the current game state, available options, and an event reason.
-     * @param state The current game state.
-     * @param options The available decisions that can be made.
-     * @param reason An event that provides context for the decision.
-     */
-    public Decision makeDecision(GameState state, List<Decision> options, Event reason) {
-        return makeDecision(state, ImmutableList.copyOf(options), Optional.ofNullable(reason));
+    private DecisionResponse fallbackDecision(DecisionRequest request) {
+        Decision decision = backupPlayer.makeDecision(
+            request.getState(),
+            ImmutableList.copyOf(request.getOptions()),
+            Optional.ofNullable(request.getReason())
+        );
+        return new DecisionResponse(decision);
     }
 
-    // Inner classes for request and response objects
-    private static class DecisionRequest {
-        private final GameState state;
-        private final List<Decision> options;
-        private final Event reason;
-        private final String player_uuid;
-
-        public DecisionRequest(GameState state, List<Decision> options, Event reason, String player_uuid) {
-            this.state = state;
-            this.options = options;
-            this.reason = reason;
-            this.player_uuid = player_uuid;
-        }
+    private void switchToBackupPlayer() {
+        this.active = false;
+        System.out.println("Network player is now a BigMoneyPlayer.");
     }
 
-    private static class DecisionResponse {
-        private Decision decision;
-
-        public Decision getDecision() {
-            return decision;
-        }
+    public boolean isActive() {
+        return active;
     }
-
-    private static class LogEventRequest {
-        private final Event decision;
-        private final String player_uuid;
-
-        public LogEventRequest(Event decision, String player_uuid) {
-            this.decision = decision;
-            this.player_uuid = player_uuid;
-        }
-    }
-
 }
