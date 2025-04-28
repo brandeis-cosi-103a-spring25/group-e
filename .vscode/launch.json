@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-EngineHarness<automation>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "edu.brandeis.cosi103a.groupe.Engine.EngineHarness",
+            "projectName": "automation",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

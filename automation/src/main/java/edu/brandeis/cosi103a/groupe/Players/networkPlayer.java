@@ -9,55 +9,74 @@ import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import edu.brandeis.cosi103a.groupe.playerServer.dto.DecisionRequest;
 import edu.brandeis.cosi103a.groupe.playerServer.dto.DecisionResponse;
+import edu.brandeis.cosi.atg.api.GameObserver;
+import edu.brandeis.cosi.atg.api.Player;
+import edu.brandeis.cosi.atg.api.GameState;
+import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.decisions.Decision;
-import edu.brandeis.cosi103a.groupe.Engine.GameEngine;
 
-public class networkPlayer {
+public class networkPlayer implements Player {
     private RestTemplate restTemplate;
     private String serverUrl;
     private boolean active;
     private BigMoneyPlayer backupPlayer;
+    private Optional<GameObserver> observer = Optional.empty();
+    private String playerName;
 
-    public networkPlayer(String serverUrl, GameEngine gameEngine) {
+    public networkPlayer(String serverUrl, String playerName) {
         this.restTemplate = new RestTemplate();
         this.serverUrl = serverUrl;
+        this.playerName = playerName;
         this.active = true;
         this.backupPlayer = new BigMoneyPlayer("ex-NetworkPlayer");
     }
 
-    public DecisionResponse getDecision(DecisionRequest request) {
+    @Override
+    public String getName() {
+        return playerName;
+    }
+
+    @Override
+    public Optional<GameObserver> getObserver() {
+        return observer;
+    }
+
+    @Override
+    public Decision makeDecision(GameState state, ImmutableList<Decision> options, Optional<Event> reason) {
         if (!active) {
-            return fallbackDecision(request);
+            return backupPlayer.makeDecision(state, options, reason);
         }
 
         try {
+            DecisionRequest request = new DecisionRequest();
+            request.setState(state);
+            request.setOptions(options);
+            request.setReason(reason.orElse(null));
+            request.setPlayer_uuid(playerName); // Assuming name is unique ID, adjust if needed
+
             HttpHeaders headers = new HttpHeaders();
             headers.set("Content-Type", "application/json");
-
             HttpEntity<DecisionRequest> entity = new HttpEntity<>(request, headers);
 
             ResponseEntity<DecisionResponse> response = restTemplate.postForEntity(
                 serverUrl + "/decision", entity, DecisionResponse.class);
 
-            return response.getBody();
+            if (response.getBody() != null) {
+                return response.getBody().getDecision();
+            } else {
+                System.err.println("Empty server response. Switching to BigMoneyPlayer.");
+                switchToBackupPlayer();
+                return backupPlayer.makeDecision(state, options, reason);
+            }
         } catch (ResourceAccessException e) {
-            System.err.println("Server is unreachable or timed out. Switching to BigMoneyPlayer: " + e.getMessage());
+            System.err.println("Server unreachable. Switching to BigMoneyPlayer: " + e.getMessage());
             switchToBackupPlayer();
-            return fallbackDecision(request);
+            return backupPlayer.makeDecision(state, options, reason);
         } catch (Exception e) {
-            System.err.println("An error occurred. Switching to BigMoneyPlayer: " + e.getMessage());
+            System.err.println("Error during server request. Switching to BigMoneyPlayer: " + e.getMessage());
             switchToBackupPlayer();
-            return fallbackDecision(request);
+            return backupPlayer.makeDecision(state, options, reason);
         }
-    }
-
-    private DecisionResponse fallbackDecision(DecisionRequest request) {
-        Decision decision = backupPlayer.makeDecision(
-            request.getState(),
-            ImmutableList.copyOf(request.getOptions()),
-            Optional.ofNullable(request.getReason())
-        );
-        return new DecisionResponse(decision);
     }
 
     private void switchToBackupPlayer() {
