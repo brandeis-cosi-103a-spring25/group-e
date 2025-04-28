@@ -1,0 +1,11 @@
+/workspaces/group-e/automation/src/test/java/edu/brandeis/cosi103a/groupe/engineTests/SimulationHarnessTest.java
+/workspaces/group-e/automation/src/test/java/edu/brandeis/cosi103a/groupe/playerTests/RandomPlayerTest.java
+/workspaces/group-e/automation/src/test/java/edu/brandeis/cosi103a/groupe/engineTests/GameEngineTest.java
+/workspaces/group-e/automation/src/test/java/edu/brandeis/cosi103a/groupe/cardTests/deckTest.java
+/workspaces/group-e/automation/src/test/java/edu/brandeis/cosi103a/groupe/playerTests/ConsolePlayerTest.java
+/workspaces/group-e/automation/src/test/java/edu/brandeis/cosi103a/groupe/cardTests/ActionCardTest.java
+/workspaces/group-e/automation/src/test/java/edu/brandeis/cosi103a/groupe/cardTests/CardTest.java
+/workspaces/group-e/automation/src/test/java/edu/brandeis/cosi103a/groupe/playerTests/SmartActionPlayerTest.java
+/workspaces/group-e/automation/src/test/java/edu/brandeis/cosi103a/groupe/engineTests/gameObserverTest.java
+/workspaces/group-e/automation/src/test/java/edu/brandeis/cosi103a/groupe/cardTests/supplyTest.java
+/workspaces/group-e/automation/src/test/java/edu/brandeis/cosi103a/groupe/playerTests/BigMoneyPlayerTest.java

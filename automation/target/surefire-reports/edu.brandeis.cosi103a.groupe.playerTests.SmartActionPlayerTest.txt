@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: edu.brandeis.cosi103a.groupe.playerTests.SmartActionPlayerTest
+-------------------------------------------------------------------------------
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s - in edu.brandeis.cosi103a.groupe.playerTests.SmartActionPlayerTest
