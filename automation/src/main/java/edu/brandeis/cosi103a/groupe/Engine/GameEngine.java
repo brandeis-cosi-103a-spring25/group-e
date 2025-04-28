@@ -33,8 +33,10 @@ import edu.brandeis.cosi103a.groupe.Players.SmartActionPlayer;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 
 /*
- * This class simulates simlpified game play for the Automation card game.
- *
+ * COSI 103a-Group E
+ * April 28th, 2025
+ * This class implements the game engine for Automation: The Game.
+ * It handles the game flow, player turns, card distribution, and game phases.
  */
 public class GameEngine implements Engine {
     private final GameObserver observer;
@@ -42,16 +44,23 @@ public class GameEngine implements Engine {
     private Supply supply = new Supply();
     private final ActionCard actionCardHandler = new ActionCard(supply, this);
 
+    /**
+     * Constructor for GameEngine.
+     * Initializes the players, supply, and observer.
+     * @param player1 The first player.
+     * @param player2 The second player.
+     * @param observer The game observer to notify about events.
+     */
     public GameEngine(ourPlayer player1, ourPlayer player2, GameObserver observer) {
         this.player1 = player1;
         this.player2 = player2;
         this.supply = new Supply();
         this.observer = observer;
-
     }
 
     
     /** 
+     * This method creates a new GameEngine instance with the given players and observer.
      * @param player12
      * @param player22
      * @param observer
@@ -64,6 +73,8 @@ public class GameEngine implements Engine {
 
     
     /** 
+     * This method starts the game by distributing cards to players, shuffling their decks, and managing turns.
+     * It alternates turns between players until all FRAMEWORK cards have been bought.
      * @return ImmutableList<ScorePair>
      * @throws PlayerViolationException
      */
@@ -103,7 +114,14 @@ public class GameEngine implements Engine {
 
         return determineWinner();
     }
-
+    
+    /*
+     * This method distributes initial cards to both players.
+     * Each player receives 7 BITCOIN cards and 3 METHOD cards.
+     * @param player1 The first player.
+     * @param player2 The second player.
+     * @param supply The supply of cards.
+     */
     public void distributeCards(ourPlayer player1, ourPlayer player2, Supply supply) {
         for (int i = 0; i < 7; i++) {
             player1.addCardToDeck(new Card(Card.Type.BITCOIN, 31));
@@ -118,7 +136,13 @@ public class GameEngine implements Engine {
             supply.takeCard(Card.Type.METHOD);
         }
     }
-
+    
+    /*
+     * This method plays a full turn for the given player.
+     * It consists of the action phase, money phase, buy phase, and cleanup phase.
+     * @param player The player whose turn it is.
+     * @throws PlayerViolationException If a player violates the game rules during their turn.
+     */
     public void playFullTurn(ourPlayer player) throws PlayerViolationException {
         actionPhase(player);
         moneyPhase(player);
@@ -128,7 +152,14 @@ public class GameEngine implements Engine {
         System.out.println("points for " + player.getName() + ": " + player.getTotalAp());
 
     }
-
+    
+    /*
+     * This method handles the action phase of a player's turn.
+     * It allows the player to play action cards from their hand.
+     * The player can play as many action cards as they have actions available.
+     * @param player The player whose action phase is being processed.
+     * @throws PlayerViolationException If a player violates the game rules during their action phase.
+     */
     public void actionPhase(ourPlayer player) throws PlayerViolationException {
 
         boolean endPhaseSelected = false;
@@ -169,7 +200,17 @@ public class GameEngine implements Engine {
         }
 
     }
-
+    
+    /*
+     * This method handles the discard phase of a player's turn.
+     * It allows the player to discard cards from their hand until they reach a target card count.
+     * If forceDiscard is true, the player must discard cards until they reach the target discard count.
+     * @param player The player whose discard phase is being processed.
+     * @param forceDiscard If true, the player must discard cards until they reach the target discard count.
+     * @param targetCardCount The target number of cards the player should have in hand after discarding.
+     * @param targetDiscardCount The target number of cards the player must discard if forceDiscard is true.
+     * @throws PlayerViolationException If a player violates the game rules during their discard phase.
+     */
     public void discardPhase(ourPlayer player, boolean forceDiscard, int targetCardCount, int targetDiscardCount)
             throws PlayerViolationException {
         System.out.println(player.getName() + " is in the Discard Phase.");
@@ -219,7 +260,15 @@ public class GameEngine implements Engine {
             endDiscardPhase(player, numDiscarded);
         }
     }
-
+    
+    /*
+     * This method handles the reaction phase for a player when they are attacked.
+     * It allows the player to play a Monitoring card to react to the attack.
+     * @param opponent The player being attacked.
+     * @param attacker The player who is attacking.
+     * @param attackCard The card used to attack.
+     * @return true if the opponent played a reaction card, false otherwise.
+     */
     public boolean reactionPhase(ourPlayer opponent, ourPlayer attacker, Card attackCard)
             throws PlayerViolationException {
         List<Decision> possibleDecisions = new ArrayList<>();
@@ -258,7 +307,12 @@ public class GameEngine implements Engine {
         return false;
     }
 
-    // MONEY PHASE
+    /*
+     * This method handles the money phase of a player's turn.
+     * It allows the player to play money cards from their hand to accumulate money.
+     * @param player The player whose money phase is being processed.
+     * @throws PlayerViolationException If a player violates the game rules during their money phase.
+     */
     public void moneyPhase(ourPlayer player) throws PlayerViolationException {
 
         boolean endPhaseSelected = false;
@@ -297,7 +351,12 @@ public class GameEngine implements Engine {
         }
     }
 
-    // BUY PHASE
+    /*
+     * This method handles the buy phase of a player's turn.
+     * It allows the player to buy cards from the supply using their accumulated money.
+     * @param player The player whose buy phase is being processed.
+     * @throws PlayerViolationException If a player violates the game rules during their buy phase.
+     */
     public void buyPhase(ourPlayer player) throws PlayerViolationException {
         System.out.println("current money: " + player.getMoney());
 
@@ -344,7 +403,12 @@ public class GameEngine implements Engine {
         }
     }
 
-    // CLEANUP PHASE
+    /*
+     * This method handles the cleanup phase of a player's turn.
+     * It cleans up the player's hand, draws a new hand of cards,
+     * and resets the player's actions and buys for the next turn.
+     * @param player The player whose cleanup phase is being processed.
+     */
     public void cleanupPhase(ourPlayer player) {
         player.cleanup();
         observer.notifyEvent(
@@ -355,7 +419,14 @@ public class GameEngine implements Engine {
         player.actions = 1;
         player.buys = 1;
     }
-
+    
+    /*
+     * This method allows a player to trash a card from their hand.
+     * It generates a list of possible trash decisions based on the player's hand,
+     * and lets the player choose a card to trash.
+     * @param player The player who is trashing a card.
+     * @throws PlayerViolationException If a player violates the game rules during the trashing phase.
+     */
     public void trashCard(ourPlayer player) throws PlayerViolationException {
         System.out.println("🔹 Trash Card Phase for " + player.getName());
 
@@ -390,7 +461,15 @@ public class GameEngine implements Engine {
             }
         }
     }
-
+    
+    /*
+     * This method allows a player to gain a card.
+     * It can either gain a specific card or pick a card from the supply up to a cost limit.
+     * @param player The player who is gaining a card.
+     * @param card The specific card to gain, or null if picking from supply.
+     * @param costLimit The maximum cost of the card to gain from the supply, or null if not applicable.
+     * @throws PlayerViolationException If a player violates the game rules during the gaining phase.
+     */
     public void gainCard(ourPlayer player, Card card, Integer costLimit) throws PlayerViolationException {
         if (card != null) {
             // Directly give a specific card (not from supply)
@@ -435,7 +514,14 @@ public class GameEngine implements Engine {
             }
         }
     }
-
+    
+    /*
+     * This method generates possible buy decisions for a player based on their money and the available cards in the supply.
+     * It returns a list of BuyDecision objects for cards that the player can afford and are available in the supply.
+     * @param player The player who is making buy decisions.
+     * @param supply The supply of cards available for purchase.
+     * @return A list of possible BuyDecision objects.
+     */
     public List<Decision> generatePossibleBuyDecisions(ourPlayer player, Supply supply) {
         List<Decision> possibleBuyDecisions = new ArrayList<>();
         Map<Card.Type, List<Card>> cardStacks = supply.getCardStacks();
@@ -455,7 +541,14 @@ public class GameEngine implements Engine {
         possibleBuyDecisions.add(new EndPhaseDecision(GameState.TurnPhase.BUY));
         return possibleBuyDecisions;
     }
-
+    
+    /*
+     * This method generates possible action decisions for a player based on their hand.
+     * It returns a list of PlayCardDecision objects for each unplayed action card in the player's hand.
+     * @param player The player whose action decisions are being generated.
+     * @param hand The player's current hand of cards.
+     * @return A list of possible PlayCardDecision objects.
+     */
     public List<Decision> generatePossibleActionDecisions(ourPlayer player, Hand hand) {
         List<Decision> possibleActionDecisions = new ArrayList<>();
         List<Card> cards = player.getCards();
@@ -471,7 +564,13 @@ public class GameEngine implements Engine {
         possibleActionDecisions.add(new EndPhaseDecision(GameState.TurnPhase.ACTION));
         return possibleActionDecisions;
     }
-
+    
+    /*
+     * This method generates possible play decisions for a player during the money phase.
+     * @param player The player whose play decisions are being generated.
+     * @param hand The player's current hand of cards.
+     * @return A list of possible PlayCardDecision objects for money cards.
+     */
     public List<Decision> generatePossiblePlayDecisions(ourPlayer player, Hand hand) {
         List<Decision> possiblePlayDecisions = new ArrayList<>();
         List<Card> cards = player.getCards();
@@ -488,7 +587,11 @@ public class GameEngine implements Engine {
         return possiblePlayDecisions;
     }
 
-    // Helper method to get opponents of a player
+    /*
+     * This method retrieves the opponents of a given player.
+     * @param player The player whose opponents are being retrieved.
+     * @return A list of opponents (other players) in the game.
+     */
     public List<ourPlayer> getOpponents(ourPlayer player) {
         List<ourPlayer> opponents = new ArrayList<>();
         if (!player.equals(player1)) {
@@ -500,7 +603,11 @@ public class GameEngine implements Engine {
         return opponents;
     }
 
-    // WINNING LOGIC
+    /*
+     * This method determines the winner of the game based on the total action points (AP) of each player.
+     * It compares the AP of both players and returns a list of ScorePair objects containing the players and their scores.
+     * @return An ImmutableList of ScorePair objects representing the players and their scores.
+     */
     public ImmutableList<ScorePair> determineWinner() {
         int player1Ap = player1.getTotalAp();
         int player2Ap = player2.getTotalAp();
@@ -511,7 +618,14 @@ public class GameEngine implements Engine {
 
         return ImmutableList.copyOf(scores);
     }
-
+    
+    /*
+     * This method generates possible discard decisions for a player during the discard phase.
+     * It allows the player to discard cards from their hand or end the phase if they choose not to discard.
+     * @param player The player whose discard decisions are being generated.
+     * @param isHackAttack If true, it indicates that the discard phase is due to a hack attack.
+     * @return A list of possible DiscardCardDecision objects.
+     */
     private List<Decision> generatePossibleDiscardDecisions(ourPlayer player, boolean isHackAttack) {
         List<Decision> discardDecisions = new ArrayList<>();
         List<Card> cards = player.getCards();
@@ -531,6 +645,9 @@ public class GameEngine implements Engine {
     /*
      * This method ends the discard phase for a player, refilling their hand if
      * necessary.
+     * @param player The player whose discard phase is ending.
+     * @param numCardstoDraw The number of cards to draw to refill the hand.
+     * @throws PlayerViolationException If a player violates the game rules during the discard phase.
      */
     private void endDiscardPhase(ourPlayer player, int numCardstoDraw) throws PlayerViolationException {
         System.out.println(player.getName() + "'s discard phase ends.");

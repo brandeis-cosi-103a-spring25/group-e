@@ -11,9 +11,14 @@ import org.junit.Test;
 
 import edu.brandeis.cosi.atg.api.cards.Card;
 import edu.brandeis.cosi103a.groupe.Other.Supply;
-
+/*
+ * COSI 103a - Group E
+ * April 28th, 2025
+ * This class contains tests for the Supply class
+ */
 public class supplyTest {
-
+    
+    //Test to ensure that the Supply class can be instantiated
     @Test
     public void testGetQuantities() {
         // Create a new supply
@@ -21,7 +26,8 @@ public class supplyTest {
 
         assertEquals(true, supply.takeCard(Card.Type.METHOD));
     }
-
+    
+    //Test to ensure that the Supply class creates unique card IDs
     @Test
     public void testUniqueCardIdsInSupply() {
         Supply supply = new Supply();

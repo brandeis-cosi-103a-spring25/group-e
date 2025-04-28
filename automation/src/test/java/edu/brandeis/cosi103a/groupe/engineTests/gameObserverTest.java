@@ -14,7 +14,11 @@ import edu.brandeis.cosi.atg.api.event.EndTurnEvent;
 import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.event.GainCardEvent;
 import edu.brandeis.cosi103a.groupe.Other.ConsoleGameObserver;
-
+/*
+ * COSI 103a - Group E
+ * April 28th, 2025
+ * This class tests the ConsoleGameObserver's notifyEvent method.
+ */
 public class gameObserverTest {
     private ConsoleGameObserver observer;
     private ByteArrayOutputStream outputStream;

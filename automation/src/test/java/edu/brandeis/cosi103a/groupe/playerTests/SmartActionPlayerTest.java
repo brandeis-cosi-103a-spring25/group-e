@@ -17,8 +17,12 @@ import edu.brandeis.cosi.atg.api.decisions.GainCardDecision;
 import edu.brandeis.cosi.atg.api.decisions.PlayCardDecision;
 import edu.brandeis.cosi.atg.api.decisions.EndPhaseDecision;
 import edu.brandeis.cosi103a.groupe.Players.SmartActionPlayer;
-
-
+/*
+ * COSI 103a - Group E
+ * April 28th, 2025
+ * This class tests the SmartActionPlayer's decision-making logic
+ * during various phases of the game.
+ */
 public class SmartActionPlayerTest {
     
     //Tests player buys the most expensive card

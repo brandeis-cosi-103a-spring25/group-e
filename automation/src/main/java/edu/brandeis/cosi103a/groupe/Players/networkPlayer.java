@@ -10,23 +10,32 @@ import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi.atg.api.event.Event;
 import java.util.List;
 import java.util.Optional;
-
+/*
+ * COSI 103a - Group E
+ * April 28th, 2025
+ * This class implements a network player that communicates with a server to make decisions.
+ */
 public class networkPlayer implements Player {
     private final String serverUrl;
     private final OkHttpClient client;
     private final Gson gson = new Gson();
-
+    
+    /*
+     * Constructor for networkPlayer
+     * @param serverUrl The URL of the server to communicate with.
+     */
     public networkPlayer(String serverUrl) {
         this.serverUrl = serverUrl;
         this.client = new OkHttpClient();
     }
 
-    
     /** 
-     * @param state
-     * @param options
-     * @param reason
-     * @return Decision
+     * This method makes a decision based on the current game state, available options, and an optional reason.
+     * It sends a request to the server and returns the decision made by the server.
+     * @param state The current game state.
+     * @param options The available decisions that can be made.
+     * @param reason An optional event that provides context for the decision.
+     * @return Decision The decision made by the server based on the game state and options provided.
      */
     @Override
     public Decision makeDecision(GameState state, ImmutableList<Decision> options, Optional<Event> reason) {
@@ -51,7 +60,9 @@ public class networkPlayer implements Player {
 
     
     /** 
-     * @param event
+     * This method logs an event to the server.
+     * It sends a request containing the event data to the server for logging.
+     * @param event The event to be logged.
      */
     public void logEvent(Event event) {
         LogEventRequest req = new LogEventRequest(event, "network-player-uuid");
@@ -69,24 +80,38 @@ public class networkPlayer implements Player {
             e.printStackTrace();
         }
     }
-
+    
+    /*
+     * This method returns the name of the player.
+     * @return String The name of the player.
+     */
     @Override
     public String getName() {
         return "Network Player";
     }
-
+    
+    /*
+     * This method returns game observer for the player.
+     * @return Optional<GameObserver> An empty optional since this player does not have an observer.
+     */
     @Override
     public Optional<GameObserver> getObserver() {
         return Optional.empty();
     }
+    
 
     // The following method can delegate to makeDecision to maintain compatibility
+    /*
+     * This method makes a decision based on the current game state, available options, and an event reason.
+     * @param state The current game state.
+     * @param options The available decisions that can be made.
+     * @param reason An event that provides context for the decision.
+     */
     public Decision makeDecision(GameState state, List<Decision> options, Event reason) {
         return makeDecision(state, ImmutableList.copyOf(options), Optional.ofNullable(reason));
     }
 
     // Inner classes for request and response objects
-
     private static class DecisionRequest {
         private final GameState state;
         private final List<Decision> options;

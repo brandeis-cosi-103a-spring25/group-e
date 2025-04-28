@@ -12,7 +12,11 @@ import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 
 import org.junit.Before;
 import org.junit.Test;
-
+/*
+ * COSI 103a - Group E
+ * April 28th, 2025
+ * This file contains unit tests for the BigMoneyPlayer class.
+ */
 import java.util.Optional;
 
 public class BigMoneyPlayerTest {
@@ -42,7 +46,8 @@ public class BigMoneyPlayerTest {
             null // Deck not needed
         );
     }
-
+    
+    //Test cases for BigMoneyPlayer's decision-making logic
     @Test
     public void testMakeDecision_BuysFrameworkWhenAffordable() {
         gameState = new GameState(
@@ -59,7 +64,8 @@ public class BigMoneyPlayerTest {
 
         assertEquals(frameworkDecision, decision); // Framework is more expensive, so should be chosen
     }
-
+    
+    //Test case for BigMoneyPlayer's decision-making logic when not enough money
     @Test
     public void testMakeDecision_BuysMoneyWhenFrameworkTooExpensive() {
         gameState = new GameState(

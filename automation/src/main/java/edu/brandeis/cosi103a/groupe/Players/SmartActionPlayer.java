@@ -9,40 +9,44 @@ import edu.brandeis.cosi.atg.api.decisions.*;
 import edu.brandeis.cosi.atg.api.event.Event;
 import java.util.Optional;
  
+/*
+ * COSI 103a - Group E
+ * April 28th, 2025
+ * This class implements a smart AI player that makes decisions based on the
+ * current game state and available options. It prioritizes playing action cards,
+ * buying the most expensive cards it can afford, discarding the least valuable
+ * cards, and playing money cards based on their value.
+ */
 public class SmartActionPlayer implements Player {
     private final String name;
     private Optional<GameObserver> observer = Optional.empty();
     private int turnNumber = 0;
     
-    /*
+    /**
      * Constructs an EngineBuilderPlayer with the given name.
+     * @param name The player's name.
      */
     public SmartActionPlayer(String name) {
         this.name = name;
     }
     
     
-    /** 
-     * @return String
-     */
-    /*
+    /**
      * Returns the name of the player.
+     * @return String
      */
     @Override
     public String getName() {
         return name;
     }
     
-    
-    /** 
-     * @param state
-     * @param options
-     * @param reason
-     * @return Decision
-     */
-    /*
+    /**
      * This method takes the current game state and list of available options,
      * and returns the player's decision based on the game phase.
+     * @param state The current game state.
+     * @param options The available decisions for the player.
+     * @param reason The reason for the decision, if any.
+     * @return Decision The player's decision.
      */
     @Override
     public Decision makeDecision(GameState state, ImmutableList<Decision> options, Optional<Event> reason) {
@@ -82,8 +86,10 @@ public class SmartActionPlayer implements Player {
         }
     }
     
-    /*
+    /**
      * Chooses the best action card to play based on the available options.
+     * @param options The available decisions for the player.
+     * @return Decision The chosen action card decision, or null if no valid action card is available.
      */
     private Decision chooseActionCard(ImmutableList<Decision> options) {
         System.out.println("Choosing an action card...");
@@ -115,8 +121,11 @@ public class SmartActionPlayer implements Player {
                 .orElse(null); // If no action cards are available, return null
     }
     
-    /*
+    /**
      * This method assigns a priority to each action card type.
+     * Higher priority cards are played first.
+     * @param type The type of the action card.
+     * @return int The priority of the action card type.
      */
     private int getActionPriority(Card.Type type) {
         switch (type) {
@@ -130,8 +139,11 @@ public class SmartActionPlayer implements Player {
         }
     }
     
-    /*
+    /**
      * Chooses the best card to buy based on the available options.
+     * @param state The current game state.
+     * @param options The available decisions for the player.
+     * @return Decision The chosen buy card decision, or null if no valid buy card is available.
      */
     private Decision chooseBuyCard(GameState state, ImmutableList<Decision> options) {
         System.out.println("Choosing the best card to buy...");
@@ -151,8 +163,10 @@ public class SmartActionPlayer implements Player {
                 .orElse(null);
     }
 
-    /*
+    /**
      * Chooses least valuble card to discard based on the available options.
+     * @param options The available decisions for the player.
+     * @return Decision The chosen discard card decision, or null if no valid discard card is available.
      */
     private Decision chooseDiscardCard(ImmutableList<Decision> options) {
         System.out.println("Choosing a card to discard...");
@@ -166,8 +180,10 @@ public class SmartActionPlayer implements Player {
                 .orElse(null);
     }
     
-    /*
+    /**
      * Chooses the best money card to play based on the available options.
+     * @param options The available decisions for the player.
+     * @return Decision The chosen money card decision, or null if no valid money card is available.
      */
     private Decision chooseMoneyCard(ImmutableList<Decision> options) {
         System.out.println("Choosing a money card to play...");
@@ -184,6 +200,8 @@ public class SmartActionPlayer implements Player {
     
     /*
      * Plays monitoring cards if available.
+     * @param options The available decisions for the player.
+     * @return Decision The chosen reaction card decision, or null if no valid reaction card is available.
      */
     private Decision chooseReactionCard(ImmutableList<Decision> options) {
         System.out.println("Choosing a reaction card...");
@@ -194,8 +212,11 @@ public class SmartActionPlayer implements Player {
                 .orElse(null);
     }
      
-    /*
+    /**
      * Chooses the best card to gain based on the available options.
+     * @param state The current game state.
+     * @param options The available decisions for the player.
+     * @return Decision The chosen gain card decision, or null if no valid gain card is available.
      */
     private Decision chooseGainCard(GameState state, ImmutableList<Decision> options) {
         System.out.println("Choosing a card to gain...");
@@ -213,8 +234,9 @@ public class SmartActionPlayer implements Player {
                 .orElse(null);
     }
     
-    /*
+    /**
      * Returns the observer for the player.
+     * @return Optional<GameObserver> The observer for the player, if present.
      */
     @Override
     public Optional<GameObserver> getObserver() {

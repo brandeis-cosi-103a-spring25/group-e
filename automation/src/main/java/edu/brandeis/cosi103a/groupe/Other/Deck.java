@@ -7,8 +7,9 @@ import java.util.List;
 import edu.brandeis.cosi.atg.api.cards.Card;
 
 /*
- * This class creates a deck of cards
- * 
+ * COSI 103A - Group E
+ * April 28th, 2025
+ * This class represents a deck of cards.
  */
 public class Deck {
     private LinkedList<Card> cards;
@@ -20,35 +21,24 @@ public class Deck {
         cards = new LinkedList<>();
     }
 
-    
-    /** 
-     * @param card
-     */
-    /*
+    /**
      * This method adds a card to the deck
-     * 
      * @param card The card to add to the deck
      */
     public void addCard(Card card) {
         cards.add(card);
     }
 
-    
-    /** 
-     * @param cards
-     */
-    /*
+    /**
      * This method adds a list of cards to the deck
-     * 
      * @param cards The list of cards to add to the deck
      */
     public void addCards(List<Card> cards) {
         this.cards.addAll(cards);
     }
 
-    /*
+    /**
      * This method draws a card from the deck
-     * 
      * @return The card drawn from the deck
      */
     public Card drawCard() {
@@ -57,16 +47,15 @@ public class Deck {
         return card;
     }
 
-    /*
+    /**
      * This method checks if the deck is empty
-     * 
      * @return True if the deck is empty, false otherwise
      */
     public boolean isEmpty() {
         return cards.isEmpty();
     }
 
-    /*
+    /**
      * This method shuffles the deck
      */
     public void shuffle() {
@@ -75,7 +64,6 @@ public class Deck {
 
     /**
      * Draws a hand of cards from the deck.
-     * 
      * @param handSize The number of cards to draw.
      * @return The list of drawn cards.
      */
@@ -89,7 +77,6 @@ public class Deck {
 
     /**
      * Gets the total Automation Points (AP) in the deck.
-     * 
      * @return The total AP.
      */
     public int getTotalAp() {

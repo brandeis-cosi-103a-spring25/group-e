@@ -15,9 +15,11 @@ import edu.brandeis.cosi.atg.api.event.Event;
 import edu.brandeis.cosi.atg.api.event.GameEvent;
 import java.util.Optional;
 import java.util.Random;
-
 /**
- * AI player that follows the "Big Money" strategy.
+ * COSI 103a - Group E
+ * April 28th, 2025
+ * This class implements a "Big Money" AI player strategy for the game.
+ * The player focuses on acquiring high-value money cards and playing them efficiently.
  */
 public class BigMoneyPlayer implements Player {
     private final String name;
@@ -35,7 +37,8 @@ public class BigMoneyPlayer implements Player {
 
     
     /** 
-     * @return String
+     * Implements `getName()` for the Player interface.
+     * @return String representing the player's name.
      */
     @Override
     public String getName() {
@@ -142,9 +145,10 @@ public class BigMoneyPlayer implements Player {
     
     
     /** 
-     * @param state
-     * @param options
-     * @return Decision
+     * This method implements the AI's decision-making for the Action phase.
+     * @param state The current game state.
+     * @param options The available decisions for the player.
+     * @return Decision The chosen action decision, or an EndPhaseDecision if no actions are available.
      */
     private Decision makeActionDecision(GameState state, ImmutableList<Decision> options) {
         Decision actionChoice = null;
@@ -191,7 +195,11 @@ public class BigMoneyPlayer implements Player {
         }
         return null;
     }
-
+    
+    /*
+     * This method sets the observer for the player.
+     * @param observer The GameObserver to set.
+     */
     public void setObserver(GameObserver observer) {
         this.observer = Optional.ofNullable(observer);
     }
