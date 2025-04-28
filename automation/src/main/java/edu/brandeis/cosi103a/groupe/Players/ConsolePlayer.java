@@ -12,10 +12,11 @@ import java.util.Optional;
 import java.util.Scanner;
 
 /**
+ * COSI 103a - Group E
+ * April 28th, 2025
  * Console-based player that interacts with the user via input.
  * Implements the necessary decision-making process.
  */
-//extend ourplayer 
 public class ConsolePlayer implements Player{
     private final Scanner scanner;
     private String phase, name;
@@ -27,21 +28,10 @@ public class ConsolePlayer implements Player{
      */
     public ConsolePlayer(String name) {
         super();
-         this.name = name;
+        this.name = name;
         this.scanner = new Scanner(System.in);
         this.observer = Optional.empty(); // Default to no observer
     }
-
-    /**
-     * Constructor with Observer.
-     * @param name The player's name.
-     * @param observer The observer for game events.
-     */
-    /*public ConsolePlayer(String name, GameObserver observer) {
-        this.name = name;
-        this.scanner = new Scanner(System.in);
-        this.observer = Optional.ofNullable(observer);
-    }*/
 
     /**
      * Implements `getObserver()` required by the Player interface.
@@ -56,7 +46,6 @@ public class ConsolePlayer implements Player{
     /**
      * Implements `makeDecision()`, prompting the player to choose an action.
      * Notifies the observer (if present) after a decision is made.
-     *
      * @param state  The current game state.
      * @param options The list of available decisions.
      * @param reason The reason for prompting this decision.
@@ -91,7 +80,6 @@ public class ConsolePlayer implements Player{
 
     /**
      * Ensures the player provides a valid numeric input within a given range.
-     *
      * @param max The maximum valid input.
      * @return A valid choice.
      */
@@ -118,6 +106,7 @@ public class ConsolePlayer implements Player{
 
     
     /** 
+     * This method returns the name of the player.
      * @return String
      */
     @Override

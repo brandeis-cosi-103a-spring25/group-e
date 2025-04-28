@@ -28,14 +28,14 @@ public class networkPlayer {
     public DecisionResponse getDecision(DecisionRequest request) {
         if (!active) {
             return fallbackDecision(request);
-        }
-
+       }
+      
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Content-Type", "application/json");
 
             HttpEntity<DecisionRequest> entity = new HttpEntity<>(request, headers);
-
+          
             ResponseEntity<DecisionResponse> response = restTemplate.postForEntity(
                 serverUrl + "/decision", entity, DecisionResponse.class);
 
@@ -50,6 +50,7 @@ public class networkPlayer {
             return fallbackDecision(request);
         }
     }
+
 
     private DecisionResponse fallbackDecision(DecisionRequest request) {
         Decision decision = backupPlayer.makeDecision(

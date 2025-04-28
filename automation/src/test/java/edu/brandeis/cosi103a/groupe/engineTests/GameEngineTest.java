@@ -28,8 +28,11 @@ import edu.brandeis.cosi103a.groupe.Engine.GameEngine;
 import edu.brandeis.cosi103a.groupe.Other.ConsoleGameObserver;
 import edu.brandeis.cosi103a.groupe.Other.Supply;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
-
-
+/*
+ * COSI 103a - Group E
+ * April 28th, 2025
+ * This class contains tests for the GameEngine class
+ */
 public class GameEngineTest {
     private ourPlayer player1;
     private ourPlayer player2;
@@ -56,7 +59,8 @@ public class GameEngineTest {
         when(player1.getPlayer()).thenReturn(mockInnerPlayer1);
         when(player2.getPlayer()).thenReturn(mockInnerPlayer2);
     }
-
+    
+    //Test to ensure that the GameEngine is initialized correctly
     @Test
     public void testInitialization() {
         assertNotNull(engine);
@@ -67,6 +71,7 @@ public class GameEngineTest {
 
     
     /** 
+     * Tests the action phase of the game engine.
      * @throws PlayerViolationException
      */
     @Test
@@ -104,6 +109,7 @@ public class GameEngineTest {
 
     
     /** 
+     * Tests the money phase of the game engine.
      * @throws PlayerViolationException
      */
     @Test
@@ -122,7 +128,8 @@ public class GameEngineTest {
         verify(player1, times(1)).playCard(any());
         verify(observer, times(1)).notifyEvent(any(), any(PlayCardEvent.class));
     }
-
+    
+    //Test to ensure that the cleanup phase of the game engine works correctly
     @Test
     public void testCleanupPhase() {
         when(player1.getHand()).thenReturn(new Hand(ImmutableList.of(), ImmutableList.of()));
@@ -133,9 +140,9 @@ public class GameEngineTest {
         verify(player1, times(1)).drawHand(5);
         verify(observer, times(1)).notifyEvent(any(), any(EndTurnEvent.class));
     }
-
+    
+    //Tests playFullTurn method of the GameEngine class
     @Test
-
     public void testPlayFullTurn() throws PlayerViolationException {
         ImmutableList<Card> playedCards = ImmutableList.of(); // or some other list of played cards
         ImmutableList<Card> unplayedCards = ImmutableList.of(new Card(Card.Type.BITCOIN, 1));
@@ -161,7 +168,8 @@ public class GameEngineTest {
         verify(player1.getPlayer(), times(1)).makeDecision(any(), any(), any());
         verify(player2.getPlayer(), times(1)).makeDecision(any(), any(), any());
     }
-
+    
+    //Test to ensure that the distributeCards method works correctly
     @Test
     public void testDistributeCards() {
         Supply mockSupply = mock(Supply.class);

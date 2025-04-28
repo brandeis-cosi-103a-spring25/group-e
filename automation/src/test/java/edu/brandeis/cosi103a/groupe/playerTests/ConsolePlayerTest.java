@@ -17,7 +17,11 @@ import java.io.InputStream;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
-
+/*
+ * COSI 103 a - Group E
+ * April 28th, 2025
+ * This file contains tests for the ConsolePlayer class.
+ */
 public class ConsolePlayerTest {
     private ConsolePlayer consolePlayer;
     private GameState gameState;
@@ -25,8 +29,6 @@ public class ConsolePlayerTest {
 
     @Before
     public void setUp() {
-   
-
         consolePlayer = new ConsolePlayer("TestPlayer");
 
         Hand hand = createValidHand();
@@ -57,6 +59,7 @@ public class ConsolePlayerTest {
         return new Hand(playedCards, unplayedCards);
     }
     
+    //Test cases for ConsolePlayer's makeDecision method
     @Test
     public void testMakeDecision_ValidInput() {
         Decision chosenDecision = decisions.get(0);
@@ -67,6 +70,7 @@ public class ConsolePlayerTest {
         assertEquals("Buy Bitcoin", chosenDecision.getDescription());
     }
     
+    //Test case for ConsolePlayer's makeDecision method with invalid input
     @Test
     public void testMakeDecision_InvalidThenValidInput() {
         Decision chosenDecision = decisions.get(1);
@@ -77,8 +81,7 @@ public class ConsolePlayerTest {
         assertEquals("Buy Ethereum", chosenDecision.getDescription());
     }
     
-    
-
+    //Test case for ConsolePlayer's makeDecision method with no valid decisions
     @Test
     public void testMakeDecision_NoOptions() {
         // Simulate any input, but no options are available
