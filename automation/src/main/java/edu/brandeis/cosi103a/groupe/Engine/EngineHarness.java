@@ -7,6 +7,7 @@ import edu.brandeis.cosi.atg.api.Player.ScorePair;
 import edu.brandeis.cosi103a.groupe.Other.ConsoleGameObserver;
 import edu.brandeis.cosi103a.groupe.Players.*;
 import edu.brandeis.cosi.atg.api.PlayerViolationException;
+import java.util.UUID;
 
 import com.google.common.collect.ImmutableList;
 
@@ -75,9 +76,10 @@ public class EngineHarness{
                 case "4":
                     return (Player) new SmartActionPlayer(playerName);
                 case "5":
-                    return (Player) new networkPlayer("https://localhost:8080", playerName);
+                    // FIX: use HTTP and real UUID
+                    return (Player) new networkPlayer("http://localhost:8080", UUID.randomUUID().toString());
                 default:
-                    System.out.print("Invalid choice. Enter 1 (Human), 2 (AI BigMoney), 3 (AI RandomBuy) or 4 (AI SmartAction), 5 (Network Player): ");
+                    System.out.print("Invalid choice. Enter 1 (Human), 2 (AI BigMoney), 3 (AI RandomBuy), 4 (AI SmartAction), or 5 (Network Player): ");
             }
         }
     }
