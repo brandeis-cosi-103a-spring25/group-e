@@ -87,4 +87,5 @@ public class networkPlayer implements Player {
     public boolean isActive() {
         return active;
     }
+    
 }
