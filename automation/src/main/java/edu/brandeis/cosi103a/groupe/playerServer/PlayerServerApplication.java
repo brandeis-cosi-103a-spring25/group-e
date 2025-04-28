@@ -12,7 +12,6 @@ public class PlayerServerApplication {
     /** 
      * @param args
      */   
-     main
     public static void main(String[] args) {
         SpringApplication.run(PlayerServerApplication.class, args);
     }
