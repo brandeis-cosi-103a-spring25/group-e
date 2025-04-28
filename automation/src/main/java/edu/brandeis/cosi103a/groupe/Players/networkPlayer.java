@@ -52,7 +52,7 @@ public class networkPlayer implements Player {
             request.setState(state);
             request.setOptions(options);
             request.setReason(reason.orElse(null));
-            request.setPlayer_uuid(playerName); // Assuming name is unique ID, adjust if needed
+            request.setPlayer_uuid(playerName);
 
             HttpHeaders headers = new HttpHeaders();
             headers.set("Content-Type", "application/json");
