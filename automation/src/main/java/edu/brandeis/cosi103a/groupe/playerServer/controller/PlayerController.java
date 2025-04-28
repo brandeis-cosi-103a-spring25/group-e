@@ -17,6 +17,11 @@ public class PlayerController {
     @Autowired
     private DecisionService decisionService;
 
+    
+    /** 
+     * @param request
+     * @return ResponseEntity<DecisionResponse>
+     */
     @PostMapping("/decide")
     public ResponseEntity<DecisionResponse> handleDecision(@RequestBody DecisionRequest request) {
         DecisionResponse response = new DecisionResponse();
@@ -24,6 +29,11 @@ public class PlayerController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    
+    /** 
+     * @param request
+     * @return ResponseEntity<Void>
+     */
     @PostMapping("/log-event")
     public ResponseEntity<Void> logEvent(@RequestBody LogEventRequest request) {
         decisionService.logEvent(request);

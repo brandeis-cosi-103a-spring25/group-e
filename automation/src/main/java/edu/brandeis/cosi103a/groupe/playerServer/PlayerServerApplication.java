@@ -7,7 +7,11 @@ import org.springframework.context.annotation.FilterType;
 
 @SpringBootApplication
 public class PlayerServerApplication {
+
     
+    /** 
+     * @param args
+     */   
     public static void main(String[] args) {
         SpringApplication.run(PlayerServerApplication.class, args);
     }

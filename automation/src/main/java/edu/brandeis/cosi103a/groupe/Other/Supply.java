@@ -40,6 +40,11 @@ public class Supply {
         addCards(Card.Type.MONITORING, 10);
     }
 
+    
+    /** 
+     * @param type
+     * @param quantity
+     */
     private void addCards(Card.Type type, int quantity) {
         List<Card> cards = new ArrayList<>();
         for (int i = 0; i < quantity; i++) {

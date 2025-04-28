@@ -33,6 +33,10 @@ public class BigMoneyPlayer implements Player {
         this.name = name;
     }
 
+    
+    /** 
+     * @return String
+     */
     @Override
     public String getName() {
         return name;
@@ -136,6 +140,12 @@ public class BigMoneyPlayer implements Player {
         return options.get(0); 
     }
     
+    
+    /** 
+     * @param state
+     * @param options
+     * @return Decision
+     */
     private Decision makeActionDecision(GameState state, ImmutableList<Decision> options) {
         Decision actionChoice = null;
 

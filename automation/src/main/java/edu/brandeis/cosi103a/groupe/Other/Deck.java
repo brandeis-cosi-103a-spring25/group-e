@@ -20,6 +20,10 @@ public class Deck {
         cards = new LinkedList<>();
     }
 
+    
+    /** 
+     * @param card
+     */
     /*
      * This method adds a card to the deck
      * 
@@ -29,6 +33,10 @@ public class Deck {
         cards.add(card);
     }
 
+    
+    /** 
+     * @param cards
+     */
     /*
      * This method adds a list of cards to the deck
      * 

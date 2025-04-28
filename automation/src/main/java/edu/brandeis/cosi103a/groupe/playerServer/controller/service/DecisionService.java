@@ -10,6 +10,11 @@ import java.util.List;
 @Service
 public class DecisionService {
 
+    
+    /** 
+     * @param request
+     * @return Decision
+     */
     public Decision makeDecision(DecisionRequest request) {
         List<Decision> options = request.getOptions();
         if (options == null || options.isEmpty()) {
@@ -18,6 +23,10 @@ public class DecisionService {
         return options.get(0);
     }
 
+    
+    /** 
+     * @param request
+     */
     public void logEvent(LogEventRequest request) {
         System.out.println("Logging event for player [" + request.getPlayer_uuid() + "]: " + request.getDecision());
     }
