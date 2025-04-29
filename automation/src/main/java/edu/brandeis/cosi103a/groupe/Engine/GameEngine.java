@@ -149,8 +149,6 @@ public class GameEngine implements Engine {
         buyPhase(player);
         cleanupPhase(player);
 
-        System.out.println("points for " + player.getName() + ": " + player.getTotalAp());
-
     }
     
     /*
@@ -163,7 +161,6 @@ public class GameEngine implements Engine {
     public void actionPhase(ourPlayer player) throws PlayerViolationException {
 
         boolean endPhaseSelected = false;
-        System.out.println("Action phase for " + player.getName());
         while (!endPhaseSelected && player.getActions() > 0) {
             List<Decision> possibleDecisions = generatePossibleActionDecisions(player, player.getHand());
             GameState currentState = new GameState(player.getName(), player.getHand(), GameState.TurnPhase.ACTION,
@@ -213,7 +210,6 @@ public class GameEngine implements Engine {
      */
     public void discardPhase(ourPlayer player, boolean forceDiscard, int targetCardCount, int targetDiscardCount)
             throws PlayerViolationException {
-        System.out.println(player.getName() + " is in the Discard Phase.");
         // Set the turn phase to Discard
 
         boolean endPhaseSelected = false;
