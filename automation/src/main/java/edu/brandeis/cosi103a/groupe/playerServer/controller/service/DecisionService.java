@@ -4,6 +4,8 @@ import edu.brandeis.cosi.atg.api.decisions.Decision;
 import edu.brandeis.cosi103a.groupe.playerServer.dto.DecisionRequest;
 import edu.brandeis.cosi103a.groupe.playerServer.dto.LogEventRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 /*
@@ -22,9 +24,13 @@ public class DecisionService {
      */
     public Decision makeDecision(DecisionRequest request) {
         List<Decision> options = request.getOptions();
+
         if (options == null || options.isEmpty()) {
-            throw new IllegalArgumentException("No available decisions provided.");
+            System.err.println("Error: No decisions available.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No decisions available for the player.");
         }
+
+        // Otherwise, just pick the first valid option
         return options.get(0);
     }
 

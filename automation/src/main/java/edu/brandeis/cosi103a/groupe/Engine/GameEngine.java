@@ -11,7 +11,6 @@ import edu.brandeis.cosi.atg.api.EngineCreator;
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.GameState;
 import edu.brandeis.cosi.atg.api.Hand;
-import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.Player.ScorePair;
 import edu.brandeis.cosi.atg.api.PlayerViolationException;
 import edu.brandeis.cosi.atg.api.cards.Card;
@@ -29,7 +28,6 @@ import edu.brandeis.cosi.atg.api.event.PlayCardEvent;
 import edu.brandeis.cosi.atg.api.event.TrashCardEvent;
 import edu.brandeis.cosi103a.groupe.Cards.ActionCard;
 import edu.brandeis.cosi103a.groupe.Other.Supply;
-import edu.brandeis.cosi103a.groupe.Players.SmartActionPlayer;
 import edu.brandeis.cosi103a.groupe.Players.ourPlayer;
 
 /*
