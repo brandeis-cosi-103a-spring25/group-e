@@ -5,7 +5,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.ResourceAccessException;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import com.google.common.collect.ImmutableList;
+import java.util.Collections;
 import java.util.Optional;
 import edu.brandeis.cosi103a.groupe.playerServer.dto.DecisionRequest;
 import edu.brandeis.cosi103a.groupe.playerServer.dto.DecisionResponse;
@@ -25,10 +27,11 @@ public class networkPlayer implements Player {
 
     public networkPlayer(String serverUrl, String playerName) {
         this.restTemplate = new RestTemplate();
+        this.restTemplate.setMessageConverters(Collections.singletonList(new MappingJackson2HttpMessageConverter()));
         this.serverUrl = serverUrl;
         this.playerName = playerName;
         this.active = true;
-        this.backupPlayer = new BigMoneyPlayer("ex-NetworkPlayer");
+        this.backupPlayer = new BigMoneyPlayer(playerName + "-Backup");
     }
 
     @Override
@@ -46,21 +49,28 @@ public class networkPlayer implements Player {
         if (!active) {
             return backupPlayer.makeDecision(state, options, reason);
         }
-
+    
         try {
             DecisionRequest request = new DecisionRequest();
             request.setState(state);
             request.setOptions(options);
             request.setReason(reason.orElse(null));
             request.setPlayer_uuid(playerName);
-
+    
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Type", "application/json");
+            headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+    
             HttpEntity<DecisionRequest> entity = new HttpEntity<>(request, headers);
-          
+    
+            System.out.println("Sending decision request to server...");
+            System.out.println("Server URL: " + serverUrl + "/decide");
+    
             ResponseEntity<DecisionResponse> response = restTemplate.postForEntity(
-                serverUrl + "/decision", entity, DecisionResponse.class);
-
+                serverUrl + "/decide",
+                entity,
+                DecisionResponse.class
+            );
+    
             if (response.getBody() != null) {
                 return response.getBody().getDecision();
             } else {
@@ -74,10 +84,13 @@ public class networkPlayer implements Player {
             return backupPlayer.makeDecision(state, options, reason);
         } catch (Exception e) {
             System.err.println("Error during server request. Switching to BigMoneyPlayer: " + e.getMessage());
+            e.printStackTrace();
             switchToBackupPlayer();
             return backupPlayer.makeDecision(state, options, reason);
         }
     }
+    
+    
 
     private void switchToBackupPlayer() {
         this.active = false;

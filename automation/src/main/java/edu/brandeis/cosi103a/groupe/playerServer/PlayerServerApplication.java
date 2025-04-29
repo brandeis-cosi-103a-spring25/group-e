@@ -4,6 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import org.springframework.context.annotation.Bean;
 /*
  * COSI 103a - Group E
  * April 28th, 2025
@@ -13,8 +16,15 @@ import org.springframework.context.annotation.FilterType;
  */
 @SpringBootApplication
 public class PlayerServerApplication {
-  
+
     public static void main(String[] args) {
         SpringApplication.run(PlayerServerApplication.class, args);
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new GuavaModule());
+        return mapper;
     }
 }

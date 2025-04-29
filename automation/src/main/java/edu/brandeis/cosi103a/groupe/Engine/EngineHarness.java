@@ -76,7 +76,6 @@ public class EngineHarness{
                 case "4":
                     return (Player) new SmartActionPlayer(playerName);
                 case "5":
-                    // FIX: use HTTP and real UUID
                     return (Player) new networkPlayer("http://localhost:8080", UUID.randomUUID().toString());
                 default:
                     System.out.print("Invalid choice. Enter 1 (Human), 2 (AI BigMoney), 3 (AI RandomBuy), 4 (AI SmartAction), or 5 (Network Player): ");
