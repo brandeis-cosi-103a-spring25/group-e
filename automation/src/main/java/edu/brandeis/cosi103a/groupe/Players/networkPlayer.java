@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Optional;
 import edu.brandeis.cosi103a.groupe.playerServer.dto.DecisionRequest;
 import edu.brandeis.cosi103a.groupe.playerServer.dto.DecisionResponse;
+import edu.brandeis.cosi103a.groupe.playerServer.dto.LogEventRequest;
 import edu.brandeis.cosi.atg.api.GameObserver;
 import edu.brandeis.cosi.atg.api.Player;
 import edu.brandeis.cosi.atg.api.GameState;
@@ -72,7 +73,24 @@ public class networkPlayer implements Player {
             );
     
             if (response.getBody() != null) {
-                return response.getBody().getDecision();
+                Decision decision = response.getBody().getDecision();
+
+                LogEventRequest logRequest = new LogEventRequest();
+                logRequest.setPlayer_uuid(playerName);
+                logRequest.setDecision(decision);
+
+                HttpEntity<LogEventRequest> logEntity = new HttpEntity<>(logRequest, headers);
+
+                try {
+                    restTemplate.postForEntity(serverUrl + "/log-event", logEntity, Void.class);
+                } catch (Exception logError) {
+                    System.err.println("Warning: Failed to log decision for " + playerName + ": " + logError.getMessage());
+                }
+
+                return decision;
+
+
+
             } else {
                 System.err.println("Empty server response. Switching to BigMoneyPlayer.");
                 switchToBackupPlayer();
