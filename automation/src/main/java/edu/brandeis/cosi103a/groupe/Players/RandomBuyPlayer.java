@@ -165,9 +165,6 @@ public class RandomBuyPlayer implements Player {
         int availableMoney = state.getSpendableMoney();
         int availableBuys = state.getAvailableBuys();
 
-        System.out.println("Checking buy decision for " + getName());
-        System.out.println("Available money: " + availableMoney);
-        System.out.println("Available buys: " + availableBuys);
 
         if (availableBuys <= 0 || availableMoney <= 0) {
             System.out.println(getName() + ": No available buys or money. Ending phase.");
