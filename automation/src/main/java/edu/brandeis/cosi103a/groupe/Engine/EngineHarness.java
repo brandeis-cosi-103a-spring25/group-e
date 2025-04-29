@@ -76,7 +76,8 @@ public class EngineHarness{
                 case "4":
                     return (Player) new SmartActionPlayer(playerName);
                 case "5":
-                    return (Player) new networkPlayer("http://localhost:8080", UUID.randomUUID().toString());
+
+                    return (Player) new networkPlayer("https://automation.politewater-48974670.eastus.azurecontainerapps.io", playerName);
                 default:
                     System.out.print("Invalid choice. Enter 1 (Human), 2 (AI BigMoney), 3 (AI RandomBuy), 4 (AI SmartAction), or 5 (Network Player): ");
             }

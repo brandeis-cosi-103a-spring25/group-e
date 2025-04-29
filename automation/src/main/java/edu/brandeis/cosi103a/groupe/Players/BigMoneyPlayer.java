@@ -103,9 +103,7 @@ public class BigMoneyPlayer implements Player {
         int availableMoney = state.getSpendableMoney(); 
         //int availableMoney = getMoney();  // Make sure this is correct
     
-        System.out.println("Checking buy decision for " + getName());
-        System.out.println("Available money: " + availableMoney);
-        System.out.println("Available buys: " + state.getAvailableBuys());
+     
         
         if (boughtCard < 1) {
             int availableBuys = state.getAvailableBuys();
@@ -120,7 +118,6 @@ public class BigMoneyPlayer implements Player {
             for (Decision decision : options) {
                 if (decision instanceof BuyDecision buyDecision) {
                     int cost = buyDecision.getCardType().getCost();
-                    System.out.println("Checking card: " + buyDecision.getCardType().name() + " Cost: " + cost);
                     
                     if (cost <= availableMoney) {
                         if (bestPurchase[0] == null || cost > bestPurchase[0].getCardType().getCost()) {

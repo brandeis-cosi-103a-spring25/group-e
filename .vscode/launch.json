@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "SimulationHarness",
+            "request": "launch",
+            "mainClass": "edu.brandeis.cosi103a.groupe.Engine.SimulationHarness",
+            "projectName": "automation"
+        },
+        {
+            "type": "java",
             "name": "PlayerServerApplication",
             "request": "launch",
             "mainClass": "edu.brandeis.cosi103a.groupe.playerServer.PlayerServerApplication",
